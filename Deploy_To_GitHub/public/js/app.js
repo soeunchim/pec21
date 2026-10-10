@@ -1923,14 +1923,56 @@ async function saveUserEdit(e) {
 // ==============================================================================
 // 7. BACKUP & EXPORT
 // ==============================================================================
-function downloadBackup() {
-  window.open('/api/backup', '_blank');
-  showToast('បានទាញយកឯកសារបម្រុងទុក!', 'success');
+async function downloadBackup() {
+  try {
+    showToast('កំពុងទាញយកឯកសារបម្រុងទុក...', 'info');
+    const headers = {};
+    if (state.token) headers['Authorization'] = `Bearer ${state.token}`;
+    const tokenParam = state.token ? `?token=${encodeURIComponent(state.token)}` : '';
+    const res = await fetch(`/api/backup${tokenParam}`, { headers });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      return showToast(err.message || 'សិទ្ធិមិនគ្រប់គ្រាន់!', 'danger');
+    }
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `backup_kb_${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+    showToast('បានទាញយក Backup ដោយជោគជ័យ!', 'success');
+  } catch (e) {
+    showToast('កំហុសទាញយក: ' + e.message, 'danger');
+  }
 }
 
-function exportExcelCsv() {
-  window.open('/api/export-csv', '_blank');
-  showToast('បានទាញយកឯកសារ CSV/Excel រួចរាល់!', 'success');
+async function exportExcelCsv() {
+  try {
+    showToast('កំពុងទាញយកឯកសារ Excel/CSV...', 'info');
+    const headers = {};
+    if (state.token) headers['Authorization'] = `Bearer ${state.token}`;
+    const tokenParam = state.token ? `?token=${encodeURIComponent(state.token)}` : '';
+    const res = await fetch(`/api/export-csv${tokenParam}`, { headers });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      return showToast(err.message || 'សិទ្ធិមិនគ្រប់គ្រាន់!', 'danger');
+    }
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `candidates_export_${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+    showToast('បានទាញយក CSV/Excel រួចរាល់!', 'success');
+  } catch (e) {
+    showToast('កំហុសទាញយក: ' + e.message, 'danger');
+  }
 }
 
 async function restoreBackup() {
