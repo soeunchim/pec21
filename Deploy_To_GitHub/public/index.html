@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ប្រព័ន្ធគ្រប់គ្រងបូកស្រង់ពិន្ទុប្រឡងជ្រើសរើស ក.ច.ប (PEC21 - ខេត្តតាកែវ)</title>
+  <link rel="stylesheet" href="css/style.css?v=20261010_form_activate">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Top Header -->
+    <header class="top-header no-print">
+      <div class="header-content">
+        <div class="header-brand">
+          <div class="brand-logo">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <div class="brand-text">
+            <h1>ប្រព័ន្ធគ្រប់គ្រងបូកស្រង់ពិន្ទុប្រឡងជ្រើសរើស ក.ច.ប</h1>
+            <p>គណៈកម្មការរៀបចំការបោះឆ្នោតខេត្តតាកែវ (គ.ខ.ប ២១ - PEC21)</p>
+          </div>
+        </div>
+
+        <div class="header-actions">
+          <div id="connStatus" class="badge badge-passed" title="ស្ថានភាពតភ្ជាប់">
+            <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background-color:#10B981;"></span>
+            <span id="connStatusText">Online / LAN</span>
+          </div>
+
+          <div id="userProfile" style="display:flex; align-items:center; gap:8px;">
+            <span id="userFullName" style="font-weight:600; font-size:0.88rem;"></span>
+            <span id="userRoleBadge" class="badge badge-district"></span>
+            <button id="btnLogout" class="btn btn-secondary btn-sm" style="color:var(--danger); border-color:#FECACA;">ចាកចេញ</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Navigation Bar -->
+    <nav class="nav-bar no-print">
+      <div class="nav-container">
+        <div class="nav-item active" data-tab="dashboard">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+          ផ្ទាំងគ្រប់គ្រង
+        </div>
+        <div class="nav-item" data-tab="codes">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="7" y1="7" x2="7" y2="7"/><line x1="12" y1="7" x2="12" y2="7"/><line x1="17" y1="7" x2="17" y2="7"/><line x1="7" y1="12" x2="7" y2="12"/><line x1="12" y1="12" x2="12" y2="12"/><line x1="17" y1="12" x2="17" y2="12"/><line x1="7" y1="17" x2="7" y2="17"/><line x1="12" y1="17" x2="12" y2="17"/><line x1="17" y1="17" x2="17" y2="17"/></svg>
+          លេខកូដ (Code) & QCM
+        </div>
+        <div class="nav-item" data-tab="entry">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          បញ្ចូលពិន្ទុតាមមុខតំណែង
+        </div>
+        <div class="nav-item" data-tab="tabulation">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          តារាងស្រង់ពិន្ទុផ្លូវការ
+        </div>
+        <div class="nav-item" data-tab="results">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+          តារាងលទ្ធផលប្រឡង
+        </div>
+        <div class="nav-item" data-tab="roster">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          បញ្ជីសមាសភាព ក.ច.ប (៣៤៣ រូប)
+        </div>
+        <div class="nav-item" data-tab="users" id="tabNavUsers">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          គ្រប់គ្រងគណនី
+        </div>
+        <div class="nav-item" data-tab="settings">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          ការកំណត់ & បម្រុងទុក
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+      <!-- ========================================================= -->
+      <!-- TAB 1: DASHBOARD -->
+      <!-- ========================================================= -->
+      <section id="pane-dashboard" class="tab-pane active">
+        <div class="stats-grid">
+          <div class="kpi-card">
+            <div class="kpi-info">
+              <h3>បេក្ខជនសរុប</h3>
+              <div class="kpi-num" id="kpiTotal">0</div>
+              <div class="kpi-sub">ស្រី: <span id="kpiFemale">0</span> នាក់</div>
+            </div>
+            <div class="kpi-icon" style="background-color:var(--primary-light); color:var(--primary);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-info">
+              <h3>ជាប់ជាស្ថាពរ (A-ជាប់)</h3>
+              <div class="kpi-num" id="kpiPassed" style="color:#059669;">0</div>
+              <div class="kpi-sub">ស្រីជាប់: <span id="kpiPassedFemale">0</span> នាក់</div>
+            </div>
+            <div class="kpi-icon" style="background-color:var(--accent-light); color:var(--accent);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-info">
+              <h3>បេក្ខជនបម្រុង (B-បម្រុង)</h3>
+              <div class="kpi-num" id="kpiReserve" style="color:#0284C7;">0</div>
+              <div class="kpi-sub">សម្រាប់ជំនួសពេលចាំបាច់</div>
+            </div>
+            <div class="kpi-icon" style="background-color:var(--info-light); color:var(--info);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-info">
+              <h3>បេក្ខជនធ្លាក់ (&lt; ៥០)</h3>
+              <div class="kpi-num" id="kpiFailed" style="color:#DC2626;">0</div>
+              <div class="kpi-sub">ពិន្ទុមិនគ្រប់លក្ខខណ្ឌ</div>
+            </div>
+            <div class="kpi-icon" style="background-color:var(--danger-light); color:var(--danger);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-info">
+              <h3>អវត្តមាន</h3>
+              <div class="kpi-num" id="kpiAbsent" style="color:var(--gray-600);">0</div>
+              <div class="kpi-sub">មិនបានមកប្រឡង</div>
+            </div>
+            <div class="kpi-icon" style="background-color:var(--gray-200); color:var(--gray-700);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Summary by District Card -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+              ស្ថិតិបូកស្រង់ពិន្ទុប្រឡង តាមបណ្តាក្រុង/ស្រុកទាំង ១០ នៃខេត្តតាកែវ
+            </div>
+            <div>
+              <button class="btn btn-secondary btn-sm" onclick="exportExcelCsv()">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                ទាញយក CSV / Excel
+              </button>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table" id="districtStatsTable">
+              <thead>
+                <tr>
+                  <th style="width:50px;">ល.រ</th>
+                  <th>ក្រុង/ស្រុក</th>
+                  <th style="text-align:center;">បេក្ខជនសរុប</th>
+                  <th style="text-align:center;">ស្រី</th>
+                  <th style="text-align:center;">ជាប់ (A)</th>
+                  <th style="text-align:center;">បម្រុង (B)</th>
+                  <th style="text-align:center;">ធ្លាក់</th>
+                  <th style="text-align:center;">អវត្តមាន</th>
+                  <th style="text-align:center;">អត្រាជាប់</th>
+                  <th style="text-align:center; width:100px;">សកម្មភាព</th>
+                </tr>
+              </thead>
+              <tbody id="districtStatsBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================= -->
+      <!-- TAB 2: CODES MANAGEMENT (NEW TAB: លេខកូដ & ពិន្ទុ QCM) -->
+      <!-- ========================================================= -->
+      <section id="pane-codes" class="tab-pane">
+        <!-- Codes KPI -->
+        <div class="stats-grid" style="grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));">
+          <div class="kpi-card">
+            <div class="kpi-info">
+              <h3>លេខកូដសរុប</h3>
+              <div class="kpi-num" id="codeKpiTotal">0</div>
+            </div>
+            <div class="kpi-icon" style="background-color:var(--primary-light); color:var(--primary);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 7h10M7 12h10M7 17h10"/></svg>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-info">
+              <h3>បានភ្ជាប់បេក្ខជន</h3>
+              <div class="kpi-num" id="codeKpiAssigned" style="color:#059669;">0</div>
+            </div>
+            <div class="kpi-icon" style="background-color:var(--accent-light); color:var(--accent);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-info">
+              <h3>កូដនៅទំនេរ</h3>
+              <div class="kpi-num" id="codeKpiUnassigned" style="color:#0284C7;">0</div>
+            </div>
+            <div class="kpi-icon" style="background-color:var(--info-light); color:var(--info);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-info">
+              <h3>កូដអវត្តមាន</h3>
+              <div class="kpi-num" id="codeKpiAbsent" style="color:var(--gray-600);">0</div>
+            </div>
+            <div class="kpi-icon" style="background-color:var(--gray-200); color:var(--gray-700);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Toolbar for Codes -->
+        <div class="toolbar">
+          <div class="toolbar-group">
+            <div>
+              <label class="form-label">ស្វែងរកកូដ ឬឈ្មោះបេក្ខជន</label>
+              <input type="text" id="codeSearchInput" class="form-control" placeholder="វាយលេខកូដ (ឧ. AB001)..." style="min-width:200px;">
+            </div>
+            <div style="display:flex; gap:6px; margin-top:auto;">
+              <button class="btn btn-secondary btn-sm" onclick="filterCodesStatus('all')">ទាំងអស់</button>
+              <button class="btn btn-secondary btn-sm" style="color:#059669;" onclick="filterCodesStatus('assigned')">បានភ្ជាប់បេក្ខជន</button>
+              <button class="btn btn-secondary btn-sm" style="color:#0284C7;" onclick="filterCodesStatus('unassigned')">នៅទំនេរ</button>
+              <button class="btn btn-secondary btn-sm" style="color:var(--gray-700);" onclick="filterCodesStatus('absent')">អវត្តមាន</button>
+            </div>
+          </div>
+
+          <div class="toolbar-group" style="margin-top:auto;">
+            <button class="btn btn-secondary" onclick="copyCodesTableToClipboard()" title="ចម្លងតារាងលេខកូដ និងពិន្ទុទាំងអស់ទៅ Excel">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              ចម្លងទៅ Excel (Copy)
+            </button>
+            <button class="btn btn-secondary" style="border-color:#10B981; color:#047857; font-weight:700;" onclick="pasteFromClipboardDirectly()" title="ចុចដើម្បីបិទភ្ជាប់ទិន្នន័យពី Clipboard ចូលតារាងផ្ទាល់">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+              📋 បិទភ្ជាប់ពី Excel (Paste)
+            </button>
+            <button class="btn btn-primary" onclick="openAddCodeModal()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              បន្ថែមលេខកូដថ្មី
+            </button>
+          </div>
+        </div>
+
+        <!-- Codes Table -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <span>តារាងលេខកូដសម្ងាត់ និងពិន្ទុ QCM (ស្វ័យប្រវត្តិតភ្ជាប់ជាមួយបេក្ខជន)</span>
+              <span id="filteredCodesCountBadge" class="badge badge-role"></span>
+            </div>
+            <div style="font-size:0.83rem; color:var(--gray-500);">
+              <span style="background:#DCFCE7; color:#15803D; padding:4px 10px; border-radius:6px; font-weight:700;">📋 អាច Copy / Paste ផ្ទាល់ពី Excel លើតារាងនេះ (ចុចលើក្រឡា ឬចុច Ctrl + V)</span>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table" id="codesTable" style="max-width:680px; margin:0 auto;" tabindex="0">
+              <thead>
+                <tr>
+                  <th style="width:60px; text-align:center;">ល.រ</th>
+                  <th style="width:160px; text-align:center;">លេខកូដ</th>
+                  <th style="width:160px; text-align:center;">ពិន្ទុ QCM</th>
+                  <th style="width:120px; text-align:center;">សកម្មភាព</th>
+                </tr>
+              </thead>
+              <tbody id="codesTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================= -->
+      <!-- TAB 3: SCORE ENTRY & CANDIDATE LIST -->
+      <!-- ========================================================= -->
+      <section id="pane-entry" class="tab-pane">
+        <div class="toolbar">
+          <div class="toolbar-group">
+            <div>
+              <label class="form-label">ស្រុក/ក្រុង</label>
+              <select id="filterDistrict" class="form-select" style="min-width:160px;"></select>
+            </div>
+            <div>
+              <label class="form-label">ឃុំ/សង្កាត់</label>
+              <select id="filterCommune" class="form-select" style="min-width:170px;"></select>
+            </div>
+            <div>
+              <label class="form-label">មុខតំណែង</label>
+              <select id="filterRole" class="form-select" style="min-width:160px;">
+                <option value="all">-- គ្រប់មុខតំណែង --</option>
+                <option value="a">ប្រធាន ក.ច.ប</option>
+                <option value="d">អនុប្រធាន (ស្មៀនឃុំ)</option>
+                <option value="c">ការីកុំព្យូទ័រ</option>
+                <option value="b">ជំនួយការអនុប្រធាន</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">ស្វែងរក (ឈ្មោះ / កូដ)</label>
+              <input type="text" id="searchInput" class="form-control" placeholder="វាយឈ្មោះបេក្ខជន..." style="min-width:180px;">
+            </div>
+          </div>
+
+          <div class="toolbar-group" style="margin-top:auto;">
+            <button class="btn btn-primary" onclick="openAddCandidateModal()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              បន្ថែមបេក្ខជនថ្មី
+            </button>
+          </div>
+        </div>
+
+        <!-- Authentic Excel Sheet Bar (ដូចក្នុង Microsoft Excel) -->
+        <div class="excel-sheet-bar">
+          <div class="excel-sheet-nav-arrows">
+            <button class="excel-nav-btn" title="រំកិលទៅមុខ" onclick="document.querySelector('.excel-sheet-bar').scrollBy({left:-120, behavior:'smooth'})">&#9664;</button>
+            <button class="excel-nav-btn" title="រំកិលថយក្រោយ" onclick="document.querySelector('.excel-sheet-bar').scrollBy({left:120, behavior:'smooth'})">&#9654;</button>
+          </div>
+          <button class="excel-sheet-tab" id="sheetTabKhum" onclick="switchTab('dashboard')">
+            🏘️ ឃុំ
+          </button>
+          <button class="excel-sheet-tab" id="sheetTabCode" onclick="switchTab('codes')">
+            🔢 Code & QCM
+          </button>
+          <button class="excel-sheet-tab active" id="sheetTabRoleA" onclick="setRoleTab('a')">
+            📑 ប្រធាន
+            <span class="excel-sheet-tab-badge" id="badgeCountRoleA">0</span>
+          </button>
+          <button class="excel-sheet-tab" id="sheetTabRoleD" onclick="setRoleTab('d')">
+            📑 អនុប្រធាន
+            <span class="excel-sheet-tab-badge" id="badgeCountRoleD">0</span>
+          </button>
+          <button class="excel-sheet-tab" id="sheetTabRoleB" onclick="setRoleTab('b')">
+            📑 ជំនួយការអនុ
+            <span class="excel-sheet-tab-badge" id="badgeCountRoleB">0</span>
+          </button>
+          <button class="excel-sheet-tab" id="sheetTabRoleC" onclick="setRoleTab('c')">
+            💻 ការី
+            <span class="excel-sheet-tab-badge" id="badgeCountRoleC">0</span>
+          </button>
+          <button class="excel-sheet-tab" id="sheetTabRoleAll" onclick="setRoleTab('all')">
+            📊 គ្រប់មុខតំណែង
+          </button>
+          <button class="excel-sheet-tab" id="sheetTabTabulation" onclick="switchTab('tabulation')">
+            📄 01-Result
+          </button>
+          <button class="excel-sheet-tab" id="sheetTabResults" onclick="switchTab('results')">
+            🏆 តារាងលទ្ធផល
+          </button>
+        </div>
+
+        <!-- Excel View Layout: Table on Left + Slicer on Right -->
+        <div class="excel-view-layout">
+          <!-- Excel Table Container -->
+          <div class="excel-table-container">
+            <div class="card" style="border-radius:0 0 8px 8px; border-top:none; box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+              <div class="card-header" style="background:#F1F5F9; border-bottom:1px solid #CBD5E1; padding:8px 14px;">
+                <div class="card-title" style="gap:10px;">
+                  <span id="roleSectionTitle" style="font-weight:700; color:var(--primary); font-size:0.95rem;">សន្លឹកកិច្ចការ៖ ប្រធាន ក.ច.ប</span>
+                  <span id="filteredCountBadge" class="badge badge-role"></span>
+                </div>
+                <div style="display:flex; gap:6px;" id="statusFilterButtons">
+                  <button class="btn btn-secondary btn-sm" onclick="filterByStatus('all')">ទាំងអស់</button>
+                  <button class="btn btn-secondary btn-sm" style="color:#059669; font-weight:600;" onclick="filterByStatus('A-ជាប់')">A-ជាប់</button>
+                  <button class="btn btn-secondary btn-sm" style="color:#0284C7; font-weight:600;" onclick="filterByStatus('B-បម្រុង')">B-បម្រុង</button>
+                  <button class="btn btn-secondary btn-sm" style="color:#DC2626; font-weight:600;" onclick="filterByStatus('ធ្លាក់')">ធ្លាក់</button>
+                </div>
+              </div>
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead id="candidatesTableHeader">
+                    <tr>
+                      <th style="width:40px;">ល.រ</th>
+                      <th style="width:105px;">កូដ</th>
+                      <th>ឈ្មោះ</th>
+                      <th style="text-align:center; width:45px;">ភេទ</th>
+                      <th style="width:110px;">ថ្ងៃខែឆ្នាំកំណើត</th>
+                      <th style="text-align:center; width:65px;">ស.បត្រ</th>
+                      <th style="text-align:center; width:65px;">ប.ពិ</th>
+                      <th style="text-align:center; width:90px;">ពិន្ទុ QCM</th>
+                      <th style="text-align:center; width:90px;">QCM-PC</th>
+                      <th style="text-align:center; width:75px; font-weight:700;">សរុប</th>
+                      <th style="width:75px;">កូដឃុំ</th>
+                      <th>ឈ្មោះឃុំ/សង្កាត់</th>
+                      <th>ស្រុក</th>
+                      <th style="text-align:center; width:85px;">លទ្ធផល</th>
+                      <th style="text-align:center; width:90px;">សកម្មភាព</th>
+                    </tr>
+                  </thead>
+                  <tbody id="candidatesTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Excel Slicer Widget (កូដឃុំ) -->
+          <div class="excel-slicer">
+            <div class="excel-slicer-header">
+              <div style="display:flex; align-items:center; gap:6px;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                <span>កូដឃុំ</span>
+              </div>
+              <button class="excel-slicer-clear-btn" id="slicerClearBtn" title="លុបការច្រោះ (Clear Filter)" onclick="clearCommuneSlicer()">
+                ✕ ទាំងអស់
+              </button>
+            </div>
+            <div class="excel-slicer-body">
+              <div class="excel-slicer-grid" id="communeSlicerGrid">
+                <!-- Slicer buttons populated dynamically -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================= -->
+      <!-- TAB 4: OFFICIAL TABULATION REPORT -->
+      <!-- ========================================================= -->
+      <section id="pane-tabulation" class="tab-pane">
+        <div class="toolbar no-print">
+          <div class="toolbar-group">
+            <div>
+              <label class="form-label">ជ្រើសរើសស្រុក/ក្រុង</label>
+              <select id="tabReportDistrict" class="form-select" style="min-width:180px;"></select>
+            </div>
+            <div>
+              <label class="form-label">ជ្រើសរើសឃុំ/សង្កាត់</label>
+              <select id="tabReportCommune" class="form-select" style="min-width:200px;"></select>
+            </div>
+          </div>
+          <div class="toolbar-group">
+            <button class="btn btn-primary" onclick="window.print()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+              បោះពុម្ពតារាងស្រង់ពិន្ទុ (Print)
+            </button>
+          </div>
+        </div>
+
+        <div class="official-paper" id="tabulationPaper">
+          <div class="paper-motto">
+            <h2>ព្រះរាជាណាចក្រកម្ពុជា</h2>
+            <h3>ជាតិ សាសនា ព្រះមហាក្សត្រ</h3>
+            <div class="dots font-moul">3</div>
+          </div>
+
+          <div class="paper-org">
+            <h4>គណៈកម្មាធិការជាតិរៀបចំការបោះឆ្នោត (គ.ជ.ប)</h4>
+            <p>គណៈកម្មការរៀបចំការបោះឆ្នោតខេត្តតាកែវ (គ.ខ.ប ២១)</p>
+          </div>
+
+          <div class="paper-title">
+            <h3 class="font-moul">តារាងស្រង់ពិន្ទុបេក្ខជន</h3>
+            <p style="font-size:0.95rem;">ដែលបានដាក់ពាក្យប្រឡងតាមមុខតំណែងនីមួយៗសម្រាប់បម្រើការងារជាក្រុមចុះឈ្មោះបោះឆ្នោត</p>
+            <p style="font-weight:700; margin-top:4px;" id="tabReportDistrictTitle">ស្រុកអង្គរបូរី នៃខេត្តតាកែវ</p>
+          </div>
+
+          <div id="tabulationTableContainer"></div>
+
+          <div class="paper-signatures">
+            <div class="sig-box">
+              <div class="sig-title font-moul">អ្នកស្រង់ពិន្ទុ និងបូកសរុប</div>
+              <div style="font-weight:600;">.......................................</div>
+            </div>
+            <div class="sig-box">
+              <div class="sig-title font-moul">បានពិនិត្យត្រឹមត្រូវ</div>
+              <div style="font-weight:600;">.......................................</div>
+            </div>
+            <div class="sig-box">
+              <div style="font-size:0.8rem; margin-bottom:4px;" id="tabSignDate">ថ្ងៃចន្ទ ៣កើត ខែភទ្របទ ឆ្នាំមមី អដ្ឋស័ក ព.ស.២៥៧០</div>
+              <div style="font-size:0.8rem; margin-bottom:12px;">តាកែវ ថ្ងៃទី១៤ ខែកញ្ញា ឆ្នាំ២០២៦</div>
+              <div class="sig-title font-moul">ជ.អនុគណៈកម្មការជ្រើសរើសថ្នាក់ខេត្ត<br>ប្រធាន</div>
+              <div style="font-weight:600;">.......................................</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================= -->
+      <!-- TAB 5: OFFICIAL EXAM RESULTS REPORT -->
+      <!-- ========================================================= -->
+      <section id="pane-results" class="tab-pane">
+        <div class="toolbar no-print">
+          <div class="toolbar-group">
+            <div>
+              <label class="form-label">ជ្រើសរើសស្រុក/ក្រុង</label>
+              <select id="resultReportDistrict" class="form-select" style="min-width:180px;"></select>
+            </div>
+            <div>
+              <label class="form-label">ជ្រើសរើសឃុំ/សង្កាត់</label>
+              <select id="resultReportCommune" class="form-select" style="min-width:200px;"></select>
+            </div>
+          </div>
+          <div class="toolbar-group">
+            <button class="btn btn-primary" onclick="window.print()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+              បោះពុម្ពតារាងលទ្ធផល (Print)
+            </button>
+          </div>
+        </div>
+
+        <div class="official-paper" id="resultsPaper">
+          <div class="paper-motto">
+            <h2>ព្រះរាជាណាចក្រកម្ពុជា</h2>
+            <h3>ជាតិ សាសនា ព្រះមហាក្សត្រ</h3>
+            <div class="dots font-moul">3</div>
+          </div>
+
+          <div class="paper-org">
+            <h4>គណៈកម្មាធិការជាតិរៀបចំការបោះឆ្នោត (គ.ជ.ប)</h4>
+            <p>គណៈកម្មការរៀបចំការបោះឆ្នោតខេត្តតាកែវ (គ.ខ.ប ២១)</p>
+          </div>
+
+          <div class="paper-title">
+            <h3 class="font-moul">លទ្ធផលនៃការប្រឡងជ្រើសរើសសមាសភាពក្រុមចុះឈ្មោះបោះឆ្នោត</h3>
+            <p style="font-weight:700; margin-top:4px;" id="resultReportDistrictTitle">ស្រុកអង្គរបូរី នៃខេត្តតាកែវ</p>
+          </div>
+
+          <div id="resultsTableContainer"></div>
+
+          <div class="paper-signatures">
+            <div class="sig-box">
+              <div class="sig-title font-moul">អ្នកស្រង់ពិន្ទុ និងបូកសរុប</div>
+              <div style="font-weight:600;">.......................................</div>
+            </div>
+            <div class="sig-box">
+              <div class="sig-title font-moul">បានពិនិត្យត្រឹមត្រូវ</div>
+              <div style="font-weight:600;">.......................................</div>
+            </div>
+            <div class="sig-box">
+              <div style="font-size:0.8rem; margin-bottom:4px;">ថ្ងៃចន្ទ ៣កើត ខែភទ្របទ ឆ្នាំមមី អដ្ឋស័ក ព.ស.២៥៧០</div>
+              <div style="font-size:0.8rem; margin-bottom:12px;">តាកែវ ថ្ងៃទី១៤ ខែកញ្ញា ឆ្នាំ២០២៦</div>
+              <div class="sig-title font-moul">ជ.អនុគណៈកម្មការជ្រើសរើសថ្នាក់ខេត្ត<br>ប្រធាន</div>
+              <div style="font-weight:600;">.......................................</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================= -->
+      <!-- TAB 6: FINAL ROSTER LIST (343 APPOINTED MEMBERS) -->
+      <!-- ========================================================= -->
+      <section id="pane-roster" class="tab-pane">
+        <div class="toolbar no-print">
+          <div class="toolbar-group">
+            <div>
+              <label class="form-label">ស្រុក/ក្រុង</label>
+              <select id="rosterDistrict" class="form-select" style="min-width:180px;"></select>
+            </div>
+            <div>
+              <label class="form-label">ស្វែងរកឈ្មោះ</label>
+              <input type="text" id="rosterSearch" class="form-control" placeholder="វាយឈ្មោះសមាជិក..." style="min-width:180px;">
+            </div>
+          </div>
+          <div class="toolbar-group">
+            <button class="btn btn-secondary" onclick="exportExcelCsv()">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              នាំចេញ Excel / CSV
+            </button>
+            <button class="btn btn-primary" onclick="window.print()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+              បោះពុម្ពបញ្ជី (Print)
+            </button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <span class="font-moul">បញ្ជីរាយនាមសមាសភាពក្រុមចុះឈ្មោះបោះឆ្នោត (ក.ច.ប) ផ្លូវការ</span>
+              <span id="rosterCountBadge" class="badge badge-passed"></span>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th style="width:40px;">ល.រ</th>
+                  <th>នាមត្រកូល និងនាមខ្លួន</th>
+                  <th style="text-align:center;">ភេទ</th>
+                  <th>ថ្ងៃខែឆ្នាំកំណើត</th>
+                  <th>តួនាទី</th>
+                  <th>ឈ្មោះឃុំ/សង្កាត់</th>
+                  <th>ក្រុង/ស្រុក</th>
+                  <th style="text-align:center;">ស្ថានភាព</th>
+                </tr>
+              </thead>
+              <tbody id="rosterTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================= -->
+      <!-- TAB 7: USER MANAGEMENT -->
+      <!-- ========================================================= -->
+      <section id="pane-users" class="tab-pane">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              ការគ្រប់គ្រងគណនីគ្រូប្រចាំក្រុង/ស្រុក និងអ្នកគ្រប់គ្រង
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ឈ្មោះគណនី (Username)</th>
+                  <th>គោត្តនាម និងនាម</th>
+                  <th>តួនាទី (Role)</th>
+                  <th>ដែនសមត្ថកិច្ច (District)</th>
+                  <th>លេខទូរស័ព្ទ</th>
+                  <th>G-mail</th>
+                  <th style="text-align:center;">ស្ថានភាព Activate</th>
+                  <th style="text-align:center; width:140px;">សកម្មភាព</th>
+                </tr>
+              </thead>
+              <tbody id="usersTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================= -->
+      <!-- TAB 8: SETTINGS & BACKUP -->
+      <!-- ========================================================= -->
+      <section id="pane-settings" class="tab-pane">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              ការបម្រុងទុកទិន្នន័យ (Backup & Restore)
+            </div>
+          </div>
+          <div class="card-body">
+            <div style="display:flex; flex-direction:column; gap:20px; max-width:650px;">
+              <div>
+                <h4 style="font-weight:700; margin-bottom:6px;">១. ទាញយកឯកសារបម្រុងទុក (Download Backup)</h4>
+                <p style="font-size:0.88rem; color:var(--gray-600); margin-bottom:10px;">
+                  រក្សាទុកទិន្នន័យបេក្ខជន លេខកូដ ពិន្ទុ និងគណនីទាំងអស់ជាឯកសារ JSON ដើម្បីធានាសុវត្ថិភាព។
+                </p>
+                <button class="btn btn-primary" onclick="downloadBackup()">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  ទាញយកឯកសារបម្រុងទុក (JSON)
+                </button>
+              </div>
+
+              <hr style="border:0; border-top:1px solid var(--gray-200);">
+
+              <div>
+                <h4 style="font-weight:700; margin-bottom:6px;">២. ស្ដារទិន្នន័យពីឯកសារបម្រុងទុក (Restore Backup)</h4>
+                <p style="font-size:0.88rem; color:var(--gray-600); margin-bottom:10px;">
+                  ជ្រើសរើសឯកសារ Backup (.json) ដើម្បីស្ដារទិន្នន័យឡើងវិញ។
+                </p>
+                <input type="file" id="restoreFileInput" accept=".json" class="form-control" style="margin-bottom:10px;">
+                <button class="btn btn-danger" onclick="restoreBackup()">
+                  ស្ដារទិន្នន័យ (Restore)
+                </button>
+              </div>
+
+              <hr style="border:0; border-top:1px solid var(--gray-200);">
+
+              <div>
+                <h4 style="font-weight:700; margin-bottom:6px; color:var(--primary);">៣. ទាញយកទិន្នន័យពី Cloud (Sync from Firebase)</h4>
+                <p style="font-size:0.88rem; color:var(--gray-600); margin-bottom:10px;">
+                  ប្រសិនបើ Web App ត្រូវបានដាក់លើ Render + Firebase លោកអ្នកអាចចុចប៊ូតុងនេះដើម្បីទាញយកពិន្ទុដែលគ្រូស្រុកបានបញ្ចូលទាំងអស់មកក្នុងប្រព័ន្ធភ្លាមៗ។
+                </p>
+                <button class="btn btn-secondary" style="border-color:var(--primary); color:var(--primary); font-weight:700;" onclick="syncFromCloudDirectly()">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                  🔄 ទាញយកទិន្នន័យពី Cloud (Sync Now)
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- MODALS -->
+  <!-- ========================================================= -->
+
+  <!-- 1. LOGIN MODAL -->
+  <div id="loginModal" class="modal-overlay">
+    <div class="modal-card" style="max-width:420px;">
+      <div class="modal-header" style="background:var(--primary); color:white;">
+        <h3 class="font-moul" style="font-size:1rem;">ចូលប្រើប្រាស់ប្រព័ន្ធ</h3>
+      </div>
+      <div class="modal-body">
+        <div style="text-align:center; margin-bottom:18px;">
+          <div style="width:60px; height:60px; background:var(--primary-light); border-radius:50%; margin:0 auto 10px; display:flex; align-items:center; justify-content:center;">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <h4 style="font-weight:700; color:var(--gray-900);">គ.ខ.ប លេខ ២១ ខេត្តតាកែវ</h4>
+          <p style="font-size:0.82rem; color:var(--gray-500);">ប្រព័ន្ធគ្រប់គ្រងបូកស្រង់ពិន្ទុប្រឡង ក.ច.ប</p>
+        </div>
+
+        <form id="loginForm" onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label class="form-label">ឈ្មោះគណនី (Username)</label>
+            <input type="text" id="loginUsername" class="form-control" placeholder="ឧ. PEC2101T001 ឬ soeunchim" required autofocus>
+          </div>
+          <div class="form-group">
+            <label class="form-label">ពាក្យសម្ងាត់ (Password)</label>
+            <input type="password" id="loginPassword" class="form-control" placeholder="បញ្ចូលពាក្យសម្ងាត់..." required>
+          </div>
+          <div id="loginError" style="color:var(--danger); font-size:0.85rem; font-weight:600; margin-bottom:12px; display:none;"></div>
+          <button type="submit" class="btn btn-primary" style="width:100%; padding:10px; font-weight:700;">
+            ចូលប្រព័ន្ធ (Sign In)
+          </button>
+        </form>
+
+        <div style="margin-top:16px; padding:12px; background:#F0FDFA; border:1px solid #99F6E4; border-radius:8px; text-align:center;">
+          <div style="font-weight:700; color:#0F766E; font-size:0.88rem; margin-bottom:4px;">
+            👉 សម្រាប់លោកគ្រូ/អ្នកគ្រូប្រចាំក្រុងស្រុក (Trainer Accounts)
+          </div>
+          <p style="font-size:0.8rem; color:#115E59; margin-bottom:8px;">
+            ទើបទទួលបានឈ្មោះគណនី និងលេខសម្ងាត់ដើម (<code>pec21</code>)?
+          </p>
+          <button type="button" class="btn btn-sm" style="background:#0D9488; color:white; font-weight:700; width:100%; padding:8px; display:inline-flex; align-items:center; justify-content:center; gap:6px;" onclick="openActivateAccountModal()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+            ដំណើរការគណនី (Form Activate Account)
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1b. FORM ACTIVATE ACCOUNT (ដំណើរការគណនីគ្រូប្រចាំក្រុងស្រុក) -->
+  <div id="activateModal" class="modal-overlay">
+    <div class="modal-card" style="max-width:480px;">
+      <div class="modal-header" style="background:#0F766E; color:white;">
+        <h3 class="font-moul" style="font-size:0.95rem;">ទម្រង់ដំណើរការគណនី (Form Activate Account)</h3>
+        <button class="btn btn-sm" style="background:transparent; color:white; border:none; font-size:1.3rem; cursor:pointer;" onclick="closeActivateModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="background:#F0FDFA; border:1px solid #99F6E4; border-radius:var(--radius-sm); padding:10px 12px; margin-bottom:14px; font-size:0.83rem; color:#115E59; line-height:1.5;">
+          📝 <strong>សូមបំពេញព័ត៌មានខាងក្រោម</strong> ដើម្បី Activate គណនីគ្រូប្រចាំក្រុង/ស្រុក ដោយប្រើឈ្មោះគណនី និងលេខសម្ងាត់ដើម (<code>pec21</code>) ភ្ជាប់ជាមួយព័ត៌មានផ្ទាល់ខ្លួន និងលេខសម្ងាត់ថ្មី។
+        </div>
+
+        <form id="activateForm" onsubmit="handleActivateAccount(event)">
+          <div class="form-group">
+            <label class="form-label" style="font-weight:700;">ឈ្មោះគណនី (Username) <span style="color:var(--danger);">*</span></label>
+            <input type="text" id="activateUsername" class="form-control" list="trainerAccountsList" placeholder="ឧ. PEC2101T001" required style="font-family:monospace; font-weight:700; text-transform:uppercase;">
+            <datalist id="trainerAccountsList">
+              <option value="PEC2101T001">ស្រុកអង្គរបូរី (T001)</option>
+              <option value="PEC2101R001">ស្រុកអង្គរបូរី (R001)</option>
+              <option value="PEC2102T001">ស្រុកបាទី (T001)</option>
+              <option value="PEC2102R001">ស្រុកបាទី (R001)</option>
+              <option value="PEC2103T001">ស្រុកបូរីជលសារ (T001)</option>
+              <option value="PEC2103R001">ស្រុកបូរីជលសារ (R001)</option>
+              <option value="PEC2104T001">ស្រុកគិរីវង់ (T001)</option>
+              <option value="PEC2104R001">ស្រុកគិរីវង់ (R001)</option>
+              <option value="PEC2105T001">ស្រុកកោះអណ្ដែត (T001)</option>
+              <option value="PEC2105R001">ស្រុកកោះអណ្ដែត (R001)</option>
+              <option value="PEC2106T001">ស្រុកព្រៃកប្បាស (T001)</option>
+              <option value="PEC2106R001">ស្រុកព្រៃកប្បាស (R001)</option>
+              <option value="PEC2107T001">ស្រុកសំរោង (T001)</option>
+              <option value="PEC2107R001">ស្រុកសំរោង (R001)</option>
+              <option value="PEC2108T001">ក្រុងដូនកែវ (T001)</option>
+              <option value="PEC2108R001">ក្រុងដូនកែវ (R001)</option>
+              <option value="PEC2109T001">ស្រុកត្រាំកក់ (T001)</option>
+              <option value="PEC2109R001">ស្រុកត្រាំកក់ (R001)</option>
+              <option value="PEC2110T001">ស្រុកទ្រាំង (T001)</option>
+              <option value="PEC2110R001">ស្រុកទ្រាំង (R001)</option>
+            </datalist>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" style="font-weight:700;">លេខសម្ងាត់ដើម (Default Password) <span style="color:var(--danger);">*</span></label>
+            <input type="password" id="activateDefaultPassword" class="form-control" placeholder="វាយ pec21" required>
+            <small style="color:var(--gray-500); font-size:0.75rem;">លេខសម្ងាត់ដើមដែលបានផ្ដល់ជូនគឺ <code>pec21</code></small>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" style="font-weight:700;">គោត្តនាម និងនាម (Full Name) <span style="color:var(--danger);">*</span></label>
+            <input type="text" id="activateFullName" class="form-control" placeholder="ឧ. សុខ ចាន់ដារ៉ា" required>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <div class="form-group">
+              <label class="form-label" style="font-weight:700;">លេខទូរស័ព្ទ (Phone Number)</label>
+              <input type="tel" id="activatePhone" class="form-control" placeholder="ឧ. 012 345 678">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" style="font-weight:700;">G-mail (Email)</label>
+              <input type="email" id="activateEmail" class="form-control" placeholder="ឧ. name@gmail.com">
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <div class="form-group">
+              <label class="form-label" style="font-weight:700;">លេខសម្ងាត់ថ្មី <span style="color:var(--danger);">*</span></label>
+              <input type="password" id="newActivatePassword" class="form-control" placeholder="យ៉ាងតិច ៤ ខ្ទង់..." required minlength="4">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" style="font-weight:700;">បញ្ជាក់លេខសម្ងាត់ថ្មី <span style="color:var(--danger);">*</span></label>
+              <input type="password" id="confirmActivatePassword" class="form-control" placeholder="វាយម្តងទៀត..." required minlength="4">
+            </div>
+          </div>
+
+          <div id="activateError" style="color:var(--danger); font-size:0.85rem; font-weight:600; margin-bottom:12px; display:none;"></div>
+
+          <div style="display:flex; flex-direction:column; gap:8px; margin-top:14px;">
+            <button type="submit" class="btn btn-primary" style="width:100%; padding:10px; background:#0F766E; border-color:#0F766E; font-weight:700;">
+              ✓ រក្សាទុក និងដំណើរការគណនី (Activate Account)
+            </button>
+            <button type="button" class="btn btn-secondary" style="width:100%; padding:8px;" onclick="closeActivateModal(); showLoginModal();">
+              ⬅️ ត្រឡប់ទៅផ្ទាំង Login
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. ADD / EDIT CODE MODAL -->
+  <div id="codeModal" class="modal-overlay">
+    <div class="modal-card" style="max-width:440px;">
+      <div class="modal-header">
+        <h3 id="codeModalTitle" style="font-weight:700;">បន្ថែមលេខកូដថ្មី</h3>
+        <button class="btn btn-secondary btn-sm" onclick="closeCodeModal()">&times;</button>
+      </div>
+      <form id="codeForm" onsubmit="saveCode(event)">
+        <div class="modal-body">
+          <input type="hidden" id="editCodeId">
+          <div class="form-group">
+            <label class="form-label">លេខកូដសម្ងាត់ (Code)</label>
+            <input type="text" id="codeValInput" class="form-control" placeholder="ឧ. AB001" required style="font-family:monospace; font-weight:700; text-transform:uppercase;">
+          </div>
+          <div class="form-group">
+            <label class="form-label">ពិន្ទុ QCM (០ ដល់ ៨០ ឬ អវត្តមាន)</label>
+            <input type="text" id="codeQcmInput" class="form-control" placeholder="ឧ. 44.00 ឬ អវត្តមាន" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">កំណត់ចំណាំ (ផ្សេងៗ)</label>
+            <input type="text" id="codeNotesInput" class="form-control" placeholder="កំណត់ចំណាំ...">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeCodeModal()">បោះបង់</button>
+          <button type="submit" class="btn btn-primary">រក្សាទុកលេខកូដ</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3. BATCH PASTE CODES MODAL -->
+  <div id="batchCodeModal" class="modal-overlay">
+    <div class="modal-card" style="max-width:550px;">
+      <div class="modal-header">
+        <h3 style="font-weight:700;">ចម្លង និងបិទភ្ជាប់លេខកូដពី Excel</h3>
+        <button class="btn btn-secondary btn-sm" onclick="closeBatchCodeModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:0.85rem; color:var(--gray-600); margin-bottom:10px;">
+          លោកអ្នកអាច Copy ពី Excel នូវ ២ ជួរឈរ (<strong>កូដ</strong> និង <strong>QCM</strong>) រួច Paste ចូលប្រអប់ខាងក្រោម៖
+        </p>
+        <textarea id="batchCodeTextarea" class="form-control" rows="10" placeholder="ឧទាហរណ៍៖
+AB001	44.00
+AB002	52.00
+AB003	44.00
+AB004	អវត្តមាន" style="font-family:monospace; font-size:0.88rem;"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeBatchCodeModal()">បោះបង់</button>
+        <button type="button" class="btn btn-primary" onclick="submitBatchCodes()">បញ្ចូលទាំងអស់</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. ADD / EDIT CANDIDATE MODAL -->
+  <div id="candidateModal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="candidateModalTitle" style="font-weight:700;">បន្ថែមបេក្ខជនថ្មី</h3>
+        <button class="btn btn-secondary btn-sm" onclick="closeCandidateModal()">&times;</button>
+      </div>
+      <form id="candidateForm" onsubmit="saveCandidate(event)">
+        <div class="modal-body">
+          <input type="hidden" id="candId">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div class="form-group">
+              <label class="form-label">ស្រុក/ក្រុង</label>
+              <select id="candDistrict" class="form-select" required></select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">ឃុំ/សង្កាត់</label>
+              <select id="candCommune" class="form-select" required></select>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:2fr 1fr 1fr; gap:12px;">
+            <div class="form-group">
+              <label class="form-label">គោត្តនាម និងនាម</label>
+              <input type="text" id="candName" class="form-control" required placeholder="ឧ. សុខ សាន">
+            </div>
+            <div class="form-group">
+              <label class="form-label">ភេទ</label>
+              <select id="candGender" class="form-select">
+                <option value="ប">ប្រុស (ប)</option>
+                <option value="ស">ស្រី (ស)</option>
+              </select>
+            </div>
+            <div class="form-group" id="groupCandCode">
+              <label class="form-label">លេខកូដ (Auto-QCM)</label>
+              <input type="text" id="candCode" class="form-control" list="codesDatalist" placeholder="ឧ. AB001" oninput="onCandCodeInput(this.value)">
+              <datalist id="codesDatalist"></datalist>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div class="form-group">
+              <label class="form-label">ថ្ងៃខែឆ្នាំកំណើត</label>
+              <input type="text" id="candDob" class="form-control" placeholder="DD-MM-YYYY (ឧ. 15-05-1990)">
+            </div>
+            <div class="form-group">
+              <label class="form-label">មុខតំណែង</label>
+              <select id="candRole" class="form-select" required>
+                <option value="a">ប្រធាន ក.ច.ប</option>
+                <option value="c">ការីកុំព្យូទ័រ</option>
+                <option value="b">ជំនួយការអនុប្រធាន</option>
+                <option value="d">អនុប្រធាន (ស្មៀនឃុំ)</option>
+              </select>
+            </div>
+          </div>
+
+          <fieldset style="border:1px solid var(--gray-300); border-radius:var(--radius-sm); padding:12px; margin-top:8px;">
+            <legend style="padding:0 8px; font-weight:700; font-size:0.85rem; color:var(--primary);">ពិន្ទុនៃការប្រឡង</legend>
+            <div id="modalScoresGrid" style="display:grid; grid-template-columns:repeat(4, 1fr); gap:10px;">
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label" style="font-size:0.78rem;">សញ្ញាបត្រ (៥)</label>
+                <input type="number" id="candScoreDegree" class="form-control" min="0" max="5" step="1" value="0">
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label" style="font-size:0.78rem;">បទពិសោធន៍ (១៥)</label>
+                <input type="number" id="candScoreExp" class="form-control" min="0" max="15" step="1" value="0">
+              </div>
+              <div class="form-group" id="groupCandScoreQcm" style="margin-bottom:0;">
+                <label class="form-label" style="font-size:0.78rem;">សរសេរ QCM (៨០)</label>
+                <input type="text" id="candScoreQcm" class="form-control" placeholder="Auto ពីកូដ ឬវាយផ្ទាល់" value="0">
+              </div>
+              <div class="form-group" id="groupCandScorePc" style="margin-bottom:0;">
+                <label class="form-label" style="font-size:0.78rem;">កុំព្យូទ័រ</label>
+                <input type="text" id="candScorePc" class="form-control" placeholder="ពិន្ទុ ឬ អវត្តមាន" value="0">
+              </div>
+            </div>
+          </fieldset>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeCandidateModal()">បោះបង់</button>
+          <button type="submit" class="btn btn-primary">រក្សាទុក</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 5. EDIT USER MODAL -->
+  <div id="userModal" class="modal-overlay">
+    <div class="modal-card" style="max-width:440px;">
+      <div class="modal-header">
+        <h3 style="font-weight:700;">កែសម្រួលគណនី</h3>
+        <button class="btn btn-secondary btn-sm" onclick="closeUserModal()">&times;</button>
+      </div>
+      <form id="userEditForm" onsubmit="saveUserEdit(event)">
+        <div class="modal-body">
+          <input type="hidden" id="editUserId">
+          <div class="form-group">
+            <label class="form-label">ឈ្មោះគណនី</label>
+            <input type="text" id="editUsername" class="form-control" readonly style="background:var(--gray-100);">
+          </div>
+          <div class="form-group">
+            <label class="form-label">ឈ្មោះពេញ</label>
+            <input type="text" id="editFullName" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">កំណត់ពាក្យសម្ងាត់ថ្មី (ទុកទទេបើមិនប្តូរ)</label>
+            <input type="password" id="editPassword" class="form-control" placeholder="បញ្ចូលពាក្យសម្ងាត់ថ្មី...">
+          </div>
+          <div class="form-group">
+            <label class="form-label">ស្ថានភាពគណនី</label>
+            <select id="editActive" class="form-select">
+              <option value="true">សកម្ម (Active)</option>
+              <option value="false">ផ្អាក (Inactive)</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeUserModal()">បោះបង់</button>
+          <button type="submit" class="btn btn-primary">រក្សាទុកការកែប្រែ</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Application Logic -->
+  <script src="js/app.js?v=20261010_form_activate"></script>
+</body>
+</html>
