@@ -3875,3 +3875,11 @@ async function handleSubstituteSubmit(e) {
   }
 }
 
+// ==============================================================================
+// OFFICIAL REPORT PRINT HANDLER (បោះពុម្ពក្រដាស A4 ផ្តេក)
+// ==============================================================================
+function printOfficialReport() {
+  window.print();
+}
+
+
