@@ -861,10 +861,14 @@ input[type="number"] {
   vertical-align: middle;
 }
 
-/* ២. នៅក្នុងតារាងសូមជា Font Khmer OS Siemreap ទាំងអស់ */
+/* ២. នៅក្នុងតារាងទាំងអស់សុំជា Font Khmer OS Siemreap Size: 12 មិនបាច់ដិតទេ */
 .excel-official-table tbody td {
   font-family: 'Khmer OS Siemreap', 'Siemreap', sans-serif !important;
-  font-size: 10pt;
+  font-size: 12pt !important;
+  font-weight: normal !important;
+  line-height: 1.4;
+  padding: 3px 6px;
+  color: #000000 !important;
 }
 
 /* ២. លើកលែងកន្លែងគូសប្រអប់ (I- ឃុំ... និង មុខតំណែង...) សុំជា Font Khmer OS MuolLight */
@@ -877,19 +881,40 @@ input[type="number"] {
 }
 
 .excel-official-table .commune-banner-row td {
-  font-size: 10pt;
+  font-size: 11pt !important;
   text-align: left;
-  padding: 5px 10px;
+  padding: 4px 10px;
   border-top: 1.5px solid #000 !important;
   border-bottom: 1px solid #000 !important;
 }
 
 .excel-official-table .role-banner-row td {
-  font-size: 10pt;
+  font-size: 11pt !important;
   text-align: left;
-  padding: 5px 10px;
+  padding: 4px 10px;
   border-top: 1px solid #000 !important;
   border-bottom: 1px solid #000 !important;
+}
+
+/* ៤. Font អក្សរថ្ងៃខែឆ្នាំចន្ទគតិ និងសុរិយគតិ សុំជា Font Khmer OS Siemreap Size: 12 */
+.report-lunar-date,
+.report-solar-date {
+  font-family: 'Khmer OS Siemreap', 'Siemreap', sans-serif !important;
+  font-size: 12pt !important;
+  font-weight: normal !important;
+  color: #000000 !important;
+  line-height: 1.5;
+}
+
+/* ១. លេខទំព័រ តាមទម្រង់ -១- , -២- */
+.paper-page-number {
+  text-align: center;
+  font-family: 'Khmer OS Siemreap', 'Siemreap', sans-serif !important;
+  font-size: 12pt !important;
+  font-weight: normal !important;
+  color: #000000 !important;
+  letter-spacing: 2px;
+  user-select: text;
 }
 
 /* ៤. ក្រឡាដែលគូសខ្វែង សូមប្របន្ទាត់ដូចក្រឡាដែរ (1px solid black) */
@@ -978,13 +1003,25 @@ input[type="number"] {
    ============================================================================== */
 @page {
   size: A4 landscape !important;
-  margin: 10mm 8mm 10mm 8mm;
+  margin: 10mm 8mm 12mm 8mm;
+  @bottom-center {
+    content: "- " counter(page) " -";
+    font-family: 'Khmer OS Siemreap', 'Siemreap', sans-serif !important;
+    font-size: 12pt !important;
+    font-weight: normal !important;
+  }
 }
 
 @media print {
   @page {
     size: A4 landscape !important;
-    margin: 10mm 8mm 10mm 8mm;
+    margin: 10mm 8mm 12mm 8mm;
+    @bottom-center {
+      content: "- " counter(page) " -";
+      font-family: 'Khmer OS Siemreap', 'Siemreap', sans-serif !important;
+      font-size: 12pt !important;
+      font-weight: normal !important;
+    }
   }
 
   html, body {
@@ -1325,7 +1362,8 @@ input[type="number"] {
   border: 1px solid #000000 !important;
   padding: 4px 6px;
   text-align: center;
-  font-size: 10pt;
+  font-size: 12pt !important;
+  font-weight: normal !important;
   height: 28px;
   vertical-align: middle;
 }
@@ -1339,14 +1377,14 @@ input[type="number"] {
   border-bottom: 1px solid #000 !important;
   text-align: left;
   padding: 5px 10px;
-  font-size: 10pt;
+  font-size: 11pt !important;
 }
 
 .excel-official-table .role-banner-row td {
   background-color: #FFFFFF !important;
   font-family: 'Khmer OS Muol Light', 'Khmer OS MuolLight', 'Khmer OS Muol', 'Moul', serif !important;
   font-weight: normal !important;
-  font-size: 10pt;
+  font-size: 11pt !important;
   text-align: left;
   padding: 5px 10px;
   border: 1px solid #000000 !important;

@@ -45,10 +45,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   const savedLogo = localStorage.getItem('pec21_custom_logo');
   if (savedLogo) applySystemLogo(savedLogo);
 
-  // Initialize report footer dates & institution lines from localStorage
+  // Initialize report footer dates, institution lines & page numbers from localStorage
   initReportDates();
   initInstLines();
   initLogoPosition();
+  initPageNumber();
 
   const cTable = document.getElementById('codesTable');
   if (cTable) cTable.addEventListener('paste', handleCodesTablePaste);
@@ -2080,6 +2081,36 @@ function applySavedReportDates() {
 }
 
 // ==============================================================================
+// PAGE NUMBER MANAGEMENT (-១- , -២- , ...)
+// ==============================================================================
+function handlePageNumberChange(pageVal) {
+  localStorage.setItem('pec21_report_page_num', pageVal);
+  applyPageNumber(pageVal);
+}
+
+function handlePageNumberDirectEdit(textVal) {
+  const trimmed = (textVal || '').trim();
+  localStorage.setItem('pec21_report_page_num', trimmed);
+  applyPageNumber(trimmed);
+}
+
+function applyPageNumber(pageVal) {
+  const val = pageVal || '-១-';
+  const tSelect = document.getElementById('tabReportPageSelect');
+  const rSelect = document.getElementById('resReportPageSelect');
+  if (tSelect) tSelect.value = val;
+  if (rSelect) rSelect.value = val;
+  document.querySelectorAll('.paper-page-number .page-num-display').forEach(el => {
+    el.innerText = val;
+  });
+}
+
+function initPageNumber() {
+  const saved = localStorage.getItem('pec21_report_page_num') || '-១-';
+  applyPageNumber(saved);
+}
+
+// ==============================================================================
 // INSTITUTION LINES & FONT SIZES UNDER LOGO MANAGEMENT (SYNC & PERSIST)
 // ==============================================================================
 const DEFAULT_INST_LINES = [
@@ -2301,15 +2332,15 @@ function renderTabulationSheet() {
         tableHtml += `
           <tr>
             <td>${toKhmerNumber(idx + 1)}</td>
-            <td style="text-align:left; padding-left:8px; font-weight:600;">${c.name}</td>
+            <td style="text-align:left; padding-left:8px;">${c.name}</td>
             <td>${c.gender || ''}</td>
             <td>${formatDobKhmer(c.dob)}</td>
             <td>${c.scoreDegree !== undefined && c.scoreDegree !== null && c.scoreDegree !== '' ? c.scoreDegree : ''}</td>
             <td>${c.scoreExp !== undefined && c.scoreExp !== null && c.scoreExp !== '' ? c.scoreExp : ''}</td>
             <td>${c.scoreQcm !== undefined && c.scoreQcm !== null && c.scoreQcm !== '' ? Number(c.scoreQcm).toFixed(2) : ''}</td>
             <td class="excel-x-cell"></td>
-            <td style="font-weight:700;">${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
-            <td style="font-weight:700;">${c.status || ''}</td>
+            <td>${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
+            <td>${c.status || ''}</td>
             <td>${c.notes || ''}</td>
           </tr>
         `;
@@ -2328,15 +2359,15 @@ function renderTabulationSheet() {
         tableHtml += `
           <tr>
             <td>${toKhmerNumber(idx + 1)}</td>
-            <td style="text-align:left; padding-left:8px; font-weight:600;">${c.name}</td>
+            <td style="text-align:left; padding-left:8px;">${c.name}</td>
             <td>${c.gender || ''}</td>
             <td>${formatDobKhmer(c.dob)}</td>
             <td>${c.scoreDegree !== undefined && c.scoreDegree !== null && c.scoreDegree !== '' ? c.scoreDegree : ''}</td>
             <td>${c.scoreExp !== undefined && c.scoreExp !== null && c.scoreExp !== '' ? c.scoreExp : ''}</td>
             <td>${c.scoreQcm !== undefined && c.scoreQcm !== null && c.scoreQcm !== '' ? Number(c.scoreQcm).toFixed(2) : ''}</td>
             <td class="excel-x-cell"></td>
-            <td style="font-weight:700;">${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
-            <td style="font-weight:700;">${c.status || ''}</td>
+            <td>${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
+            <td>${c.status || ''}</td>
             <td>${c.notes || ''}</td>
           </tr>
         `;
@@ -2355,15 +2386,15 @@ function renderTabulationSheet() {
         tableHtml += `
           <tr>
             <td>${toKhmerNumber(idx + 1)}</td>
-            <td style="text-align:left; padding-left:8px; font-weight:600;">${c.name}</td>
+            <td style="text-align:left; padding-left:8px;">${c.name}</td>
             <td>${c.gender || ''}</td>
             <td>${formatDobKhmer(c.dob)}</td>
             <td class="excel-x-cell"></td>
             <td>${c.scoreExp !== undefined && c.scoreExp !== null && c.scoreExp !== '' ? c.scoreExp : ''}</td>
             <td class="excel-x-cell"></td>
             <td>${c.scorePc !== undefined && c.scorePc !== null && c.scorePc !== '' ? Number(c.scorePc).toFixed(2) : ''}</td>
-            <td style="font-weight:700;">${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
-            <td style="font-weight:700;">${c.status || ''}</td>
+            <td>${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
+            <td>${c.status || ''}</td>
             <td>${c.notes || ''}</td>
           </tr>
         `;
@@ -2376,7 +2407,7 @@ function renderTabulationSheet() {
     </table>
   `;
 
-  // Dynamic summary line below table (គម្រូតាមរូបទី៣: អក្សរពណ៌ខ្មៅដិត ដាក់ជាប់នឹងតារាងខាងលើ)
+  // Dynamic summary line below table (គៀកជើងតារាងខាងឆ្វេង ស្មើនឹងជួរថ្ងៃខែឆ្នាំខាងស្តាំ)
   let allTabCands = [];
   communesInDist.forEach(comm => {
     const cands = state.candidates.filter(c => c.communeCode === comm.code);
@@ -2388,16 +2419,17 @@ function renderTabulationSheet() {
   const femTabCount = allTabCands.filter(c => c.gender === 'ស្រី' || c.gender === 'ស').length;
   const femTabCountStr = String(femTabCount).padStart(2, '0');
 
-  tableHtml += `
-    <div style="color:#000000; font-weight:bold; font-size:10pt; margin:3px 0 12px 2px; text-align:left; line-height:1.4;">
-      បញ្ឈប់បញ្ជីនេះត្រឹមឈ្មោះ: ${lastTabCandName} សរុប ${toKhmerNumber(totalTabCands)} នាក់ (ស្រី ${toKhmerNumber(femTabCountStr)} នាក់)
-    </div>
-  `;
-
   container.innerHTML = tableHtml;
+
+  const tabStopEl = document.getElementById('tabStopListText');
+  if (tabStopEl) {
+    tabStopEl.innerText = `បញ្ឈប់បញ្ជីនេះត្រឹមឈ្មោះ: ${lastTabCandName} សរុប ${toKhmerNumber(totalTabCands)} នាក់ (ស្រី ${toKhmerNumber(femTabCountStr)} នាក់)`;
+  }
+
   applySavedReportDates();
   initInstLines();
   initLogoPosition();
+  initPageNumber();
 }
 
 // ==============================================================================
@@ -2516,12 +2548,12 @@ function renderResultsSheet() {
         tableHtml += `
           <tr>
             <td>${toKhmerNumber(idx + 1)}</td>
-            <td style="text-align:left; padding-left:8px; font-weight:600;">${c.name}</td>
+            <td style="text-align:left; padding-left:8px;">${c.name}</td>
             <td>${c.gender || ''}</td>
             <td>${formatDobKhmer(c.dob)}</td>
-            <td style="font-weight:700;">${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
-            <td style="font-weight:700;">${toKhmerNumber(c.rank || idx + 1)}</td>
-            <td style="font-weight:700; color:${c.status === 'A-ជាប់' ? '#047857' : (c.status === 'B-បម្រុង' || c.status === 'C-បម្រុងបន្ទាប់') ? '#0284C7' : '#DC2626'};">${c.status || ''}</td>
+            <td>${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
+            <td>${toKhmerNumber(c.rank || idx + 1)}</td>
+            <td style="color:${c.status === 'A-ជាប់' ? '#047857' : (c.status === 'B-បម្រុង' || c.status === 'C-បម្រុងបន្ទាប់') ? '#0284C7' : '#DC2626'};">${c.status || ''}</td>
             <td>${c.notes || ''}</td>
           </tr>
         `;
@@ -2540,12 +2572,12 @@ function renderResultsSheet() {
         tableHtml += `
           <tr>
             <td>${toKhmerNumber(idx + 1)}</td>
-            <td style="text-align:left; padding-left:8px; font-weight:600;">${c.name}</td>
+            <td style="text-align:left; padding-left:8px;">${c.name}</td>
             <td>${c.gender || ''}</td>
             <td>${formatDobKhmer(c.dob)}</td>
-            <td style="font-weight:700;">${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
-            <td style="font-weight:700;">${toKhmerNumber(c.rank || idx + 1)}</td>
-            <td style="font-weight:700; color:${c.status === 'A-ជាប់' ? '#047857' : (c.status === 'B-បម្រុង' || c.status === 'C-បម្រុងបន្ទាប់') ? '#0284C7' : '#DC2626'};">${c.status || ''}</td>
+            <td>${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
+            <td>${toKhmerNumber(c.rank || idx + 1)}</td>
+            <td style="color:${c.status === 'A-ជាប់' ? '#047857' : (c.status === 'B-បម្រុង' || c.status === 'C-បម្រុងបន្ទាប់') ? '#0284C7' : '#DC2626'};">${c.status || ''}</td>
             <td>${c.notes || ''}</td>
           </tr>
         `;
@@ -2564,12 +2596,12 @@ function renderResultsSheet() {
         tableHtml += `
           <tr>
             <td>${toKhmerNumber(idx + 1)}</td>
-            <td style="text-align:left; padding-left:8px; font-weight:600;">${c.name}</td>
+            <td style="text-align:left; padding-left:8px;">${c.name}</td>
             <td>${c.gender || ''}</td>
             <td>${formatDobKhmer(c.dob)}</td>
-            <td style="font-weight:700;">${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
-            <td style="font-weight:700;">${toKhmerNumber(c.rank || idx + 1)}</td>
-            <td style="font-weight:700; color:${c.status === 'A-ជាប់' ? '#047857' : (c.status === 'B-បម្រុង' || c.status === 'C-បម្រុងបន្ទាប់') ? '#0284C7' : '#DC2626'};">${c.status || ''}</td>
+            <td>${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
+            <td>${toKhmerNumber(c.rank || idx + 1)}</td>
+            <td style="color:${c.status === 'A-ជាប់' ? '#047857' : (c.status === 'B-បម្រុង' || c.status === 'C-បម្រុងបន្ទាប់') ? '#0284C7' : '#DC2626'};">${c.status || ''}</td>
             <td>${c.notes || ''}</td>
           </tr>
         `;
@@ -2582,7 +2614,7 @@ function renderResultsSheet() {
     </table>
   `;
 
-  // Dynamic summary line below table (គម្រូតាមរូបទី៣: អក្សរពណ៌ខ្មៅដិត ដាក់ជាប់នឹងតារាងខាងលើ)
+  // Dynamic summary line below table (គៀកជើងតារាងខាងឆ្វេង ស្មើនឹងជួរថ្ងៃខែឆ្នាំខាងស្តាំ)
   let allResCands = [];
   communesInDist.forEach(comm => {
     const cands = state.candidates.filter(c => c.communeCode === comm.code);
@@ -2594,16 +2626,17 @@ function renderResultsSheet() {
   const femResCount = allResCands.filter(c => c.gender === 'ស្រី' || c.gender === 'ស').length;
   const femResCountStr = String(femResCount).padStart(2, '0');
 
-  tableHtml += `
-    <div style="color:#000000; font-weight:bold; font-size:10pt; margin:3px 0 12px 2px; text-align:left; line-height:1.4;">
-      បញ្ឈប់បញ្ជីនេះត្រឹមឈ្មោះ: ${lastResCandName} សរុប ${toKhmerNumber(totalResCands)} នាក់ (ស្រី ${toKhmerNumber(femResCountStr)} នាក់)
-    </div>
-  `;
-
   container.innerHTML = tableHtml;
+
+  const resStopEl = document.getElementById('resStopListText');
+  if (resStopEl) {
+    resStopEl.innerText = `បញ្ឈប់បញ្ជីនេះត្រឹមឈ្មោះ: ${lastResCandName} សរុប ${toKhmerNumber(totalResCands)} នាក់ (ស្រី ${toKhmerNumber(femResCountStr)} នាក់)`;
+  }
+
   applySavedReportDates();
   initInstLines();
   initLogoPosition();
+  initPageNumber();
 }
 
 // ==============================================================================

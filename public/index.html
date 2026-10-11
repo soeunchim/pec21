@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ប្រព័ន្ធគ្រប់គ្រងបូកស្រង់ពិន្ទុប្រឡងជ្រើសរើស ក.ច.ប (PEC21 - ខេត្តតាកែវ)</title>
-  <link rel="stylesheet" href="css/style.css?v=20261011_a4_landscape_print">
+  <link rel="stylesheet" href="css/style.css?v=20261011_table_font12_page_footer_tight">
 </head>
 <body>
   <div class="app-container">
@@ -468,6 +468,21 @@
               <label class="form-label">កាលបរិច្ឆេទ (ចន្ទគតិ)</label>
               <input type="text" id="tabReportLunarDate" class="form-control" placeholder="ថ្ងៃចន្ទ ៣កើត ខែភទ្របទ..." style="min-width:260px;" oninput="handleLunarDateChange(this.value)">
             </div>
+            <div>
+              <label class="form-label">លេខទំព័រ</label>
+              <select id="tabReportPageSelect" class="form-select" style="min-width:85px;" onchange="handlePageNumberChange(this.value)">
+                <option value="-១-">-១-</option>
+                <option value="-២-">-២-</option>
+                <option value="-៣-">-៣-</option>
+                <option value="-៤-">-៤-</option>
+                <option value="-៥-">-៥-</option>
+                <option value="-៦-">-៦-</option>
+                <option value="-៧-">-៧-</option>
+                <option value="-៨-">-៨-</option>
+                <option value="-៩-">-៩-</option>
+                <option value="-១០-">-១០-</option>
+              </select>
+            </div>
           </div>
           <div class="toolbar-group">
             <span class="badge" style="background:#EFF6FF; color:#1E40AF; border:1px solid #BFDBFE; font-size:0.85rem; padding:6px 12px; display:inline-flex; align-items:center; gap:6px;">
@@ -530,25 +545,38 @@
 
           <div id="tabulationTableContainer"></div>
 
-          <!-- Official Signatures Footer (គម្រូតាមរូបទី៣) -->
-          <div class="official-signatures-layout" style="display:flex; justify-content:space-between; align-items:flex-start; margin-top:20px; font-size:0.88rem; page-break-inside:avoid;">
-            <!-- Left: បានពិនិត្យត្រឹមត្រូវ -->
-            <div style="text-align:center; min-width:320px; line-height:1.65;">
-              <div style="font-family:'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', serif; font-size:0.92rem; margin-bottom:4px;">បានពិនិត្យត្រឹមត្រូវ</div>
-              <div class="report-lunar-date" contenteditable="true" onblur="handleFooterDirectEdit('lunar', this.innerText)" style="font-size:0.84rem;">ថ្ងៃចន្ទ ៣កើត ខែភទ្របទ ឆ្នាំមមី អដ្ឋស័ក ព.ស.២៥៧០</div>
-              <div class="report-solar-date" contenteditable="true" onblur="handleFooterDirectEdit('solar', this.innerText)" style="font-size:0.84rem; margin-bottom:4px;">តាកែវ ថ្ងៃទី១៤ ខែកញ្ញា ឆ្នាំ២០២៦</div>
-              <div style="font-family:'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', serif; font-size:0.88rem;">ជ.អនុគណៈកម្មការជ្រើសរើសថ្នាក់ខេត្ត</div>
-              <div style="font-family:'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', serif; font-size:0.88rem; margin-top:2px;">ប្រធាន</div>
+          <!-- Official Paper Footer Section (បញ្ឈប់បញ្ជី ជាប់ជើងតារាង & ថ្ងៃខែឆ្នាំខាងស្តាំ គៀកជើងតារាង) -->
+          <div class="official-paper-footer-section" style="margin-top:2px; page-break-inside:avoid;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+              <!-- Left Column: បញ្ឈប់បញ្ជី (គៀកជើងតារាង) + បានពិនិត្យត្រឹមត្រូវ -->
+              <div style="text-align:left; min-width:340px;">
+                <div id="tabStopListText" style="color:#000000; font-weight:bold; font-family:'Khmer OS Siemreap', 'Siemreap', sans-serif; font-size:12pt; margin:2px 0 16px 2px; line-height:1.4;">
+                  បញ្ឈប់បញ្ជីនេះត្រឹមឈ្មោះ: - សរុប ០០ នាក់ (ស្រី ០០ នាក់)
+                </div>
+
+                <div style="text-align:center; min-width:320px; line-height:1.65;">
+                  <div style="font-family:'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', serif; font-size:12pt; margin-bottom:4px; font-weight:normal;">បានពិនិត្យត្រឹមត្រូវ</div>
+                  <div class="report-lunar-date" contenteditable="true" onblur="handleFooterDirectEdit('lunar', this.innerText)" style="font-family:'Khmer OS Siemreap', 'Siemreap', sans-serif; font-size:12pt; line-height:1.5;">ថ្ងៃចន្ទ ៣កើត ខែភទ្របទ ឆ្នាំមមី អដ្ឋស័ក ព.ស.២៥៧០</div>
+                  <div class="report-solar-date" contenteditable="true" onblur="handleFooterDirectEdit('solar', this.innerText)" style="font-family:'Khmer OS Siemreap', 'Siemreap', sans-serif; font-size:12pt; margin-bottom:4px; line-height:1.5;">តាកែវ ថ្ងៃទី១៤ ខែកញ្ញា ឆ្នាំ២០២៦</div>
+                  <div style="font-family:'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', serif; font-size:11pt; font-weight:normal;">ជ.អនុគណៈកម្មការជ្រើសរើសថ្នាក់ខេត្ត</div>
+                  <div style="font-family:'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', serif; font-size:11pt; margin-top:2px; font-weight:normal;">ប្រធាន</div>
+                </div>
+              </div>
+
+              <!-- Right Column: ថ្ងៃខែឆ្នាំ គៀកជើងតារាងខាងស្តាំ -->
+              <div style="text-align:center; min-width:360px; line-height:1.65; margin-top:2px;">
+                <div class="report-lunar-date" contenteditable="true" onblur="handleFooterDirectEdit('lunar', this.innerText)" style="font-family:'Khmer OS Siemreap', 'Siemreap', sans-serif; font-size:12pt; line-height:1.5;">ថ្ងៃចន្ទ ៣កើត ខែភទ្របទ ឆ្នាំមមី អដ្ឋស័ក ព.ស.២៥៧០</div>
+                <div class="report-solar-date" contenteditable="true" onblur="handleFooterDirectEdit('solar', this.innerText)" style="font-family:'Khmer OS Siemreap', 'Siemreap', sans-serif; font-size:12pt; margin-bottom:4px; line-height:1.5;">តាកែវ ថ្ងៃទី១៤ ខែកញ្ញា ឆ្នាំ២០២៦</div>
+                <div style="font-family:'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', serif; font-size:12pt; margin-bottom:8px; font-weight:normal;">អ្នកស្រង់ពិន្ទុ និងបូកសរុប</div>
+                <div style="text-align:left; font-family:'Khmer OS Siemreap', 'Siemreap', sans-serif; font-size:12pt; margin-bottom:8px; padding-left:25px;">១....................................................................</div>
+                <div style="text-align:left; font-family:'Khmer OS Siemreap', 'Siemreap', sans-serif; font-size:12pt; margin-bottom:8px; padding-left:25px;">២....................................................................</div>
+                <div style="text-align:left; font-family:'Khmer OS Siemreap', 'Siemreap', sans-serif; font-size:12pt; padding-left:25px;">៣....................................................................</div>
+              </div>
             </div>
 
-            <!-- Right: អ្នកស្រង់ពិន្ទុ និងបូកសរុប -->
-            <div style="text-align:center; min-width:340px; line-height:1.65;">
-              <div class="report-lunar-date" contenteditable="true" onblur="handleFooterDirectEdit('lunar', this.innerText)" style="font-size:0.84rem;">ថ្ងៃចន្ទ ៣កើត ខែភទ្របទ ឆ្នាំមមី អដ្ឋស័ក ព.ស.២៥៧០</div>
-              <div class="report-solar-date" contenteditable="true" onblur="handleFooterDirectEdit('solar', this.innerText)" style="font-size:0.84rem; margin-bottom:4px;">តាកែវ ថ្ងៃទី១៤ ខែកញ្ញា ឆ្នាំ២០២៦</div>
-              <div style="font-family:'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', serif; font-size:0.92rem; margin-bottom:8px;">អ្នកស្រង់ពិន្ទុ និងបូកសរុប</div>
-              <div style="text-align:left; font-weight:600; font-size:0.84rem; margin-bottom:8px; padding-left:20px;">១....................................................................</div>
-              <div style="text-align:left; font-weight:600; font-size:0.84rem; margin-bottom:8px; padding-left:20px;">២....................................................................</div>
-              <div style="text-align:left; font-weight:600; font-size:0.84rem; padding-left:20px;">៣....................................................................</div>
+            <!-- Bottom Center Page Number: -១- , -២- -->
+            <div class="paper-page-number" contenteditable="true" onblur="handlePageNumberDirectEdit(this.innerText)" style="text-align:center; font-family:'Khmer OS Siemreap', 'Siemreap', sans-serif; font-size:12pt; margin-top:18px; color:#000000; font-weight:normal;">
+              <span class="page-num-display">-១-</span>
             </div>
           </div>
         </div>
@@ -580,6 +608,21 @@
             <div>
               <label class="form-label">កាលបរិច្ឆេទ (ចន្ទគតិ)</label>
               <input type="text" id="resReportLunarDate" class="form-control" placeholder="ថ្ងៃចន្ទ ៣កើត ខែភទ្របទ..." style="min-width:260px;" oninput="handleLunarDateChange(this.value)">
+            </div>
+            <div>
+              <label class="form-label">លេខទំព័រ</label>
+              <select id="resReportPageSelect" class="form-select" style="min-width:85px;" onchange="handlePageNumberChange(this.value)">
+                <option value="-១-">-១-</option>
+                <option value="-២-">-២-</option>
+                <option value="-៣-">-៣-</option>
+                <option value="-៤-">-៤-</option>
+                <option value="-៥-">-៥-</option>
+                <option value="-៦-">-៦-</option>
+                <option value="-៧-">-៧-</option>
+                <option value="-៨-">-៨-</option>
+                <option value="-៩-">-៩-</option>
+                <option value="-១០-">-១០-</option>
+              </select>
             </div>
           </div>
           <div class="toolbar-group">
@@ -642,26 +685,37 @@
 
           <div id="resultsTableContainer"></div>
 
-          <!-- Official Signatures Footer (គម្រូតាមរូបទី៣) -->
-          <div class="official-signatures-layout" style="display:flex; justify-content:space-between; align-items:flex-start; margin-top:20px; font-size:0.88rem; page-break-inside:avoid;">
-            <!-- Left: បានពិនិត្យត្រឹមត្រូវ -->
-            <div style="text-align:center; min-width:320px; line-height:1.65;">
-              <div style="font-family:'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', serif; font-size:0.92rem; margin-bottom:4px;">បានពិនិត្យត្រឹមត្រូវ</div>
-              <div class="report-lunar-date" contenteditable="true" onblur="handleFooterDirectEdit('lunar', this.innerText)" style="font-size:0.84rem;">ថ្ងៃចន្ទ ៣កើត ខែភទ្របទ ឆ្នាំមមី អដ្ឋស័ក ព.ស.២៥៧០</div>
-              <div class="report-solar-date" contenteditable="true" onblur="handleFooterDirectEdit('solar', this.innerText)" style="font-size:0.84rem; margin-bottom:4px;">តាកែវ ថ្ងៃទី១៤ ខែកញ្ញា ឆ្នាំ២០២៦</div>
-              <div style="font-family:'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', serif; font-size:0.88rem;">ជ.អនុគណៈកម្មការជ្រើសរើសថ្នាក់ខេត្ត</div>
-              <div style="font-family:'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', serif; font-size:0.88rem; margin-top:2px;">ប្រធាន</div>
+          <!-- Official Signatures Footer (គៀកជើងតារាង) -->
+          <div class="official-signatures-layout" style="display:flex; justify-content:space-between; align-items:flex-start; margin-top:2px; font-size:12pt; page-break-inside:avoid;">
+            <!-- Left Column: បញ្ឈប់បញ្ជី (គៀកជើងតារាង) + បានពិនិត្យត្រឹមត្រូវ -->
+            <div style="text-align:left; min-width:340px;">
+              <div id="resStopListText" style="color:#000000; font-weight:bold; font-family:'Khmer OS Siemreap', 'Siemreap', sans-serif; font-size:12pt; margin:2px 0 16px 2px; line-height:1.4;">
+                បញ្ឈប់បញ្ជីនេះត្រឹមឈ្មោះ: - សរុប ០០ នាក់ (ស្រី ០០ នាក់)
+              </div>
+
+              <div style="text-align:center; min-width:320px; line-height:1.65;">
+                <div style="font-family:'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', serif; font-size:12pt; margin-bottom:4px; font-weight:normal;">បានពិនិត្យត្រឹមត្រូវ</div>
+                <div class="report-lunar-date" contenteditable="true" onblur="handleFooterDirectEdit('lunar', this.innerText)" style="font-family:'Khmer OS Siemreap', 'Siemreap', sans-serif; font-size:12pt; line-height:1.5;">ថ្ងៃចន្ទ ៣កើត ខែភទ្របទ ឆ្នាំមមី អដ្ឋស័ក ព.ស.២៥៧០</div>
+                <div class="report-solar-date" contenteditable="true" onblur="handleFooterDirectEdit('solar', this.innerText)" style="font-family:'Khmer OS Siemreap', 'Siemreap', sans-serif; font-size:12pt; margin-bottom:4px; line-height:1.5;">តាកែវ ថ្ងៃទី១៤ ខែកញ្ញា ឆ្នាំ២០២៦</div>
+                <div style="font-family:'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', serif; font-size:11pt; font-weight:normal;">ជ.អនុគណៈកម្មការជ្រើសរើសថ្នាក់ខេត្ត</div>
+                <div style="font-family:'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', serif; font-size:11pt; margin-top:2px; font-weight:normal;">ប្រធាន</div>
+              </div>
             </div>
 
-            <!-- Right: អ្នកស្រង់ពិន្ទុ និងបូកសរុប -->
-            <div style="text-align:center; min-width:340px; line-height:1.65;">
-              <div class="report-lunar-date" contenteditable="true" onblur="handleFooterDirectEdit('lunar', this.innerText)" style="font-size:0.84rem;">ថ្ងៃចន្ទ ៣កើត ខែភទ្របទ ឆ្នាំមមី អដ្ឋស័ក ព.ស.២៥៧០</div>
-              <div class="report-solar-date" contenteditable="true" onblur="handleFooterDirectEdit('solar', this.innerText)" style="font-size:0.84rem; margin-bottom:4px;">តាកែវ ថ្ងៃទី១៤ ខែកញ្ញា ឆ្នាំ២០២៦</div>
-              <div style="font-family:'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', serif; font-size:0.92rem; margin-bottom:8px;">អ្នកស្រង់ពិន្ទុ និងបូកសរុប</div>
-              <div style="text-align:left; font-weight:600; font-size:0.84rem; margin-bottom:8px; padding-left:20px;">១....................................................................</div>
-              <div style="text-align:left; font-weight:600; font-size:0.84rem; margin-bottom:8px; padding-left:20px;">២....................................................................</div>
-              <div style="text-align:left; font-weight:600; font-size:0.84rem; padding-left:20px;">៣....................................................................</div>
+            <!-- Right Column: ថ្ងៃខែឆ្នាំ គៀកជើងតារាងខាងស្តាំ -->
+            <div style="text-align:center; min-width:360px; line-height:1.65; margin-top:2px;">
+              <div class="report-lunar-date" contenteditable="true" onblur="handleFooterDirectEdit('lunar', this.innerText)" style="font-family:'Khmer OS Siemreap', 'Siemreap', sans-serif; font-size:12pt; line-height:1.5;">ថ្ងៃចន្ទ ៣កើត ខែភទ្របទ ឆ្នាំមមី អដ្ឋស័ក ព.ស.២៥៧០</div>
+              <div class="report-solar-date" contenteditable="true" onblur="handleFooterDirectEdit('solar', this.innerText)" style="font-family:'Khmer OS Siemreap', 'Siemreap', sans-serif; font-size:12pt; margin-bottom:4px; line-height:1.5;">តាកែវ ថ្ងៃទី១៤ ខែកញ្ញា ឆ្នាំ២០២៦</div>
+              <div style="font-family:'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', serif; font-size:12pt; margin-bottom:8px; font-weight:normal;">អ្នកស្រង់ពិន្ទុ និងបូកសរុប</div>
+              <div style="text-align:left; font-family:'Khmer OS Siemreap', 'Siemreap', sans-serif; font-size:12pt; margin-bottom:8px; padding-left:25px;">១....................................................................</div>
+              <div style="text-align:left; font-family:'Khmer OS Siemreap', 'Siemreap', sans-serif; font-size:12pt; margin-bottom:8px; padding-left:25px;">២....................................................................</div>
+              <div style="text-align:left; font-family:'Khmer OS Siemreap', 'Siemreap', sans-serif; font-size:12pt; padding-left:25px;">៣....................................................................</div>
             </div>
+          </div>
+
+          <!-- Bottom Center Page Number: -១- , -២- -->
+          <div class="paper-page-number" contenteditable="true" onblur="handlePageNumberDirectEdit(this.innerText)" style="text-align:center; font-family:'Khmer OS Siemreap', 'Siemreap', sans-serif; font-size:12pt; margin-top:18px; color:#000000; font-weight:normal;">
+            <span class="page-num-display">-១-</span>
           </div>
         </div>
       </section>
@@ -1515,6 +1569,6 @@ AB004	អវត្តមាន" style="font-family:monospace; font-size:0.88rem;
   <div id="toastContainer" class="toast-container"></div>
 
   <!-- Application Logic -->
-  <script src="js/app.js?v=20261011_a4_landscape_print"></script>
+  <script src="js/app.js?v=20261011_table_font12_page_footer_tight"></script>
 </body>
 </html>
