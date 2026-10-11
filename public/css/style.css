@@ -1292,6 +1292,7 @@ input[type="number"] {
   font-size: 10pt !important;
   line-height: 1.35;
   vertical-align: middle;
+  white-space: nowrap !important;
 }
 
 .excel-official-table tbody td {
