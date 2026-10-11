@@ -45,13 +45,20 @@ function getFirebaseEndpoint() {
 }
 
 // Fetch latest database from Firebase Realtime Database
-function fetchFromFirebase() {
+function fetchFromFirebase(targetUrl, redirectCount = 0) {
   return new Promise((resolve) => {
-    const endpoint = getFirebaseEndpoint();
-    if (!endpoint) return resolve(null);
+    const endpoint = targetUrl || getFirebaseEndpoint();
+    if (!endpoint || redirectCount > 4) return resolve(null);
     try {
       const parsedUrl = new URL(endpoint);
       const req = https.get(parsedUrl, (res) => {
+        if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+          let redirectTarget = res.headers.location;
+          if (!redirectTarget.startsWith('http://') && !redirectTarget.startsWith('https://')) {
+            redirectTarget = 'https://' + parsedUrl.hostname + redirectTarget;
+          }
+          return resolve(fetchFromFirebase(redirectTarget, redirectCount + 1));
+        }
         let body = '';
         res.on('data', chunk => body += chunk);
         res.on('end', () => {
@@ -83,7 +90,47 @@ function fetchFromFirebase() {
   });
 }
 
-// Sync in-memory database to Firebase Realtime Database
+// Sync in-memory database to Firebase Realtime Database with redirect handling
+function sendFirebaseRequest(targetUrl, payload, redirectCount = 0) {
+  if (redirectCount > 4) {
+    console.error('[Firebase] Too many redirects');
+    return;
+  }
+  try {
+    const parsedUrl = new URL(targetUrl);
+    const options = {
+      hostname: parsedUrl.hostname,
+      port: 443,
+      path: parsedUrl.pathname + parsedUrl.search,
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(payload)
+      }
+    };
+    const req = https.request(options, (res) => {
+      if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+        let redirectTarget = res.headers.location;
+        if (!redirectTarget.startsWith('http://') && !redirectTarget.startsWith('https://')) {
+          redirectTarget = 'https://' + parsedUrl.hostname + redirectTarget;
+        }
+        return sendFirebaseRequest(redirectTarget, payload, redirectCount + 1);
+      }
+      if (res.statusCode >= 200 && res.statusCode < 300) {
+        console.log('[Firebase] Cloud Database successfully synchronized!');
+      } else {
+        console.error('[Firebase] Sync HTTP status:', res.statusCode);
+      }
+    });
+    req.on('error', (e) => console.error('[Firebase] Sync network error:', e.message));
+    req.setTimeout(12000, () => req.destroy());
+    req.write(payload);
+    req.end();
+  } catch (err) {
+    console.error('[Firebase] Sync exception:', err.message);
+  }
+}
+
 let firebaseSyncTimer = null;
 function syncToFirebase(dataObj) {
   const endpoint = getFirebaseEndpoint();
@@ -91,33 +138,8 @@ function syncToFirebase(dataObj) {
 
   if (firebaseSyncTimer) clearTimeout(firebaseSyncTimer);
   firebaseSyncTimer = setTimeout(() => {
-    try {
-      const payload = JSON.stringify(dataObj);
-      const parsedUrl = new URL(endpoint);
-      const options = {
-        hostname: parsedUrl.hostname,
-        port: 443,
-        path: parsedUrl.pathname + parsedUrl.search,
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Content-Length': Buffer.byteLength(payload)
-        }
-      };
-      const req = https.request(options, (res) => {
-        if (res.statusCode >= 200 && res.statusCode < 300) {
-          console.log('[Firebase] Cloud Database successfully synchronized!');
-        } else {
-          console.error('[Firebase] Sync HTTP status:', res.statusCode);
-        }
-      });
-      req.on('error', (e) => console.error('[Firebase] Sync network error:', e.message));
-      req.setTimeout(12000, () => req.destroy());
-      req.write(payload);
-      req.end();
-    } catch (err) {
-      console.error('[Firebase] Sync exception:', err.message);
-    }
+    const payload = JSON.stringify(dataObj);
+    sendFirebaseRequest(endpoint, payload);
   }, 350);
 }
 
@@ -240,9 +262,19 @@ function generateToken(user) {
 }
 
 function authenticate(req) {
+  let token = null;
   const authHeader = req.headers['authorization'];
-  if (!authHeader) return null;
-  const token = authHeader.replace(/^Bearer\s+/, '').trim();
+  if (authHeader) {
+    token = authHeader.replace(/^Bearer\s+/, '').trim();
+  } else {
+    try {
+      const parsedUrl = url.parse(req.url, true);
+      if (parsedUrl.query && parsedUrl.query.token) {
+        token = parsedUrl.query.token.trim();
+      }
+    } catch (e) {}
+  }
+  if (!token) return null;
   if (activeTokens.has(token)) return activeTokens.get(token);
 
   // Self-verifying fallback across server restarts
@@ -334,8 +366,15 @@ const server = http.createServer(async (req, res) => {
   }
 
   const parsedUrl = url.parse(req.url, true);
-  const pathname = parsedUrl.pathname;
+  let pathname = parsedUrl.pathname || '/';
   const query = parsedUrl.query;
+
+  // Support /pec21 routing (e.g. localhost:3000/pec21)
+  if (pathname === '/pec21') {
+    pathname = '/';
+  } else if (pathname.startsWith('/pec21/')) {
+    pathname = pathname.replace(/^\/pec21/, '') || '/';
+  }
 
   if (pathname.startsWith('/api/')) {
     try {
@@ -583,6 +622,43 @@ const server = http.createServer(async (req, res) => {
         return sendJson(res, 201, { success: true, message: 'បានបញ្ចូលបេក្ខជនដោយជោគជ័យ!', candidate: newCand });
       }
 
+      // 6b. POST /api/candidates/batch-update (Excel paste batch update)
+      if (pathname === '/api/candidates/batch-update' && req.method === 'POST') {
+        const session = authenticate(req);
+        if (!session) return sendJson(res, 401, { success: false, message: 'សូមចូលប្រព័ន្ធជាមុន!' });
+
+        const body = await parseJsonBody(req);
+        const updates = body.updates || [];
+        let count = 0;
+
+        updates.forEach(u => {
+          if (!u.id) return;
+          const cand = db.candidates.find(c => c.id === u.id);
+          if (!cand) return;
+          if (session.role === 'Trainer' && session.district !== cand.district) return;
+
+          if (u.name !== undefined) cand.name = String(u.name).trim();
+          if (u.gender !== undefined) cand.gender = u.gender;
+          if (u.dob !== undefined) cand.dob = String(u.dob).trim();
+          if (u.scoreDegree !== undefined) cand.scoreDegree = Math.min(5, Math.max(0, Number(u.scoreDegree) || 0));
+          if (u.scoreExp !== undefined) cand.scoreExp = Math.min(15, Math.max(0, Number(u.scoreExp) || 0));
+          if (u.notes !== undefined) cand.notes = u.notes;
+
+          if (session.role !== 'Trainer') {
+            if (u.candidateCode !== undefined) cand.candidateCode = String(u.candidateCode).trim().toUpperCase();
+            if (u.scoreQcm !== undefined) cand.scoreQcm = u.scoreQcm === 'អវត្តមាន' ? 'អវត្តមាន' : (Number(u.scoreQcm) || 0);
+            if (u.scorePc !== undefined) cand.scorePc = u.scorePc === 'អវត្តមាន' ? 'អវត្តមាន' : (Number(u.scorePc) || 0);
+            syncCandidateWithCode(cand);
+          }
+          computeCandidateTotal(cand);
+          count++;
+        });
+
+        recomputeRanksAndStatuses();
+        saveDatabase();
+        return sendJson(res, 200, { success: true, message: `បានកែសម្រួល ${count} នាក់ដោយជោគជ័យ!` });
+      }
+
       // 7. PUT /api/candidates/:id (Update candidate & auto-sync code)
       if (pathname.startsWith('/api/candidates/') && req.method === 'PUT') {
         const session = authenticate(req);
@@ -600,12 +676,12 @@ const server = http.createServer(async (req, res) => {
         if (body.name !== undefined) cand.name = body.name.trim();
         if (body.gender !== undefined) cand.gender = body.gender;
         if (body.dob !== undefined) cand.dob = body.dob;
-        if (body.scoreDegree !== undefined) cand.scoreDegree = Number(body.scoreDegree) || 0;
-        if (body.scoreExp !== undefined) cand.scoreExp = Number(body.scoreExp) || 0;
+        if (body.scoreDegree !== undefined) cand.scoreDegree = Math.min(5, Math.max(0, Number(body.scoreDegree) || 0));
+        if (body.scoreExp !== undefined) cand.scoreExp = Math.min(15, Math.max(0, Number(body.scoreExp) || 0));
         if (body.notes !== undefined) cand.notes = body.notes;
 
         if (session.role !== 'Trainer') {
-          if (body.scorePc !== undefined) cand.scorePc = body.scorePc === 'អវត្តមាន' ? 'អវត្តមាន' : (Number(body.scorePc) || 0);
+          if (body.scorePc !== undefined) cand.scorePc = body.scorePc === 'អវត្តមាន' ? 'អវត្តមាន' : Math.max(0, Number(body.scorePc) || 0);
 
           // If candidateCode is changed or entered: check uniqueness and auto-lookup score from examCodes!
           if (body.candidateCode !== undefined) {
@@ -619,7 +695,7 @@ const server = http.createServer(async (req, res) => {
             cand.candidateCode = newCodeStr;
             syncCandidateWithCode(cand);
           } else if (body.scoreQcm !== undefined) {
-            cand.scoreQcm = body.scoreQcm === 'អវត្តមាន' ? 'អវត្តមាន' : (Number(body.scoreQcm) || 0);
+            cand.scoreQcm = body.scoreQcm === 'អវត្តមាន' ? 'អវត្តមាន' : Math.max(0, Number(body.scoreQcm) || 0);
           }
         }
 

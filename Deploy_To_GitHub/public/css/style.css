@@ -501,20 +501,130 @@ body {
   gap: 10px;
 }
 
-/* Inline Editing for Scores */
+/* Inline Editing for Scores & Authentic Microsoft Excel Grid System */
+.excel-grid {
+  border-collapse: collapse;
+}
+
+.excel-grid td {
+  padding: 0 !important;
+  vertical-align: middle;
+  height: 34px;
+}
+
+.excel-grid td:has(.btn) {
+  padding: 4px 6px !important;
+}
+
 .score-input {
-  width: 70px;
+  width: 100%;
   padding: 4px 6px;
   text-align: center;
   font-weight: 600;
-  border: 1px solid var(--gray-300);
-  border-radius: var(--radius-sm);
-  background-color: white;
+  border: 1px solid transparent;
+  background-color: transparent;
+  box-sizing: border-box;
+}
+
+/* Hide number up/down arrow spinners completely */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none !important;
+  margin: 0 !important;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield !important;
+  appearance: textfield !important;
+}
+
+.score-input:hover {
+  background-color: rgba(241, 245, 249, 0.7);
 }
 
 .score-input:focus {
-  border-color: var(--primary);
-  background-color: #EFF6FF;
+  border: 2px solid #107C41 !important; /* Excel signature green */
+  background-color: #FFFFFF !important;
+  outline: none;
+  box-shadow: 0 0 0 1px #107C41;
+  z-index: 5;
+  position: relative;
+}
+
+.excel-cell-input {
+  width: 100%;
+  height: 100%;
+  min-height: 32px;
+  border: 1px solid transparent;
+  background: transparent;
+  padding: 4px 8px;
+  font-size: 0.92rem;
+  font-family: inherit;
+  color: #1E293B;
+  box-sizing: border-box;
+  transition: all 0.1s ease;
+}
+
+.name-input {
+  min-width: 180px !important;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.excel-cell-input:hover {
+  background-color: rgba(226, 232, 240, 0.4);
+}
+
+.excel-cell-input:focus {
+  outline: none;
+  border: 2px solid #107C41 !important; /* Authentic Microsoft Excel Green */
+  background-color: #FFFFFF !important;
+  box-shadow: 0 0 0 1px #107C41;
+  z-index: 5;
+  position: relative;
+}
+
+.excel-cell-select {
+  width: 100%;
+  height: 100%;
+  min-height: 32px;
+  border: 1px solid transparent;
+  background: transparent;
+  font-size: 0.92rem;
+  font-family: inherit;
+  font-weight: 700;
+  text-align: center;
+  text-align-last: center;
+  box-sizing: border-box;
+  cursor: pointer;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  background-image: none !important;
+  padding: 4px 6px;
+}
+
+.excel-cell-select:hover {
+  background-color: rgba(226, 232, 240, 0.4);
+}
+
+.excel-cell-select:focus {
+  outline: none;
+  border: 2px solid #107C41 !important;
+  background-color: #FFFFFF !important;
+  box-shadow: 0 0 0 1px #107C41;
+  z-index: 5;
+  position: relative;
+}
+
+.cell-flagged-red {
+  background-color: #DC2626 !important;
+  color: #FFFFFF !important;
+  font-weight: 700;
+}
+.cell-flagged-red input {
+  color: #FFFFFF !important;
+  font-weight: 700;
 }
 
 /* Modal Dialog */
@@ -686,6 +796,77 @@ body {
 .paper-table th {
   background-color: #f5f5f5;
   font-weight: 700;
+}
+
+/* Authentic Excel Official Tabulation Template Styling */
+.excel-official-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.86rem;
+  margin-bottom: 25px;
+  background-color: #FFFFFF;
+}
+
+.excel-official-table th,
+.excel-official-table td {
+  border: 1px solid #000000;
+  padding: 4px 6px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.excel-official-table th {
+  background-color: #FFFFFF;
+  font-weight: 700;
+}
+
+.commune-banner-row td {
+  background-color: #FFFFFF;
+  font-weight: 700;
+  font-size: 0.94rem;
+  text-align: left;
+  padding: 5px 8px;
+  border-top: 1.5px solid #000;
+  border-bottom: 1px solid #000;
+}
+
+.role-banner-row td {
+  background-color: #FFFFFF;
+  font-weight: 700;
+  font-size: 0.88rem;
+  text-align: left;
+  padding: 4px 8px;
+  border-top: 1px solid #000;
+  border-bottom: 1px solid #000;
+}
+
+.excel-x-cell {
+  background: 
+    linear-gradient(to top right, transparent calc(50% - 0.75px), #64748B calc(50% - 0.75px), #64748B calc(50% + 0.75px), transparent calc(50% + 0.75px)),
+    linear-gradient(to bottom right, transparent calc(50% - 0.75px), #64748B calc(50% - 0.75px), #64748B calc(50% + 0.75px), transparent calc(50% + 0.75px)) !important;
+  background-color: #FFFFFF !important;
+}
+
+.btn-excel-pill {
+  background: #93C5FD;
+  color: #1E3A8A;
+  border: 1.5px solid #60A5FA;
+  border-radius: 8px;
+  padding: 5px 14px;
+  font-weight: 700;
+  font-size: 0.88rem;
+  font-family: inherit;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.btn-excel-pill:hover {
+  background: #60A5FA;
+  color: #FFFFFF;
 }
 
 .paper-signatures {
@@ -1001,3 +1182,114 @@ body {
     grid-template-columns: repeat(10, 1fr);
   }
 }
+
+/* ==========================================================================
+   OFFICIAL TABULATION REPORT TABLE (ដូចក្នុងគម្រូ EXCEL ពិតប្រាកដ)
+   ========================================================================== */
+.btn-excel-pill {
+  background: #9BD0F5;
+  border: 1.5px solid #5B9BD5;
+  color: #0C4A6E;
+  font-family: 'Kantumruy Pro', 'Hanuman', sans-serif;
+  font-weight: 700;
+  font-size: 0.86rem;
+  padding: 5px 18px;
+  border-radius: 16px;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.12);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.btn-excel-pill:hover {
+  background: #7DBCEB;
+  border-color: #2563EB;
+  color: #082F49;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 7px rgba(0, 0, 0, 0.18);
+}
+
+.btn-excel-pill:active {
+  transform: translateY(0);
+}
+
+.excel-official-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Kantumruy Pro', 'Hanuman', sans-serif;
+  font-size: 0.88rem;
+  color: #000000;
+  background: #FFFFFF;
+  border: 1.5px solid #000000 !important;
+}
+
+.excel-official-table th {
+  border: 1px solid #000000 !important;
+  background-color: #FFFFFF !important;
+  color: #000000 !important;
+  font-weight: 700;
+  text-align: center;
+  padding: 6px 4px;
+  font-size: 0.86rem;
+  vertical-align: middle;
+}
+
+.excel-official-table td {
+  border: 1px solid #000000 !important;
+  padding: 4px 6px;
+  text-align: center;
+  font-size: 0.88rem;
+  height: 28px;
+  vertical-align: middle;
+}
+
+.excel-official-table .commune-banner-row td {
+  background-color: #FFFFFF !important;
+  font-weight: 700;
+  border: 1px solid #000000 !important;
+}
+
+.excel-official-table .commune-banner-row td:first-child {
+  text-align: center;
+  font-weight: 700;
+}
+
+.excel-official-table .commune-banner-row td:nth-child(2) {
+  text-align: left;
+  padding-left: 10px;
+  font-weight: 700;
+  font-size: 0.92rem;
+}
+
+.excel-official-table .role-banner-row td {
+  background-color: #FFFFFF !important;
+  font-family: 'Moul', 'Khmer OS Muol Light', serif;
+  font-size: 0.85rem;
+  text-align: left;
+  padding: 6px 10px;
+  border: 1px solid #000000 !important;
+}
+
+/* Authentic Excel X Cross Hatch Cell (ប្រអប់គូសខ្វែងអង្កត់ទ្រូង X) */
+.excel-x-cell {
+  background:
+    linear-gradient(to top right, transparent calc(50% - 0.75px), #000000 calc(50% - 0.5px), #000000 calc(50% + 0.5px), transparent calc(50% + 0.75px)),
+    linear-gradient(to bottom right, transparent calc(50% - 0.75px), #000000 calc(50% - 0.5px), #000000 calc(50% + 0.5px), transparent calc(50% + 0.75px)) !important;
+  background-color: #FFFFFF !important;
+  padding: 0 !important;
+}
+
+@media print {
+  .excel-x-cell {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  .btn-excel-pill {
+    display: none !important;
+  }
+}
+

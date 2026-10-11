@@ -46,6 +46,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   const cBody = document.getElementById('codesTableBody');
   if (cBody) cBody.addEventListener('paste', handleCodesTablePaste);
 
+  const candTable = document.getElementById('candidatesTable');
+  if (candTable) candTable.addEventListener('paste', handleCandidatesTablePaste);
+  const candBody = document.getElementById('candidatesTableBody');
+  if (candBody) candBody.addEventListener('paste', handleCandidatesTablePaste);
+
 
   if (state.token && state.user) {
     applyUserSession(state.user);
@@ -194,7 +199,7 @@ async function handleLogin(e) {
       // Check if trainer account requires initial activation
       if (res.needsActivation) {
         showToast(res.message, 'info');
-        openActivateAccountModal(res.username);
+        openActivateAccountModal(res.username, password);
         return;
       }
 
@@ -220,7 +225,7 @@ async function handleLogin(e) {
 // ==============================================================================
 // FORM ACTIVATE ACCOUNT (ដំណើរការគណនីគ្រូប្រចាំក្រុងស្រុក)
 // ==============================================================================
-function openActivateAccountModal(prefillUsername = '') {
+function openActivateAccountModal(prefillUsername = '', prefillDefaultPassword = 'pec21') {
   hideLoginModal();
   const modal = document.getElementById('activateModal');
   if (modal) modal.classList.add('active');
@@ -230,18 +235,32 @@ function openActivateAccountModal(prefillUsername = '') {
 
   const uInput = document.getElementById('activateUsername');
   if (uInput) {
+    uInput.value = prefillUsername || '';
     if (prefillUsername) {
-      uInput.value = prefillUsername;
+      uInput.readOnly = true;
+      uInput.style.backgroundColor = '#F1F5F9';
+    } else {
+      uInput.readOnly = false;
+      uInput.style.backgroundColor = '';
     }
   }
 
   const pDef = document.getElementById('activateDefaultPassword');
-  if (pDef) pDef.value = 'pec21';
+  if (pDef) {
+    pDef.value = prefillDefaultPassword || 'pec21';
+    pDef.readOnly = true;
+    pDef.style.backgroundColor = '#F1F5F9';
+  }
 
   const p1 = document.getElementById('newActivatePassword');
   if (p1) p1.value = '';
   const p2 = document.getElementById('confirmActivatePassword');
   if (p2) p2.value = '';
+
+  const nameInput = document.getElementById('activateFullName');
+  if (nameInput) {
+    setTimeout(() => nameInput.focus(), 150);
+  }
 }
 
 function closeActivateModal() {
@@ -674,7 +693,7 @@ function updateTableHeaderForRole(roleCode) {
       thead.innerHTML = `
         <tr>
           <th style="width:40px;">ល.រ</th>
-          <th>ឈ្មោះ</th>
+          <th style="min-width:180px; width:180px;">ឈ្មោះ</th>
           <th style="text-align:center; width:45px;">ភេទ</th>
           <th style="width:110px;">ថ្ងៃខែឆ្នាំកំណើត</th>
           <th style="text-align:center; width:75px;">ស.បត្រ</th>
@@ -690,7 +709,7 @@ function updateTableHeaderForRole(roleCode) {
       thead.innerHTML = `
         <tr>
           <th style="width:40px;">ល.រ</th>
-          <th>ឈ្មោះ</th>
+          <th style="min-width:180px; width:180px;">ឈ្មោះ</th>
           <th style="text-align:center; width:45px;">ភេទ</th>
           <th style="width:110px;">ថ្ងៃខែឆ្នាំកំណើត</th>
           <th style="text-align:center; width:75px;">ប.ពិ</th>
@@ -705,8 +724,8 @@ function updateTableHeaderForRole(roleCode) {
       thead.innerHTML = `
         <tr>
           <th style="width:40px;">ល.រ</th>
-          <th>ឈ្មោះ</th>
-          <th>គោត្តនាម និងនាម</th>
+          <th style="min-width:180px; width:180px;">ឈ្មោះ</th>
+          <th style="min-width:180px; width:180px;">គោត្តនាម និងនាម</th>
           <th style="text-align:center; width:45px;">ភេទ</th>
           <th style="width:110px;">ថ្ងៃខែឆ្នាំកំណើត</th>
           <th style="width:120px;">មុខតំណែង</th>
@@ -720,7 +739,7 @@ function updateTableHeaderForRole(roleCode) {
       thead.innerHTML = `
         <tr>
           <th style="width:40px;">ល.រ</th>
-          <th>ឈ្មោះ</th>
+          <th style="min-width:180px; width:180px;">ឈ្មោះ</th>
           <th style="text-align:center; width:45px;">ភេទ</th>
           <th style="width:110px;">ថ្ងៃខែឆ្នាំកំណើត</th>
           <th style="text-align:center; width:75px;">ស.បត្រ</th>
@@ -742,7 +761,7 @@ function updateTableHeaderForRole(roleCode) {
         <tr>
           <th style="width:40px;">ល.រ</th>
           <th style="width:100px;">កូដ</th>
-          <th>ឈ្មោះ</th>
+          <th style="min-width:180px; width:180px;">ឈ្មោះ</th>
           <th style="text-align:center; width:45px;">ភេទ</th>
           <th style="width:110px;">ថ្ងៃខែឆ្នាំកំណើត</th>
           <th style="text-align:center; width:65px;">ស.បត្រ</th>
@@ -762,7 +781,7 @@ function updateTableHeaderForRole(roleCode) {
         <tr>
           <th style="width:40px;">ល.រ</th>
           <th style="width:100px;">កូដ</th>
-          <th>ឈ្មោះ</th>
+          <th style="min-width:180px; width:180px;">ឈ្មោះ</th>
           <th style="text-align:center; width:45px;">ភេទ</th>
           <th style="width:110px;">ថ្ងៃខែឆ្នាំកំណើត</th>
           <th style="text-align:center; width:65px;" class="col-shaded-excel">ស.បត្រ</th>
@@ -781,8 +800,8 @@ function updateTableHeaderForRole(roleCode) {
       thead.innerHTML = `
         <tr>
           <th style="width:40px;">ល.រ</th>
-          <th>ឈ្មោះ</th>
-          <th>គោត្តនាម និងនាម</th>
+          <th style="min-width:180px; width:180px;">ឈ្មោះ</th>
+          <th style="min-width:180px; width:180px;">គោត្តនាម និងនាម</th>
           <th style="text-align:center; width:45px;">ភេទ</th>
           <th style="width:110px;">ថ្ងៃខែឆ្នាំកំណើត</th>
           <th style="width:120px;">មុខតំណែង</th>
@@ -798,7 +817,7 @@ function updateTableHeaderForRole(roleCode) {
         <tr>
           <th style="width:40px;">ល.រ</th>
           <th style="width:100px;">កូដ</th>
-          <th>ឈ្មោះ</th>
+          <th style="min-width:180px; width:180px;">ឈ្មោះ</th>
           <th style="text-align:center; width:45px;">ភេទ</th>
           <th style="width:110px;">ថ្ងៃខែឆ្នាំកំណើត</th>
           <th style="text-align:center; width:65px;">ស.បត្រ</th>
@@ -886,10 +905,7 @@ function updateRoleCounts() {
   const bC = document.getElementById('badgeCountRoleC'); if (bC) bC.textContent = counts.c;
 }
 
-function renderCandidatesTable() {
-  const tbody = document.getElementById('candidatesTableBody');
-  if (!tbody) return;
-
+function getFilteredCandidatesList() {
   let list = state.candidates;
 
   // Filter District
@@ -917,6 +933,40 @@ function renderCandidatesTable() {
       (c.communeName && c.communeName.toLowerCase().includes(q))
     );
   }
+  return list;
+}
+
+function handleCandidateCellKeydown(e, rowIndex, colName) {
+  // Prevent negative sign or scientific notation on score/numeric fields
+  if (['scoreDegree', 'scoreExp', 'scoreQcm', 'scorePc'].includes(colName)) {
+    if (e.key === '-' || e.key === 'Subtract' || e.key === 'e' || e.key === 'E') {
+      e.preventDefault();
+      return;
+    }
+  }
+
+  if (e.key === 'Enter' || e.key === 'ArrowDown') {
+    e.preventDefault();
+    const nextEl = document.querySelector(`#candidatesTableBody [data-col="${colName}"][data-index="${rowIndex + 1}"]`);
+    if (nextEl) {
+      nextEl.focus();
+      if (nextEl.select) nextEl.select();
+    }
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    const prevEl = document.querySelector(`#candidatesTableBody [data-col="${colName}"][data-index="${rowIndex - 1}"]`);
+    if (prevEl) {
+      prevEl.focus();
+      if (prevEl.select) prevEl.select();
+    }
+  }
+}
+
+function renderCandidatesTable() {
+  const tbody = document.getElementById('candidatesTableBody');
+  if (!tbody) return;
+
+  const list = getFilteredCandidatesList();
 
   const countEl = document.getElementById('filteredCountBadge');
   if (countEl) countEl.textContent = `សរុប: ${list.length} នាក់`;
@@ -963,102 +1013,107 @@ function renderCandidatesTable() {
       `
     ) : '-';
 
+    // Cell inputs for in-place Excel-like editing
+    const nameCell = canEdit
+      ? `<input type="text" class="excel-cell-input name-input" data-col="name" data-index="${idx}" data-id="${c.id}" value="${c.name || ''}" onchange="updateCandidateField('${c.id}', 'name', this.value)" onkeydown="handleCandidateCellKeydown(event, ${idx}, 'name')">`
+      : `<span style="padding:4px 8px; font-weight:600; white-space:nowrap;">${c.name || ''}</span>`;
+
+    const genderCell = canEdit
+      ? `<select class="excel-cell-select gender-select" data-col="gender" data-index="${idx}" data-id="${c.id}" onchange="updateCandidateField('${c.id}', 'gender', this.value)" onkeydown="handleCandidateCellKeydown(event, ${idx}, 'gender')">
+          <option value="ប" ${c.gender === 'ប' ? 'selected' : ''}>ប</option>
+          <option value="ស" ${c.gender === 'ស' ? 'selected' : ''}>ស</option>
+         </select>`
+      : `<span style="font-weight:600;">${c.gender || ''}</span>`;
+
+    const dobCell = canEdit
+      ? `<input type="text" class="excel-cell-input dob-input ${isFlaggedDob ? 'cell-flagged-red' : ''}" data-col="dob" data-index="${idx}" data-id="${c.id}" value="${c.dob || ''}" onchange="updateCandidateField('${c.id}', 'dob', this.value)" onkeydown="handleCandidateCellKeydown(event, ${idx}, 'dob')" style="text-align:center; font-family:monospace;">`
+      : `<span style="font-family:monospace;" class="${isFlaggedDob ? 'cell-flagged-red' : ''}">${c.dob || '-'}</span>`;
+
+    const degCell = canEdit
+      ? `<input type="number" class="excel-cell-input score-input" min="0" max="5" oninput="if(this.value < 0) this.value = 0; if(this.value > 5) this.value = 5;" data-col="scoreDegree" data-index="${idx}" data-id="${c.id}" value="${c.scoreDegree}" onchange="updateCandidateField('${c.id}', 'scoreDegree', this.value)" onkeydown="handleCandidateCellKeydown(event, ${idx}, 'scoreDegree')" style="text-align:center;">`
+      : `<span>${c.scoreDegree}</span>`;
+
+    const expCell = canEdit
+      ? `<input type="number" class="excel-cell-input score-input" min="0" max="15" oninput="if(this.value < 0) this.value = 0; if(this.value > 15) this.value = 15;" data-col="scoreExp" data-index="${idx}" data-id="${c.id}" value="${c.scoreExp}" onchange="updateCandidateField('${c.id}', 'scoreExp', this.value)" onkeydown="handleCandidateCellKeydown(event, ${idx}, 'scoreExp')" style="text-align:center;">`
+      : `<span>${c.scoreExp}</span>`;
+
     if (isTrainer) {
-      // =====================================================================
-      // គណនីគ្រូស្រុក៖ មិនបង្ហាញកូដ, មិនបង្ហាញ QCM/PC, មិនបង្ហាញលទ្ធផល
-      // ជួរឈរ (សរុប) = ស.បត្រ + ប.ពិ ប៉ុណ្ណោះ
-      // =====================================================================
+      // Trainer: No code, no QCM/PC, no final result
       if (currentRole === 'a' || currentRole === 'b') {
-        // ប្រធាន និង ជំនួយការអនុ
         rows.push(`
           <tr id="row-${c.id}">
             <td style="text-align:center; font-weight:600; color:var(--gray-500);">${idx + 1}</td>
-            <td style="font-weight:600; white-space:nowrap;">${c.name}</td>
-            <td style="text-align:center; font-weight:600;">${c.gender}</td>
-            <td style="text-align:center; font-family:monospace; font-size:0.9rem;" class="${isFlaggedDob ? 'cell-flagged-red' : ''}">${c.dob || '-'}</td>
-            <td style="text-align:center;">
-              <input type="number" class="score-input" min="0" max="5" style="width:55px; text-align:center;" value="${c.scoreDegree}" onchange="updateScore('${c.id}', 'scoreDegree', this.value)">
-            </td>
-            <td style="text-align:center;">
-              <input type="number" class="score-input" min="0" max="15" style="width:55px; text-align:center;" value="${c.scoreExp}" onchange="updateScore('${c.id}', 'scoreExp', this.value)">
-            </td>
+            <td style="min-width:180px; width:180px;">${nameCell}</td>
+            <td style="text-align:center;">${genderCell}</td>
+            <td style="text-align:center;">${dobCell}</td>
+            <td style="text-align:center;">${degCell}</td>
+            <td style="text-align:center;">${expCell}</td>
             <td style="text-align:center; font-weight:700; font-size:1.05rem; color:var(--primary);">
               <span id="total-${c.id}">${trainerTotal}</span>
             </td>
             <td style="text-align:center; font-family:monospace; font-weight:600; color:var(--gray-600);">${c.communeCode || '-'}</td>
-            <td style="white-space:nowrap;">${c.communeName || '-'}</td>
-            <td style="white-space:nowrap; color:var(--gray-700);">${c.district || '-'}</td>
+            <td style="white-space:nowrap; padding:4px 8px;">${c.communeName || '-'}</td>
+            <td style="white-space:nowrap; color:var(--gray-700); padding:4px 8px;">${c.district || '-'}</td>
             <td style="text-align:center;">${actionButtons}</td>
           </tr>
         `);
       } else if (currentRole === 'c') {
-        // ការីកុំព្យូទ័រ
         rows.push(`
           <tr id="row-${c.id}">
             <td style="text-align:center; font-weight:600; color:var(--gray-500);">${idx + 1}</td>
-            <td style="font-weight:600; white-space:nowrap;">${c.name}</td>
-            <td style="text-align:center; font-weight:600;">${c.gender}</td>
-            <td style="text-align:center; font-family:monospace; font-size:0.9rem;" class="${isFlaggedDob ? 'cell-flagged-red' : ''}">${c.dob || '-'}</td>
-            <td style="text-align:center;">
-              <input type="number" class="score-input" min="0" max="15" style="width:55px; text-align:center;" value="${c.scoreExp}" onchange="updateScore('${c.id}', 'scoreExp', this.value)">
-            </td>
+            <td style="min-width:180px; width:180px;">${nameCell}</td>
+            <td style="text-align:center;">${genderCell}</td>
+            <td style="text-align:center;">${dobCell}</td>
+            <td style="text-align:center;">${expCell}</td>
             <td style="text-align:center; font-weight:700; font-size:1.05rem; color:var(--primary);">
               <span id="total-${c.id}">${exp}</span>
             </td>
             <td style="text-align:center; font-family:monospace; font-weight:600; color:var(--gray-600);">${c.communeCode || '-'}</td>
-            <td style="white-space:nowrap;">${c.communeName || '-'}</td>
-            <td style="white-space:nowrap; color:var(--gray-700);">${c.district || '-'}</td>
+            <td style="white-space:nowrap; padding:4px 8px;">${c.communeName || '-'}</td>
+            <td style="white-space:nowrap; color:var(--gray-700); padding:4px 8px;">${c.district || '-'}</td>
             <td style="text-align:center;">${actionButtons}</td>
           </tr>
         `);
       } else if (currentRole === 'd') {
-        // អនុប្រធាន (ស្មៀន)
         rows.push(`
           <tr id="row-${c.id}">
             <td style="text-align:center; font-weight:600; color:var(--gray-500);">${idx + 1}</td>
-            <td style="font-weight:600; white-space:nowrap;">${c.name}</td>
-            <td style="white-space:nowrap; color:var(--gray-700);">${c.name} (ស្មៀនឃុំ)</td>
-            <td style="text-align:center; font-weight:600;">${c.gender}</td>
-            <td style="text-align:center; font-family:monospace; font-size:0.9rem;" class="${isFlaggedDob ? 'cell-flagged-red' : ''}">${c.dob || '-'}</td>
-            <td style="white-space:nowrap; color:var(--primary); font-weight:600;">${c.role}</td>
+            <td style="min-width:180px; width:180px;">${nameCell}</td>
+            <td style="white-space:nowrap; color:var(--gray-700); padding:4px 8px;">${c.name} (ស្មៀនឃុំ)</td>
+            <td style="text-align:center;">${genderCell}</td>
+            <td style="text-align:center;">${dobCell}</td>
+            <td style="white-space:nowrap; color:var(--primary); font-weight:600; padding:4px 8px;">${c.role}</td>
             <td style="text-align:center; font-family:monospace; font-weight:600; color:var(--gray-600);">${c.communeCode || '-'}</td>
-            <td style="white-space:nowrap;">${c.communeName || '-'}</td>
-            <td style="white-space:nowrap; color:var(--gray-700);">${c.district || '-'}</td>
+            <td style="white-space:nowrap; padding:4px 8px;">${c.communeName || '-'}</td>
+            <td style="white-space:nowrap; color:var(--gray-700); padding:4px 8px;">${c.district || '-'}</td>
             <td style="text-align:center;">${actionButtons}</td>
           </tr>
         `);
       } else {
-        // គ្រប់មុខតំណែង
         rows.push(`
           <tr id="row-${c.id}">
             <td style="text-align:center; font-weight:600; color:var(--gray-500);">${idx + 1}</td>
-            <td style="font-weight:600; white-space:nowrap;">${c.name}</td>
-            <td style="text-align:center; font-weight:600;">${c.gender}</td>
-            <td style="text-align:center; font-family:monospace; font-size:0.9rem;" class="${isFlaggedDob ? 'cell-flagged-red' : ''}">${c.dob || '-'}</td>
+            <td style="min-width:180px; width:180px;">${nameCell}</td>
+            <td style="text-align:center;">${genderCell}</td>
+            <td style="text-align:center;">${dobCell}</td>
             <td style="text-align:center;">
-              ${(c.roleCode === 'd' || c.roleCode === 'c') ? '-' : `
-                <input type="number" class="score-input" min="0" max="5" style="width:55px; text-align:center;" value="${c.scoreDegree}" onchange="updateScore('${c.id}', 'scoreDegree', this.value)">
-              `}
+              ${(c.roleCode === 'd' || c.roleCode === 'c') ? '-' : degCell}
             </td>
             <td style="text-align:center;">
-              ${c.roleCode === 'd' ? '-' : `
-                <input type="number" class="score-input" min="0" max="15" style="width:55px; text-align:center;" value="${c.scoreExp}" onchange="updateScore('${c.id}', 'scoreExp', this.value)">
-              `}
+              ${c.roleCode === 'd' ? '-' : expCell}
             </td>
             <td style="text-align:center; font-weight:700; font-size:1.05rem; color:var(--primary);">
               <span id="total-${c.id}">${c.roleCode === 'd' ? '-' : (c.roleCode === 'c' ? exp : trainerTotal)}</span>
             </td>
             <td style="text-align:center; font-family:monospace; font-weight:600; color:var(--gray-600);">${c.communeCode || '-'}</td>
-            <td style="white-space:nowrap;">${c.communeName || '-'}</td>
-            <td style="white-space:nowrap; color:var(--gray-700);">${c.district || '-'}</td>
+            <td style="white-space:nowrap; padding:4px 8px;">${c.communeName || '-'}</td>
+            <td style="white-space:nowrap; color:var(--gray-700); padding:4px 8px;">${c.district || '-'}</td>
             <td style="text-align:center;">${actionButtons}</td>
           </tr>
         `);
       }
     } else {
-      // =====================================================================
-      // គណនី Admin / SuperAdmin / PEC21៖ បង្ហាញគ្រប់ ១៥ ជួរឈរពេញលេញ
-      // =====================================================================
+      // Admin / SuperAdmin / PEC21
       let badgeClass = 'badge-passed';
       if (c.status === 'B-បម្រុង') badgeClass = 'badge-reserve';
       if (c.status === 'ធ្លាក់') badgeClass = 'badge-failed';
@@ -1071,7 +1126,15 @@ function renderCandidatesTable() {
       `;
 
       const codeCell = `
-        <input type="text" class="score-input" list="codesDatalist" style="width:85px; text-transform:uppercase; font-family:monospace; font-weight:700; text-align:center;" value="${c.candidateCode || ''}" placeholder="កូដ..." onchange="updateCandidateCodeInline('${c.id}', this.value)">
+        <input type="text" class="excel-cell-input score-input" list="codesDatalist" data-col="candidateCode" data-index="${idx}" data-id="${c.id}" style="width:85px; text-transform:uppercase; font-family:monospace; font-weight:700; text-align:center;" value="${c.candidateCode || ''}" placeholder="កូដ..." onchange="updateCandidateField('${c.id}', 'candidateCode', this.value)" onkeydown="handleCandidateCellKeydown(event, ${idx}, 'candidateCode')">
+      `;
+
+      const qcmCell = `
+        <input type="text" id="qcm-input-${c.id}" class="excel-cell-input score-input" data-col="scoreQcm" data-index="${idx}" data-id="${c.id}" style="width:70px; text-align:center; font-weight:600;" value="${c.scoreQcm}" oninput="if(this.value !== 'អវត្តមាន' && Number(this.value) < 0) this.value = 0;" onchange="updateCandidateField('${c.id}', 'scoreQcm', this.value)" onkeydown="handleCandidateCellKeydown(event, ${idx}, 'scoreQcm')">
+      `;
+
+      const pcCell = `
+        <input type="text" class="excel-cell-input score-input" data-col="scorePc" data-index="${idx}" data-id="${c.id}" style="width:70px; text-align:center; font-weight:600;" value="${c.scorePc}" oninput="if(this.value !== 'អវត្តមាន' && Number(this.value) < 0) this.value = 0;" onchange="updateCandidateField('${c.id}', 'scorePc', this.value)" onkeydown="handleCandidateCellKeydown(event, ${idx}, 'scorePc')">
       `;
 
       if (currentRole === 'a' || currentRole === 'b') {
@@ -1079,25 +1142,19 @@ function renderCandidatesTable() {
           <tr id="row-${c.id}">
             <td style="text-align:center; font-weight:600; color:var(--gray-500);">${idx + 1}</td>
             <td style="text-align:center;">${codeCell}</td>
-            <td style="font-weight:600; white-space:nowrap;">${c.name}</td>
-            <td style="text-align:center; font-weight:600;">${c.gender}</td>
-            <td style="text-align:center; font-family:monospace; font-size:0.9rem;" class="${isFlaggedDob ? 'cell-flagged-red' : ''}">${c.dob || '-'}</td>
-            <td style="text-align:center;">
-              <input type="number" class="score-input" min="0" max="5" style="width:55px; text-align:center;" value="${c.scoreDegree}" onchange="updateScore('${c.id}', 'scoreDegree', this.value)">
-            </td>
-            <td style="text-align:center;">
-              <input type="number" class="score-input" min="0" max="15" style="width:55px; text-align:center;" value="${c.scoreExp}" onchange="updateScore('${c.id}', 'scoreExp', this.value)">
-            </td>
-            <td style="text-align:center;">
-              <input type="text" id="qcm-input-${c.id}" class="score-input" style="width:70px; text-align:center; font-weight:600;" value="${c.scoreQcm}" onchange="updateScore('${c.id}', 'scoreQcm', this.value)">
-            </td>
+            <td style="min-width:180px; width:180px;">${nameCell}</td>
+            <td style="text-align:center;">${genderCell}</td>
+            <td style="text-align:center;">${dobCell}</td>
+            <td style="text-align:center;">${degCell}</td>
+            <td style="text-align:center;">${expCell}</td>
+            <td style="text-align:center;">${qcmCell}</td>
             <td class="col-shaded-excel"></td>
             <td style="text-align:center; font-weight:700; font-size:1.05rem; color:var(--primary);">
               <span id="total-${c.id}">${c.scoreTotal}</span>
             </td>
             <td style="text-align:center; font-family:monospace; font-weight:600; color:var(--gray-600);">${c.communeCode || '-'}</td>
-            <td style="white-space:nowrap;">${c.communeName || '-'}</td>
-            <td style="white-space:nowrap; color:var(--gray-700);">${c.district || '-'}</td>
+            <td style="white-space:nowrap; padding:4px 8px;">${c.communeName || '-'}</td>
+            <td style="white-space:nowrap; color:var(--gray-700); padding:4px 8px;">${c.district || '-'}</td>
             ${resultCell}
             <td style="text-align:center;">${actionButtons}</td>
           </tr>
@@ -1106,14 +1163,14 @@ function renderCandidatesTable() {
         rows.push(`
           <tr id="row-${c.id}">
             <td style="text-align:center; font-weight:600; color:var(--gray-500);">${idx + 1}</td>
-            <td style="font-weight:600; white-space:nowrap;">${c.name}</td>
-            <td style="white-space:nowrap; color:var(--gray-700);">${c.name} (ស្មៀនឃុំ)</td>
-            <td style="text-align:center; font-weight:600;">${c.gender}</td>
-            <td style="text-align:center; font-family:monospace; font-size:0.9rem;" class="${isFlaggedDob ? 'cell-flagged-red' : ''}">${c.dob || '-'}</td>
-            <td style="white-space:nowrap; color:var(--primary); font-weight:600;">${c.role}</td>
+            <td style="min-width:180px; width:180px;">${nameCell}</td>
+            <td style="white-space:nowrap; color:var(--gray-700); padding:4px 8px;">${c.name} (ស្មៀនឃុំ)</td>
+            <td style="text-align:center;">${genderCell}</td>
+            <td style="text-align:center;">${dobCell}</td>
+            <td style="white-space:nowrap; color:var(--primary); font-weight:600; padding:4px 8px;">${c.role}</td>
             <td style="text-align:center; font-family:monospace; font-weight:600; color:var(--gray-600);">${c.communeCode || '-'}</td>
-            <td style="white-space:nowrap;">${c.communeName || '-'}</td>
-            <td style="white-space:nowrap; color:var(--gray-700);">${c.district || '-'}</td>
+            <td style="white-space:nowrap; padding:4px 8px;">${c.communeName || '-'}</td>
+            <td style="white-space:nowrap; color:var(--gray-700); padding:4px 8px;">${c.district || '-'}</td>
             ${resultCell}
             <td style="text-align:center;">${actionButtons}</td>
           </tr>
@@ -1123,23 +1180,19 @@ function renderCandidatesTable() {
           <tr id="row-${c.id}">
             <td style="text-align:center; font-weight:600; color:var(--gray-500);">${idx + 1}</td>
             <td style="text-align:center;">${codeCell}</td>
-            <td style="font-weight:600; white-space:nowrap;">${c.name}</td>
-            <td style="text-align:center; font-weight:600;">${c.gender}</td>
-            <td style="text-align:center; font-family:monospace; font-size:0.9rem;" class="${isFlaggedDob ? 'cell-flagged-red' : ''}">${c.dob || '-'}</td>
+            <td style="min-width:180px; width:180px;">${nameCell}</td>
+            <td style="text-align:center;">${genderCell}</td>
+            <td style="text-align:center;">${dobCell}</td>
             <td class="col-shaded-excel"></td>
-            <td style="text-align:center;">
-              <input type="number" class="score-input" min="0" max="15" style="width:55px; text-align:center;" value="${c.scoreExp}" onchange="updateScore('${c.id}', 'scoreExp', this.value)">
-            </td>
+            <td style="text-align:center;">${expCell}</td>
             <td class="col-shaded-excel"></td>
-            <td style="text-align:center;">
-              <input type="text" class="score-input" style="width:70px; text-align:center; font-weight:600;" value="${c.scorePc}" onchange="updateScore('${c.id}', 'scorePc', this.value)">
-            </td>
+            <td style="text-align:center;">${pcCell}</td>
             <td style="text-align:center; font-weight:700; font-size:1.05rem; color:var(--primary);">
               <span id="total-${c.id}">${c.scoreTotal}</span>
             </td>
             <td style="text-align:center; font-family:monospace; font-weight:600; color:var(--gray-600);">${c.communeCode || '-'}</td>
-            <td style="white-space:nowrap;">${c.communeName || '-'}</td>
-            <td style="white-space:nowrap; color:var(--gray-700);">${c.district || '-'}</td>
+            <td style="white-space:nowrap; padding:4px 8px;">${c.communeName || '-'}</td>
+            <td style="white-space:nowrap; color:var(--gray-700); padding:4px 8px;">${c.district || '-'}</td>
             ${resultCell}
             <td style="text-align:center;">${actionButtons}</td>
           </tr>
@@ -1149,35 +1202,27 @@ function renderCandidatesTable() {
           <tr id="row-${c.id}">
             <td style="text-align:center; font-weight:600; color:var(--gray-500);">${idx + 1}</td>
             <td style="text-align:center;">${codeCell}</td>
-            <td style="font-weight:600; white-space:nowrap;">${c.name}</td>
-            <td style="text-align:center; font-weight:600;">${c.gender}</td>
-            <td style="text-align:center; font-family:monospace; font-size:0.9rem;" class="${isFlaggedDob ? 'cell-flagged-red' : ''}">${c.dob || '-'}</td>
+            <td style="min-width:180px; width:180px;">${nameCell}</td>
+            <td style="text-align:center;">${genderCell}</td>
+            <td style="text-align:center;">${dobCell}</td>
             ${(isClerk || isPc) ? '<td class="col-shaded-excel"></td>' : `
-              <td style="text-align:center;">
-                <input type="number" class="score-input" min="0" max="5" style="width:55px; text-align:center;" value="${c.scoreDegree}" onchange="updateScore('${c.id}', 'scoreDegree', this.value)">
-              </td>
+              <td style="text-align:center;">${degCell}</td>
             `}
             ${isClerk ? '<td class="col-shaded-excel"></td>' : `
-              <td style="text-align:center;">
-                <input type="number" class="score-input" min="0" max="15" style="width:55px; text-align:center;" value="${c.scoreExp}" onchange="updateScore('${c.id}', 'scoreExp', this.value)">
-              </td>
+              <td style="text-align:center;">${expCell}</td>
             `}
             ${(isClerk || isPc) ? '<td class="col-shaded-excel"></td>' : `
-              <td style="text-align:center;">
-                <input type="text" id="qcm-input-${c.id}" class="score-input" style="width:70px; text-align:center; font-weight:600;" value="${c.scoreQcm}" onchange="updateScore('${c.id}', 'scoreQcm', this.value)">
-              </td>
+              <td style="text-align:center;">${qcmCell}</td>
             `}
             ${isPc ? `
-              <td style="text-align:center;">
-                <input type="text" class="score-input" style="width:70px; text-align:center; font-weight:600;" value="${c.scorePc}" onchange="updateScore('${c.id}', 'scorePc', this.value)">
-              </td>
+              <td style="text-align:center;">${pcCell}</td>
             ` : '<td class="col-shaded-excel"></td>'}
             <td style="text-align:center; font-weight:700; font-size:1.05rem; color:var(--primary);">
               <span id="total-${c.id}">${c.scoreTotal}</span>
             </td>
             <td style="text-align:center; font-family:monospace; font-weight:600; color:var(--gray-600);">${c.communeCode || '-'}</td>
-            <td style="white-space:nowrap;">${c.communeName || '-'}</td>
-            <td style="white-space:nowrap; color:var(--gray-700);">${c.district || '-'}</td>
+            <td style="white-space:nowrap; padding:4px 8px;">${c.communeName || '-'}</td>
+            <td style="white-space:nowrap; color:var(--gray-700); padding:4px 8px;">${c.district || '-'}</td>
             ${resultCell}
             <td style="text-align:center;">${actionButtons}</td>
           </tr>
@@ -1191,9 +1236,24 @@ function renderCandidatesTable() {
   updateRoleCounts();
 }
 
-async function updateScore(candId, field, value) {
+async function updateCandidateField(candId, field, value) {
+  if (field === 'candidateCode') {
+    return updateCandidateCodeInline(candId, value);
+  }
+
   const cand = state.candidates.find(c => c.id === candId);
   if (!cand) return;
+
+  // Enforce positive values only
+  if (field === 'scoreDegree') {
+    value = Math.min(5, Math.max(0, Number(value) || 0));
+  } else if (field === 'scoreExp') {
+    value = Math.min(15, Math.max(0, Number(value) || 0));
+  } else if (field === 'scoreQcm' || field === 'scorePc') {
+    if (value !== 'អវត្តមាន') {
+      value = Math.max(0, Number(value) || 0);
+    }
+  }
 
   const payload = {};
   payload[field] = value;
@@ -1205,11 +1265,13 @@ async function updateScore(candId, field, value) {
     });
 
     if (res.success) {
-      // Reload candidates and refresh view
+      // Reload candidates to ensure formulas and ranks update
       const candRes = await api('/api/candidates');
-      state.candidates = candRes.candidates;
+      if (candRes.success) {
+        state.candidates = candRes.candidates;
+      }
 
-      // Update specific row badges
+      // Update specific row total & badges
       const updated = state.candidates.find(c => c.id === candId);
       if (updated) {
         const isTrainer = state.user && state.user.role === 'Trainer';
@@ -1219,8 +1281,6 @@ async function updateScore(candId, field, value) {
         if (totEl) {
           totEl.textContent = isTrainer ? (updated.roleCode === 'c' ? exp : (deg + exp)) : updated.scoreTotal;
         }
-        const rkEl = document.getElementById(`rank-${candId}`);
-        if (rkEl) rkEl.textContent = updated.rank;
         const stBadge = document.getElementById(`status-${candId}`);
         if (stBadge) {
           stBadge.textContent = updated.status;
@@ -1231,10 +1291,248 @@ async function updateScore(candId, field, value) {
           stBadge.className = `badge ${badgeClass}`;
         }
       }
-      showToast(`បានកែសម្រួលពិន្ទុ ${cand.name} រួចរាល់!`, 'success');
+      showToast(`បានកែសម្រួលដោយជោគជ័យ!`, 'success');
     }
   } catch (err) {
-    showToast(err.message || 'បរាជ័យក្នុងការកែសម្រួលពិន្ទុ!', 'error');
+    showToast(err.message || 'បរាជ័យក្នុងការកែសម្រួលទិន្នន័យ!', 'error');
+  }
+}
+
+async function updateScore(candId, field, value) {
+  return updateCandidateField(candId, field, value);
+}
+
+// ==============================================================================
+// CANDIDATES TABLE EXCEL COPY & PASTE (ដូចក្នុង Microsoft Excel)
+// ==============================================================================
+async function copyCandidatesTableToClipboard() {
+  const list = getFilteredCandidatesList();
+  if (!list || list.length === 0) {
+    showToast('ពុំមានទិន្នន័យបេក្ខជនសម្រាប់ចម្លងឡើយ!', 'error');
+    return;
+  }
+
+  const isTrainer = state.user && state.user.role === 'Trainer';
+  const headers = isTrainer
+    ? ['ល.រ', 'គោត្តនាម និងនាម', 'ភេទ', 'ថ្ងៃខែឆ្នាំកំណើត', 'សញ្ញាបត្រ', 'បទពិសោធន៍', 'ពិន្ទុសរុប', 'កូដឃុំ', 'ឃុំ/សង្កាត់', 'ក្រុង/ស្រុក']
+    : ['ល.រ', 'លេខកូដ', 'គោត្តនាម និងនាម', 'ភេទ', 'ថ្ងៃខែឆ្នាំកំណើត', 'សញ្ញាបត្រ', 'បទពិសោធន៍', 'ពិន្ទុ QCM', 'QCM-PC', 'ពិន្ទុសរុប', 'កូដឃុំ', 'ឃុំ/សង្កាត់', 'ក្រុង/ស្រុក', 'លទ្ធផល'];
+
+  const rows = [headers.join('\t')];
+
+  list.forEach((c, idx) => {
+    const deg = Number(c.scoreDegree) || 0;
+    const exp = Number(c.scoreExp) || 0;
+    const trainerTotal = deg + exp;
+    if (isTrainer) {
+      const tot = c.roleCode === 'c' ? exp : (c.roleCode === 'd' ? '-' : trainerTotal);
+      rows.push([
+        idx + 1,
+        c.name || '',
+        c.gender || '',
+        c.dob || '',
+        c.scoreDegree !== undefined ? c.scoreDegree : '',
+        c.scoreExp !== undefined ? c.scoreExp : '',
+        tot,
+        c.communeCode || '',
+        c.communeName || '',
+        c.district || ''
+      ].join('\t'));
+    } else {
+      rows.push([
+        idx + 1,
+        c.candidateCode || '',
+        c.name || '',
+        c.gender || '',
+        c.dob || '',
+        c.scoreDegree !== undefined ? c.scoreDegree : '',
+        c.scoreExp !== undefined ? c.scoreExp : '',
+        c.scoreQcm !== undefined ? c.scoreQcm : '',
+        c.scorePc !== undefined ? c.scorePc : '',
+        c.scoreTotal !== undefined ? c.scoreTotal : '',
+        c.communeCode || '',
+        c.communeName || '',
+        c.district || '',
+        c.status || ''
+      ].join('\t'));
+    }
+  });
+
+  const tsv = rows.join('\r\n');
+  try {
+    await navigator.clipboard.writeText(tsv);
+    showToast(`បានចម្លងទិន្នន័យបេក្ខជន ${list.length} នាក់ទៅ Clipboard រួចរាល់! អាចបិទភ្ជាប់ (Ctrl+V) ក្នុង Excel បាន។`, 'success');
+  } catch (err) {
+    const textarea = document.createElement('textarea');
+    textarea.value = tsv;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+    showToast(`បានចម្លងទិន្នន័យបេក្ខជន ${list.length} នាក់ទៅ Clipboard រួចរាល់!`, 'success');
+  }
+}
+
+async function pasteCandidatesFromClipboardDirectly() {
+  try {
+    if (!navigator.clipboard || !navigator.clipboard.readText) {
+      alert('សូមចុចលើក្រឡាតារាងបេក្ខជន រួចចុច Ctrl + V ដើម្បី Paste ពី Excel!');
+      return;
+    }
+    const text = await navigator.clipboard.readText();
+    if (!text || !text.trim()) {
+      showToast('Clipboard គ្មានទិន្នន័យឡើយ! សូម Copy ពី Excel ជាមុន។', 'error');
+      return;
+    }
+    const isTrainer = state.user && state.user.role === 'Trainer';
+    await processPastedTextOnCandidatesTable(text, 0, isTrainer ? 'name' : 'candidateCode');
+  } catch (err) {
+    alert('Browser មិនអនុញ្ញាតអាន Clipboard ដោយស្វ័យប្រវត្តិ។ សូមចុចលើក្រឡាតារាងបេក្ខជន ហើយចុច Ctrl + V លើក្តារចុច!');
+  }
+}
+
+async function handleCandidatesTablePaste(e) {
+  const text = (e.clipboardData || window.clipboardData)?.getData('text');
+  if (!text || !text.trim()) return;
+
+  const rawLines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+  if (rawLines.length === 0) return;
+
+  const isMultiLine = rawLines.length > 1;
+  const isMultiCol = rawLines[0].includes('\t') || rawLines[0].split(/[ ,\t]{2,}/).length >= 2;
+
+  // If only a single plain value pasted inside a regular input, allow default typing behavior
+  if (!isMultiLine && !isMultiCol) return;
+
+  e.preventDefault();
+
+  const target = e.target;
+  const targetCol = target?.getAttribute('data-col') || 'name';
+  const targetRowIdx = parseInt(target?.getAttribute('data-index') || '0', 10) || 0;
+
+  await processPastedTextOnCandidatesTable(text, targetRowIdx, targetCol);
+}
+
+async function processPastedTextOnCandidatesTable(text, startRowIdx = 0, targetCol = 'name') {
+  let rawLines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+  if (rawLines.length === 0) return;
+
+  // Filter out table headers if copied together
+  const firstLine = rawLines[0].toLowerCase();
+  if (firstLine.includes('ល.រ') || firstLine.includes('ឈ្មោះ') || firstLine.includes('កូដ') || firstLine.includes('ភេទ') || firstLine.includes('name') || firstLine.includes('gender')) {
+    rawLines.shift();
+  }
+  if (rawLines.length === 0) return;
+
+  const list = getFilteredCandidatesList();
+  if (list.length === 0) {
+    showToast('ពុំមានបញ្ជីបេក្ខជនសម្រាប់បិទភ្ជាប់ (Paste) ឡើយ!', 'error');
+    return;
+  }
+
+  const updates = [];
+  const isTrainer = state.user && state.user.role === 'Trainer';
+  const hasTabsOrMultiCols = rawLines[0].includes('\t') || rawLines[0].split(/[ \t]{2,}/).length >= 2;
+
+  rawLines.forEach((line, i) => {
+    const rowIdx = startRowIdx + i;
+    if (rowIdx >= list.length) return;
+    const cand = list[rowIdx];
+    if (isTrainer && cand.district !== state.user.district) return;
+
+    const candUpdate = { id: cand.id };
+
+    if (!hasTabsOrMultiCols) {
+      // Single column paste directly down targetCol
+      const val = line.trim();
+      if (targetCol === 'gender') {
+        candUpdate.gender = (val === 'ស' || val === 'F' || val === 'ស្រី') ? 'ស' : 'ប';
+      } else if (targetCol === 'scoreDegree') {
+        candUpdate.scoreDegree = Math.min(5, Math.max(0, Number(val) || 0));
+      } else if (targetCol === 'scoreExp') {
+        candUpdate.scoreExp = Math.min(15, Math.max(0, Number(val) || 0));
+      } else if (targetCol === 'scoreQcm') {
+        candUpdate.scoreQcm = val;
+      } else if (targetCol === 'scorePc') {
+        candUpdate.scorePc = val;
+      } else if (targetCol === 'dob') {
+        candUpdate.dob = val;
+      } else if (targetCol === 'candidateCode') {
+        candUpdate.candidateCode = val.toUpperCase();
+      } else {
+        candUpdate.name = val;
+      }
+    } else {
+      // Multi-column paste
+      let parts = line.split('\t');
+      if (parts.length < 2) parts = line.split(/[ \t]{2,}/);
+
+      // If first column is sequence number (1, 2, 3...) and more than 2 columns exist, remove the sequence number
+      if (parts.length >= 3 && /^\d+$/.test(parts[0].trim()) && parts[1].trim() !== 'ប' && parts[1].trim() !== 'ស') {
+        parts.shift();
+      }
+
+      // Column sequence mapping
+      const colSequence = (targetCol === 'candidateCode') 
+        ? ['candidateCode', 'name', 'gender', 'dob', 'scoreDegree', 'scoreExp', 'scoreQcm', 'scorePc']
+        : (targetCol === 'dob')
+        ? ['dob', 'scoreDegree', 'scoreExp']
+        : (targetCol === 'scoreDegree')
+        ? ['scoreDegree', 'scoreExp']
+        : ['name', 'gender', 'dob', 'scoreDegree', 'scoreExp'];
+
+      parts.forEach((partVal, pIdx) => {
+        if (pIdx < colSequence.length) {
+          const col = colSequence[pIdx];
+          const val = partVal.trim();
+          if (col === 'gender') {
+            candUpdate.gender = (val === 'ស' || val === 'F' || val === 'ស្រី') ? 'ស' : 'ប';
+          } else if (col === 'scoreDegree') {
+            candUpdate.scoreDegree = Math.min(5, Math.max(0, Number(val) || 0));
+          } else if (col === 'scoreExp') {
+            candUpdate.scoreExp = Math.min(15, Math.max(0, Number(val) || 0));
+          } else if (col === 'scoreQcm') {
+            candUpdate.scoreQcm = val;
+          } else if (col === 'scorePc') {
+            candUpdate.scorePc = val;
+          } else if (col === 'dob') {
+            candUpdate.dob = val;
+          } else if (col === 'candidateCode') {
+            candUpdate.candidateCode = val.toUpperCase();
+          } else if (col === 'name') {
+            candUpdate.name = val;
+          }
+        }
+      });
+    }
+
+    updates.push(candUpdate);
+  });
+
+  if (updates.length === 0) {
+    showToast('ពុំមានទិន្នន័យសមស្របសម្រាប់បិទភ្ជាប់ (Paste) ឡើយ!', 'error');
+    return;
+  }
+
+  showToast(`កំពុងដំណើរការបិទភ្ជាប់ទិន្នន័យ ${updates.length} ជួរពី Excel...`, 'info');
+
+  try {
+    const res = await api('/api/candidates/batch-update', {
+      method: 'POST',
+      body: JSON.stringify({ updates })
+    });
+
+    if (res.success) {
+      showToast(`បានបិទភ្ជាប់ (Paste) ផ្ទាល់ពី Excel និងរក្សាទុកចំនួន ${updates.length} ជួរដោយជោគជ័យ!`, 'success');
+      const candRes = await api('/api/candidates');
+      if (candRes.success) {
+        state.candidates = candRes.candidates;
+        renderCandidatesTable();
+      }
+    } else {
+      showToast(res.message || 'បរាជ័យក្នុងការបិទភ្ជាប់ទិន្នន័យ!', 'error');
+    }
+  } catch (err) {
+    showToast(err.message || 'មានបញ្ហាក្នុងការរក្សាទុកទិន្នន័យ!', 'error');
   }
 }
 
@@ -1510,13 +1808,160 @@ async function deleteCandidate(candId) {
 }
 
 // ==============================================================================
-// 3. OFFICIAL TABULATION REPORT (PRINT-READY)
+// 3. OFFICIAL TABULATION REPORT (PRINT-READY EXACT EXCEL REPLICA)
 // ==============================================================================
+
+// Helper: Convert number to Roman numerals (I, II, III, IV, V...)
+function toRoman(num) {
+  const romanMap = [
+    [10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I']
+  ];
+  let n = parseInt(num, 10);
+  if (isNaN(n) || n <= 0) return '';
+  let result = '';
+  for (const [val, sym] of romanMap) {
+    while (n >= val) {
+      result += sym;
+      n -= val;
+    }
+  }
+  return result;
+}
+
+// Helper: Convert English/Arabic digits to Khmer numerals (0 -> ០, 1 -> ១...)
+function toKhmerNumber(val) {
+  if (val === null || val === undefined || val === '') return '';
+  const khmerDigits = ['០', '១', '២', '៣', '៤', '៥', '៦', '៧', '៨', '៩'];
+  return String(val).replace(/[0-9]/g, d => khmerDigits[parseInt(d, 10)]);
+}
+
+// Khmer month dictionary for DOB formatting (e.g. 05-05-1966 -> ០៥-ឧសភា-១៩៦៦)
+const KHMER_MONTHS_MAP = {
+  '01': 'មករា', '1': 'មករា',
+  '02': 'កុម្ភៈ', '2': 'កុម្ភៈ',
+  '03': 'មីនា', '3': 'មីនា',
+  '04': 'មេសា', '4': 'មេសា',
+  '05': 'ឧសភា', '5': 'ឧសភា',
+  '06': 'មិថុនា', '6': 'មិថុនា',
+  '07': 'កក្កដា', '7': 'កក្កដា',
+  '08': 'សីហា', '8': 'សីហា',
+  '09': 'កញ្ញា', '9': 'កញ្ញា',
+  '10': 'តុលា',
+  '11': 'វិច្ឆិកា',
+  '12': 'ធ្នូ'
+};
+
+function formatDobKhmer(dobStr) {
+  if (!dobStr) return '';
+  let parts = String(dobStr).trim().split(/[-/]/);
+  if (parts.length === 3) {
+    let d, m, y;
+    if (parts[0].length === 4) {
+      // YYYY-MM-DD
+      y = parts[0];
+      m = parts[1].padStart(2, '0');
+      d = parts[2].padStart(2, '0');
+    } else {
+      // DD-MM-YYYY
+      d = parts[0].padStart(2, '0');
+      m = parts[1].padStart(2, '0');
+      y = parts[2];
+    }
+    const monthName = KHMER_MONTHS_MAP[m] || m;
+    return `${toKhmerNumber(d)}-${monthName}-${toKhmerNumber(y)}`;
+  }
+  return toKhmerNumber(dobStr);
+}
+
+// Render District Sheet Tabs (01 អង្គរបូរី, 02 បាទី...)
+function renderTabDistrictSheetBar() {
+  const container = document.getElementById('tabDistrictSheetBar');
+  if (!container) return;
+
+  const activeDist = state.tabReport.district || (state.districts[0] ? state.districts[0].name : '');
+
+  let html = `
+    <div class="excel-sheet-nav-arrows">
+      <button class="excel-nav-btn" onclick="scrollTabDistrictSheetBar(-100)" title="រំកិលទៅឆ្វេង">◀</button>
+      <button class="excel-nav-btn" onclick="scrollTabDistrictSheetBar(100)" title="រំកិលទៅស្តាំ">▶</button>
+    </div>
+  `;
+
+  state.districts.forEach(dist => {
+    const isActive = (dist.name === activeDist);
+    html += `
+      <div class="excel-sheet-tab ${isActive ? 'active' : ''}" onclick="setTabReportDistrict('${dist.name}')">
+        <span>${dist.code} ${dist.name}</span>
+        <span class="excel-sheet-tab-badge">${dist.communeCount} ឃុំ</span>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+}
+
+function scrollTabDistrictSheetBar(delta) {
+  const container = document.getElementById('tabDistrictSheetBar');
+  if (container) container.scrollBy({ left: delta, behavior: 'smooth' });
+}
+
+function setTabReportDistrict(distName) {
+  state.tabReport.district = distName;
+  const distSelect = document.getElementById('tabReportDistrict');
+  if (distSelect) distSelect.value = distName;
+  updateCommuneDropdowns();
+  renderTabulationSheet();
+}
+
+// Reorganize / Sort List (ប៊ូតុង "រៀបចំបញ្ជី")
+function reorganizeTabulationList() {
+  state.candidates.sort((a, b) => {
+    if (a.communeCode !== b.communeCode) {
+      return a.communeCode.localeCompare(b.communeCode);
+    }
+    if (a.roleCode !== b.roleCode) {
+      return a.roleCode.localeCompare(b.roleCode);
+    }
+    return (Number(b.scoreTotal) || 0) - (Number(a.scoreTotal) || 0);
+  });
+
+  const groups = {};
+  state.candidates.forEach(c => {
+    const key = `${c.communeCode}_${c.roleCode}`;
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(c);
+  });
+
+  Object.values(groups).forEach(list => {
+    list.forEach((cand, idx) => {
+      cand.rank = idx + 1;
+      if (idx === 0) {
+        cand.status = 'A-ជាប់';
+      } else if (idx === 1) {
+        cand.status = 'B-បម្រុង';
+      } else {
+        cand.status = 'ធ្លាក់';
+      }
+    });
+  });
+
+  renderTabulationSheet();
+  showToast('បានរៀបចំ និងតម្រៀបបញ្ជីបេក្ខជនតាមពិន្ទុរួចរាល់!', 'success');
+}
+
+// Render Continuous Official Tabulation Table
 function renderTabulationSheet() {
-  const districtName = state.tabReport.district || state.districts[0].name;
+  const districtName = state.tabReport.district || (state.districts[0] ? state.districts[0].name : 'អង្គរបូរី');
   const communeCode = state.tabReport.communeCode;
 
-  document.getElementById('tabReportDistrictTitle').textContent = `ស្រុក${districtName} នៃខេត្តតាកែវ`;
+  // Title: Underlined district name
+  const titleEl = document.getElementById('tabReportDistrictTitle');
+  if (titleEl) {
+    titleEl.textContent = `ស្រុក${districtName} នៃខេត្តតាកែវ`;
+  }
+
+  // Update sheet tabs bar
+  renderTabDistrictSheetBar();
 
   let communesInDist = state.communes.filter(k => k.district === districtName);
   if (communeCode && communeCode !== 'all') {
@@ -1524,143 +1969,273 @@ function renderTabulationSheet() {
   }
 
   const container = document.getElementById('tabulationTableContainer');
-  container.innerHTML = '';
+  if (!container) return;
 
-  communesInDist.forEach(comm => {
+  let tableHtml = `
+    <table class="excel-official-table">
+      <thead>
+        <tr>
+          <th rowspan="2" style="width:40px;">ល.រ</th>
+          <th rowspan="2" style="width:170px;">គោត្តនាម និងនាម</th>
+          <th rowspan="2" style="width:45px;">ភេទ</th>
+          <th rowspan="2" style="width:125px;">ថ្ងៃ ខែ ឆ្នាំកំណើត</th>
+          <th colspan="4">ពិន្ទុ</th>
+          <th rowspan="2" style="width:80px;">សរុបពិន្ទុ</th>
+          <th rowspan="2" style="width:85px;">ចំណាត់ថ្នាក់</th>
+          <th rowspan="2" style="width:70px;">ផ្សេងៗ</th>
+        </tr>
+        <tr>
+          <th style="width:65px;">សញ្ញាបត្រ</th>
+          <th style="width:75px;">បទពិសោធន៍</th>
+          <th style="width:85px;">សរសេរ QCM</th>
+          <th style="width:95px;">ធ្វើតេស្តកុំព្យូទ័រ</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  if (communesInDist.length === 0) {
+    tableHtml += `
+      <tr>
+        <td colspan="11" style="padding:20px; color:#64748B;">គ្មានទិន្នន័យឃុំសម្រាប់ស្រុកនេះទេ</td>
+      </tr>
+    `;
+  }
+
+  communesInDist.forEach((comm, commIdx) => {
     const commCands = state.candidates.filter(c => c.communeCode === comm.code);
+    const roman = comm.romanOrder || toRoman(commIdx + 1);
+    const cleanCommName = comm.name.replace(/^ឃុំ|^សង្កាត់/, '').trim();
+    const commPrefix = districtName === 'ដូនកែវ' ? 'សង្កាត់' : 'ឃុំ';
+    const commCodeKhmer = toKhmerNumber(comm.code);
 
-    let html = `
-      <div style="margin-bottom:25px; page-break-inside:avoid;">
-        <div style="font-weight:700; font-size:0.95rem; margin-bottom:6px; color:var(--primary);">
-          ${comm.fullName || comm.name}
-        </div>
-        <table class="paper-table">
-          <thead>
-            <tr>
-              <th rowspan="2" style="width:35px;">ល.រ</th>
-              <th rowspan="2">គោត្តនាម និងនាម</th>
-              <th rowspan="2" style="width:40px;">ភេទ</th>
-              <th rowspan="2" style="width:90px;">ថ្ងៃ ខែ ឆ្នាំកំណើត</th>
-              <th colspan="4">ពិន្ទុ</th>
-              <th rowspan="2" style="width:60px;">សរុបពិន្ទុ</th>
-              <th rowspan="2" style="width:65px;">ចំណាត់ថ្នាក់</th>
-              <th rowspan="2" style="width:75px;">លទ្ធផល</th>
-            </tr>
-            <tr>
-              <th style="width:60px;">សញ្ញាបត្រ</th>
-              <th style="width:65px;">បទពិសោធន៍</th>
-              <th style="width:75px;">សរសេរ QCM</th>
-              <th style="width:80px;">ធ្វើតេស្តកុំព្យូទ័រ</th>
-            </tr>
-          </thead>
-          <tbody>
+    // 1. Commune Banner Row (e.g. I | ឃុំអង្គរបូរី (០០១))
+    tableHtml += `
+      <tr class="commune-banner-row">
+        <td>${roman}</td>
+        <td colspan="10">${commPrefix}${cleanCommName} (${commCodeKhmer})</td>
+      </tr>
     `;
 
-    // 1. ប្រធាន
+    // 2. Role 1: មុខតំណែងប្រធាន ក.ច.ប
     const prathanList = commCands.filter(c => c.roleCode === 'a');
-    html += `
-      <tr style="background:#F1F5F9; font-weight:700;">
-        <td style="text-align:center;">I</td>
-        <td colspan="10" style="text-align:left; padding-left:10px;">មុខតំណែងប្រធាន ក.ច.ប</td>
+    tableHtml += `
+      <tr class="role-banner-row">
+        <td colspan="11">មុខតំណែងប្រធាន ក.ច.ប</td>
       </tr>
     `;
-    if (prathanList.length === 0) {
-      html += `<tr><td colspan="11" style="text-align:center; color:#94A3B8;">(គ្មានបេក្ខជន)</td></tr>`;
-    } else {
+
+    if (prathanList.length > 0) {
       prathanList.forEach((c, idx) => {
-        html += `
+        tableHtml += `
           <tr>
-            <td>${idx + 1}</td>
+            <td>${toKhmerNumber(idx + 1)}</td>
             <td style="text-align:left; padding-left:8px; font-weight:600;">${c.name}</td>
-            <td>${c.gender}</td>
-            <td>${c.dob || '-'}</td>
-            <td>${c.scoreDegree}</td>
-            <td>${c.scoreExp}</td>
-            <td>${c.scoreQcm}</td>
-            <td>-</td>
-            <td style="font-weight:700;">${c.scoreTotal}</td>
-            <td>${c.rank}</td>
-            <td style="font-weight:700;">${c.status}</td>
+            <td>${c.gender || ''}</td>
+            <td>${formatDobKhmer(c.dob)}</td>
+            <td>${c.scoreDegree !== undefined && c.scoreDegree !== null && c.scoreDegree !== '' ? c.scoreDegree : ''}</td>
+            <td>${c.scoreExp !== undefined && c.scoreExp !== null && c.scoreExp !== '' ? c.scoreExp : ''}</td>
+            <td>${c.scoreQcm !== undefined && c.scoreQcm !== null && c.scoreQcm !== '' ? Number(c.scoreQcm).toFixed(2) : ''}</td>
+            <td class="excel-x-cell"></td>
+            <td style="font-weight:700;">${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
+            <td style="font-weight:700;">${c.status || ''}</td>
+            <td>${c.notes || ''}</td>
           </tr>
         `;
       });
+      // Add empty template row like Excel if candidates < 2
+      if (prathanList.length < 2) {
+        tableHtml += `
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="excel-x-cell"></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        `;
+      }
+    } else {
+      for (let k = 0; k < 2; k++) {
+        tableHtml += `
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="excel-x-cell"></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        `;
+      }
     }
 
-    // 2. ការីកុំព្យូទ័រ
+    // 3. Role 2: មុខតំណែងសមាជិក ក.ច.ប ការីកុំព្យូទ័រ
     const pcList = commCands.filter(c => c.roleCode === 'c');
-    html += `
-      <tr style="background:#F1F5F9; font-weight:700;">
-        <td style="text-align:center;">II</td>
-        <td colspan="10" style="text-align:left; padding-left:10px;">មុខតំណែងសមាជិក ក.ច.ប ជាការីកុំព្យូទ័រ</td>
+    tableHtml += `
+      <tr class="role-banner-row">
+        <td colspan="11">មុខតំណែងសមាជិក ក.ច.ប ការីកុំព្យូទ័រ</td>
       </tr>
     `;
-    if (pcList.length === 0) {
-      html += `<tr><td colspan="11" style="text-align:center; color:#94A3B8;">(គ្មានបេក្ខជន)</td></tr>`;
-    } else {
+
+    if (pcList.length > 0) {
       pcList.forEach((c, idx) => {
-        html += `
+        tableHtml += `
           <tr>
-            <td>${idx + 1}</td>
+            <td>${toKhmerNumber(idx + 1)}</td>
             <td style="text-align:left; padding-left:8px; font-weight:600;">${c.name}</td>
-            <td>${c.gender}</td>
-            <td>${c.dob || '-'}</td>
-            <td>-</td>
-            <td>${c.scoreExp}</td>
-            <td>-</td>
-            <td>${c.scorePc}</td>
-            <td style="font-weight:700;">${c.scoreTotal}</td>
-            <td>${c.rank}</td>
-            <td style="font-weight:700;">${c.status}</td>
+            <td>${c.gender || ''}</td>
+            <td>${formatDobKhmer(c.dob)}</td>
+            <td class="excel-x-cell"></td>
+            <td>${c.scoreExp !== undefined && c.scoreExp !== null && c.scoreExp !== '' ? c.scoreExp : ''}</td>
+            <td class="excel-x-cell"></td>
+            <td>${c.scorePc !== undefined && c.scorePc !== null && c.scorePc !== '' ? Number(c.scorePc).toFixed(2) : ''}</td>
+            <td style="font-weight:700;">${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
+            <td style="font-weight:700;">${c.status || ''}</td>
+            <td>${c.notes || ''}</td>
           </tr>
         `;
       });
+      // Add empty template row if candidates < 2
+      if (pcList.length < 2) {
+        tableHtml += `
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="excel-x-cell"></td>
+            <td></td>
+            <td class="excel-x-cell"></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        `;
+      }
+    } else {
+      for (let k = 0; k < 2; k++) {
+        tableHtml += `
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="excel-x-cell"></td>
+            <td></td>
+            <td class="excel-x-cell"></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        `;
+      }
     }
 
-    // 3. ជំនួយការអនុ
+    // 4. Role 3 (Optional): មុខតំណែងសមាជិក ក.ច.ប ដែលជួយការងារអនុប្រធាន ក.ច.ប
     const jumList = commCands.filter(c => c.roleCode === 'b');
     if (jumList.length > 0) {
-      html += `
-        <tr style="background:#F1F5F9; font-weight:700;">
-          <td style="text-align:center;">III</td>
-          <td colspan="10" style="text-align:left; padding-left:10px;">មុខតំណែងសមាជិក ក.ច.ប ដែលជួយការងារអនុប្រធាន ក.ច.ប</td>
+      tableHtml += `
+        <tr class="role-banner-row">
+          <td colspan="11">មុខតំណែងសមាជិក ក.ច.ប ដែលជួយការងារអនុប្រធាន ក.ច.ប</td>
         </tr>
       `;
       jumList.forEach((c, idx) => {
-        html += `
+        tableHtml += `
           <tr>
-            <td>${idx + 1}</td>
+            <td>${toKhmerNumber(idx + 1)}</td>
             <td style="text-align:left; padding-left:8px; font-weight:600;">${c.name}</td>
-            <td>${c.gender}</td>
-            <td>${c.dob || '-'}</td>
-            <td>${c.scoreDegree}</td>
-            <td>${c.scoreExp}</td>
-            <td>${c.scoreQcm}</td>
-            <td>-</td>
-            <td style="font-weight:700;">${c.scoreTotal}</td>
-            <td>${c.rank}</td>
-            <td style="font-weight:700;">${c.status}</td>
+            <td>${c.gender || ''}</td>
+            <td>${formatDobKhmer(c.dob)}</td>
+            <td>${c.scoreDegree !== undefined && c.scoreDegree !== null && c.scoreDegree !== '' ? c.scoreDegree : ''}</td>
+            <td>${c.scoreExp !== undefined && c.scoreExp !== null && c.scoreExp !== '' ? c.scoreExp : ''}</td>
+            <td>${c.scoreQcm !== undefined && c.scoreQcm !== null && c.scoreQcm !== '' ? Number(c.scoreQcm).toFixed(2) : ''}</td>
+            <td class="excel-x-cell"></td>
+            <td style="font-weight:700;">${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
+            <td style="font-weight:700;">${c.status || ''}</td>
+            <td>${c.notes || ''}</td>
           </tr>
         `;
       });
     }
-
-    html += `
-          </tbody>
-        </table>
-      </div>
-    `;
-    container.innerHTML += html;
   });
+
+  tableHtml += `
+      </tbody>
+    </table>
+  `;
+
+  container.innerHTML = tableHtml;
 }
 
 // ==============================================================================
-// 4. OFFICIAL RESULTS REPORT
+// 4. OFFICIAL RESULTS REPORT (PRINT-READY EXACT EXCEL REPLICA)
 // ==============================================================================
+
+// Render District Sheet Tabs for Results
+function renderResDistrictSheetBar() {
+  const container = document.getElementById('resDistrictSheetBar');
+  if (!container) return;
+
+  const activeDist = state.resultReport.district || (state.districts[0] ? state.districts[0].name : '');
+
+  let html = `
+    <div class="excel-sheet-nav-arrows">
+      <button class="excel-nav-btn" onclick="scrollResDistrictSheetBar(-100)" title="រំកិលទៅឆ្វេង">◀</button>
+      <button class="excel-nav-btn" onclick="scrollResDistrictSheetBar(100)" title="រំកិលទៅស្តាំ">▶</button>
+    </div>
+  `;
+
+  state.districts.forEach(dist => {
+    const isActive = (dist.name === activeDist);
+    html += `
+      <div class="excel-sheet-tab ${isActive ? 'active' : ''}" onclick="setResReportDistrict('${dist.name}')">
+        <span>${dist.code} ${dist.name}</span>
+        <span class="excel-sheet-tab-badge">${dist.communeCount} ឃុំ</span>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+}
+
+function scrollResDistrictSheetBar(delta) {
+  const container = document.getElementById('resDistrictSheetBar');
+  if (container) container.scrollBy({ left: delta, behavior: 'smooth' });
+}
+
+function setResReportDistrict(distName) {
+  state.resultReport.district = distName;
+  const distSelect = document.getElementById('resultReportDistrict');
+  if (distSelect) distSelect.value = distName;
+  updateCommuneDropdowns();
+  renderResultsSheet();
+}
+
 function renderResultsSheet() {
-  const districtName = state.resultReport.district || state.districts[0].name;
+  const districtName = state.resultReport.district || (state.districts[0] ? state.districts[0].name : 'អង្គរបូរី');
   const communeCode = state.resultReport.communeCode;
 
-  document.getElementById('resultReportDistrictTitle').textContent = `ស្រុក${districtName} នៃខេត្តតាកែវ`;
+  const titleEl = document.getElementById('resultReportDistrictTitle');
+  if (titleEl) {
+    titleEl.textContent = `ស្រុក${districtName} នៃខេត្តតាកែវ`;
+  }
+
+  // Update sheet tabs bar
+  renderResDistrictSheetBar();
 
   let communesInDist = state.communes.filter(k => k.district === districtName);
   if (communeCode && communeCode !== 'all') {
@@ -1668,106 +2243,159 @@ function renderResultsSheet() {
   }
 
   const container = document.getElementById('resultsTableContainer');
-  container.innerHTML = '';
+  if (!container) return;
 
-  communesInDist.forEach(comm => {
+  let tableHtml = `
+    <table class="excel-official-table">
+      <thead>
+        <tr>
+          <th style="width:45px;">ល.រ</th>
+          <th style="width:200px;">គោត្តនាម និងនាម</th>
+          <th style="width:50px;">ភេទ</th>
+          <th style="width:140px;">ថ្ងៃ ខែ ឆ្នាំកំណើត</th>
+          <th style="width:90px;">សរុបពិន្ទុ</th>
+          <th style="width:90px;">ចំណាត់ថ្នាក់</th>
+          <th style="width:100px;">លទ្ធផល</th>
+          <th style="width:90px;">ផ្សេងៗ</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  if (communesInDist.length === 0) {
+    tableHtml += `
+      <tr>
+        <td colspan="8" style="padding:20px; color:#64748B;">គ្មានទិន្នន័យឃុំសម្រាប់ស្រុកនេះទេ</td>
+      </tr>
+    `;
+  }
+
+  communesInDist.forEach((comm, commIdx) => {
     const commCands = state.candidates.filter(c => c.communeCode === comm.code);
+    const roman = comm.romanOrder || toRoman(commIdx + 1);
+    const cleanCommName = comm.name.replace(/^ឃុំ|^សង្កាត់/, '').trim();
+    const commPrefix = districtName === 'ដូនកែវ' ? 'សង្កាត់' : 'ឃុំ';
+    const commCodeKhmer = toKhmerNumber(comm.code);
 
-    let html = `
-      <div style="margin-bottom:25px; page-break-inside:avoid;">
-        <div style="font-weight:700; font-size:0.95rem; margin-bottom:6px; color:var(--primary);">
-          ${comm.fullName || comm.name}
-        </div>
-        <table class="paper-table">
-          <thead>
-            <tr>
-              <th style="width:40px;">ល.រ</th>
-              <th>គោត្តនាម និងនាម</th>
-              <th style="width:45px;">ភេទ</th>
-              <th style="width:95px;">ថ្ងៃ ខែ ឆ្នាំកំណើត</th>
-              <th style="width:65px;">សរុបពិន្ទុ</th>
-              <th style="width:70px;">ចំណាត់ថ្នាក់</th>
-              <th style="width:85px;">លទ្ធផល</th>
-            </tr>
-          </thead>
-          <tbody>
+    // 1. Commune Banner Row
+    tableHtml += `
+      <tr class="commune-banner-row">
+        <td>${roman}</td>
+        <td colspan="7">${commPrefix}${cleanCommName} (${commCodeKhmer})</td>
+      </tr>
     `;
 
-    // ប្រធាន
+    // 2. Role 1: មុខតំណែងប្រធាន ក.ច.ប
     const prathanList = commCands.filter(c => c.roleCode === 'a');
-    html += `
-      <tr style="background:#F1F5F9; font-weight:700;">
-        <td style="text-align:center;">I</td>
-        <td colspan="6" style="text-align:left; padding-left:10px;">មុខតំណែងប្រធាន ក.ច.ប</td>
+    tableHtml += `
+      <tr class="role-banner-row">
+        <td colspan="8">មុខតំណែងប្រធាន ក.ច.ប</td>
       </tr>
     `;
-    prathanList.forEach((c, idx) => {
-      html += `
-        <tr>
-          <td>${idx + 1}</td>
-          <td style="text-align:left; padding-left:8px; font-weight:600;">${c.name}</td>
-          <td>${c.gender}</td>
-          <td>${c.dob || '-'}</td>
-          <td style="font-weight:700;">${c.scoreTotal}</td>
-          <td>${c.rank}</td>
-          <td style="font-weight:700;">${c.status}</td>
-        </tr>
-      `;
-    });
 
-    // ការី
+    if (prathanList.length > 0) {
+      prathanList.forEach((c, idx) => {
+        tableHtml += `
+          <tr>
+            <td>${toKhmerNumber(idx + 1)}</td>
+            <td style="text-align:left; padding-left:8px; font-weight:600;">${c.name}</td>
+            <td>${c.gender || ''}</td>
+            <td>${formatDobKhmer(c.dob)}</td>
+            <td style="font-weight:700;">${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
+            <td style="font-weight:700;">${toKhmerNumber(c.rank || idx + 1)}</td>
+            <td style="font-weight:700; color:${c.status === 'A-ជាប់' ? '#047857' : c.status === 'B-បម្រុង' ? '#0284C7' : '#DC2626'};">${c.status || ''}</td>
+            <td>${c.notes || ''}</td>
+          </tr>
+        `;
+      });
+      if (prathanList.length < 2) {
+        tableHtml += `
+          <tr>
+            <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+          </tr>
+        `;
+      }
+    } else {
+      for (let k = 0; k < 2; k++) {
+        tableHtml += `
+          <tr>
+            <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+          </tr>
+        `;
+      }
+    }
+
+    // 3. Role 2: មុខតំណែងសមាជិក ក.ច.ប ការីកុំព្យូទ័រ
     const pcList = commCands.filter(c => c.roleCode === 'c');
-    html += `
-      <tr style="background:#F1F5F9; font-weight:700;">
-        <td style="text-align:center;">II</td>
-        <td colspan="6" style="text-align:left; padding-left:10px;">មុខតំណែងសមាជិក ក.ច.ប ជាការីកុំព្យូទ័រ</td>
+    tableHtml += `
+      <tr class="role-banner-row">
+        <td colspan="8">មុខតំណែងសមាជិក ក.ច.ប ការីកុំព្យូទ័រ</td>
       </tr>
     `;
-    pcList.forEach((c, idx) => {
-      html += `
-        <tr>
-          <td>${idx + 1}</td>
-          <td style="text-align:left; padding-left:8px; font-weight:600;">${c.name}</td>
-          <td>${c.gender}</td>
-          <td>${c.dob || '-'}</td>
-          <td style="font-weight:700;">${c.scoreTotal}</td>
-          <td>${c.rank}</td>
-          <td style="font-weight:700;">${c.status}</td>
-        </tr>
-      `;
-    });
 
-    // ជំនួយការអនុ
+    if (pcList.length > 0) {
+      pcList.forEach((c, idx) => {
+        tableHtml += `
+          <tr>
+            <td>${toKhmerNumber(idx + 1)}</td>
+            <td style="text-align:left; padding-left:8px; font-weight:600;">${c.name}</td>
+            <td>${c.gender || ''}</td>
+            <td>${formatDobKhmer(c.dob)}</td>
+            <td style="font-weight:700;">${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
+            <td style="font-weight:700;">${toKhmerNumber(c.rank || idx + 1)}</td>
+            <td style="font-weight:700; color:${c.status === 'A-ជាប់' ? '#047857' : c.status === 'B-បម្រុង' ? '#0284C7' : '#DC2626'};">${c.status || ''}</td>
+            <td>${c.notes || ''}</td>
+          </tr>
+        `;
+      });
+      if (pcList.length < 2) {
+        tableHtml += `
+          <tr>
+            <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+          </tr>
+        `;
+      }
+    } else {
+      for (let k = 0; k < 2; k++) {
+        tableHtml += `
+          <tr>
+            <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+          </tr>
+        `;
+      }
+    }
+
+    // 4. Role 3 (Optional): មុខតំណែងសមាជិក ក.ច.ប ដែលជួយការងារអនុប្រធាន ក.ច.ប
     const jumList = commCands.filter(c => c.roleCode === 'b');
     if (jumList.length > 0) {
-      html += `
-        <tr style="background:#F1F5F9; font-weight:700;">
-          <td style="text-align:center;">III</td>
-          <td colspan="6" style="text-align:left; padding-left:10px;">មុខតំណែងសមាជិក ក.ច.ប ដែលជួយការងារអនុប្រធាន ក.ច.ប</td>
+      tableHtml += `
+        <tr class="role-banner-row">
+          <td colspan="8">មុខតំណែងសមាជិក ក.ច.ប ដែលជួយការងារអនុប្រធាន ក.ច.ប</td>
         </tr>
       `;
       jumList.forEach((c, idx) => {
-        html += `
+        tableHtml += `
           <tr>
-            <td>${idx + 1}</td>
+            <td>${toKhmerNumber(idx + 1)}</td>
             <td style="text-align:left; padding-left:8px; font-weight:600;">${c.name}</td>
-            <td>${c.gender}</td>
-            <td>${c.dob || '-'}</td>
-            <td style="font-weight:700;">${c.scoreTotal}</td>
-            <td>${c.rank}</td>
-            <td style="font-weight:700;">${c.status}</td>
+            <td>${c.gender || ''}</td>
+            <td>${formatDobKhmer(c.dob)}</td>
+            <td style="font-weight:700;">${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
+            <td style="font-weight:700;">${toKhmerNumber(c.rank || idx + 1)}</td>
+            <td style="font-weight:700; color:${c.status === 'A-ជាប់' ? '#047857' : c.status === 'B-បម្រុង' ? '#0284C7' : '#DC2626'};">${c.status || ''}</td>
+            <td>${c.notes || ''}</td>
           </tr>
         `;
       });
     }
-
-    html += `
-          </tbody>
-        </table>
-      </div>
-    `;
-    container.innerHTML += html;
   });
+
+  tableHtml += `
+      </tbody>
+    </table>
+  `;
+
+  container.innerHTML = tableHtml;
 }
 
 // ==============================================================================
