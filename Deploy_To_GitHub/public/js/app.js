@@ -2061,21 +2061,21 @@ function renderTabulationSheet() {
   let tableHtml = `
     <table class="excel-official-table">
       <thead>
-        <tr>
-          <th rowspan="2" style="width:40px;">ល.រ</th>
-          <th rowspan="2" style="width:170px;">គោត្តនាម និងនាម</th>
-          <th rowspan="2" style="width:45px;">ភេទ</th>
-          <th rowspan="2" style="width:125px;">ថ្ងៃ ខែ ឆ្នាំកំណើត</th>
-          <th colspan="4">ពិន្ទុ</th>
-          <th rowspan="2" style="width:80px;">សរុបពិន្ទុ</th>
-          <th rowspan="2" style="width:85px;">ចំណាត់ថ្នាក់</th>
-          <th rowspan="2" style="width:70px;">ផ្សេងៗ</th>
+        <tr style="font-size:10pt;">
+          <th rowspan="2" style="width:40px; font-size:10pt;">ល.រ</th>
+          <th rowspan="2" style="width:170px; font-size:10pt;">គោត្តនាម និងនាម</th>
+          <th rowspan="2" style="width:45px; font-size:10pt;">ភេទ</th>
+          <th rowspan="2" style="width:120px; font-size:10pt;">ថ្ងៃ ខែ ឆ្នាំកំណើត</th>
+          <th colspan="4" style="font-size:10pt;">ពិន្ទុ</th>
+          <th rowspan="2" style="width:80px; font-size:10pt;">សរុបពិន្ទុ</th>
+          <th rowspan="2" style="width:85px; font-size:10pt;">ចំណាត់ថ្នាក់</th>
+          <th rowspan="2" style="width:70px; font-size:10pt;">ផ្សេងៗ</th>
         </tr>
-        <tr>
-          <th style="width:65px;">សញ្ញាបត្រ</th>
-          <th style="width:75px;">បទពិសោធន៍</th>
-          <th style="width:85px;">សរសេរ QCM</th>
-          <th style="width:95px;">ធ្វើតេស្តកុំព្យូទ័រ</th>
+        <tr style="font-size:10pt;">
+          <th style="width:65px; font-size:10pt;">សញ្ញាបត្រ</th>
+          <th style="width:85px; font-size:10pt;">បទពិសោធន៍</th>
+          <th style="width:85px; font-size:10pt;">សរសេរ QCM</th>
+          <th style="width:105px; font-size:10pt;">ធ្វើតេស្តកុំព្យូទ័រ</th>
         </tr>
       </thead>
       <tbody>
@@ -2280,15 +2280,15 @@ function renderResultsSheet() {
   let tableHtml = `
     <table class="excel-official-table">
       <thead>
-        <tr>
-          <th style="width:45px;">ល.រ</th>
-          <th style="width:200px;">គោត្តនាម និងនាម</th>
-          <th style="width:50px;">ភេទ</th>
-          <th style="width:140px;">ថ្ងៃ ខែ ឆ្នាំកំណើត</th>
-          <th style="width:90px;">សរុបពិន្ទុ</th>
-          <th style="width:90px;">ចំណាត់ថ្នាក់</th>
-          <th style="width:100px;">លទ្ធផល</th>
-          <th style="width:90px;">ផ្សេងៗ</th>
+        <tr style="font-size:10pt;">
+          <th style="width:45px; font-size:10pt;">ល.រ</th>
+          <th style="width:200px; font-size:10pt;">គោត្តនាម និងនាម</th>
+          <th style="width:50px; font-size:10pt;">ភេទ</th>
+          <th style="width:140px; font-size:10pt;">ថ្ងៃ ខែ ឆ្នាំកំណើត</th>
+          <th style="width:90px; font-size:10pt;">សរុបពិន្ទុ</th>
+          <th style="width:90px; font-size:10pt;">ចំណាត់ថ្នាក់</th>
+          <th style="width:100px; font-size:10pt;">លទ្ធផល</th>
+          <th style="width:90px; font-size:10pt;">ផ្សេងៗ</th>
         </tr>
       </thead>
       <tbody>

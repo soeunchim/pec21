@@ -5,6 +5,26 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Moul&family=Siemreap&display=swap');
 
+@font-face {
+  font-family: 'Tacteing';
+  src: local('Tacteing'), local('TACTENG'), local('Khmer OS Tacteing'),
+       url('/fonts/TACTENG.TTF') format('truetype'),
+       url('../fonts/TACTENG.TTF') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.tacteing-symbol {
+  font-family: 'Tacteing', 'TACTENG', 'Khmer OS Tacteing', serif !important;
+  font-size: 24pt !important;
+  line-height: 0.8 !important;
+  text-align: center !important;
+  margin: 3px auto 5px !important;
+  display: block !important;
+  color: #000000 !important;
+  user-select: none;
+}
+
 :root {
   --primary: #1E3A8A;       /* Deep Election Blue */
   --primary-hover: #172554;
