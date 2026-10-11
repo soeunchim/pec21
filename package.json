@@ -1,0 +1,12 @@
+{
+  "name": "election-exam-score-mgt-takeo",
+  "version": "1.0.0",
+  "description": "ប្រព័ន្ធគ្រប់គ្រងបូកស្រង់ពិន្ទុប្រឡងជ្រើសរើស ក.ច.ប (PEC21 - ខេត្តតាកែវ)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": ["nec", "pec21", "exam", "score", "takeo"],
+  "author": "PEC21 Takeo",
+  "license": "ISC"
+}

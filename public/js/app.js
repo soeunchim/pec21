@@ -2178,6 +2178,24 @@ function renderTabulationSheet() {
     </table>
   `;
 
+  // Dynamic summary line below table (គម្រូតាមរូបទី៣)
+  let allTabCands = [];
+  communesInDist.forEach(comm => {
+    const cands = state.candidates.filter(c => c.communeCode === comm.code);
+    allTabCands.push(...cands);
+  });
+  const lastTabCand = allTabCands.length > 0 ? allTabCands[allTabCands.length - 1] : null;
+  const lastTabCandName = lastTabCand ? lastTabCand.name : '';
+  const totalTabCands = allTabCands.length;
+  const femTabCount = allTabCands.filter(c => c.gender === 'ស្រី' || c.gender === 'ស').length;
+  const femTabCountStr = String(femTabCount).padStart(2, '0');
+
+  tableHtml += `
+    <div style="color:#DC2626; font-weight:700; font-size:0.92rem; margin:10px 0 15px 4px; text-align:left;">
+      បញ្ឈប់បញ្ជីនេះត្រឹមឈ្មោះ: ${lastTabCandName} សរុប ${toKhmerNumber(totalTabCands)} នាក់ (ស្រី ${toKhmerNumber(femTabCountStr)} នាក់)
+    </div>
+  `;
+
   container.innerHTML = tableHtml;
 }
 
@@ -2393,6 +2411,24 @@ function renderResultsSheet() {
   tableHtml += `
       </tbody>
     </table>
+  `;
+
+  // Dynamic summary line below table (គម្រូតាមរូបទី៣)
+  let allResCands = [];
+  communesInDist.forEach(comm => {
+    const cands = state.candidates.filter(c => c.communeCode === comm.code);
+    allResCands.push(...cands);
+  });
+  const lastResCand = allResCands.length > 0 ? allResCands[allResCands.length - 1] : null;
+  const lastResCandName = lastResCand ? lastResCand.name : '';
+  const totalResCands = allResCands.length;
+  const femResCount = allResCands.filter(c => c.gender === 'ស្រី' || c.gender === 'ស').length;
+  const femResCountStr = String(femResCount).padStart(2, '0');
+
+  tableHtml += `
+    <div style="color:#DC2626; font-weight:700; font-size:0.92rem; margin:10px 0 15px 4px; text-align:left;">
+      បញ្ឈប់បញ្ជីនេះត្រឹមឈ្មោះ: ${lastResCandName} សរុប ${toKhmerNumber(totalResCands)} នាក់ (ស្រី ${toKhmerNumber(femResCountStr)} នាក់)
+    </div>
   `;
 
   container.innerHTML = tableHtml;
