@@ -450,13 +450,7 @@
               <select id="tabReportCommune" class="form-select" style="min-width:200px;"></select>
             </div>
           </div>
-          <div class="toolbar-group" style="display:flex; align-items:center; gap:8px;">
-            <button class="btn-excel-pill" onclick="reorganizeTabulationList()" title="រៀបចំ និងតម្រៀបបញ្ជីបេក្ខជន">
-              📋 រៀបចំបញ្ជី
-            </button>
-            <button class="btn-excel-pill" onclick="renderTabulationSheet()" title="បង្ហាញទិន្នន័យស្រង់ពិន្ទុ">
-              👁️ បង្ហាញ
-            </button>
+          <div class="toolbar-group">
             <button class="btn btn-primary" onclick="window.print()">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
               បោះពុម្ពតារាងស្រង់ពិន្ទុ (Print)
@@ -465,10 +459,10 @@
         </div>
 
         <div class="official-paper" id="tabulationPaper">
-          <!-- Top Header Grid (ដូចក្នុងគម្រូ Excel ពិតប្រាកដ) -->
-          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
+          <!-- Top Header Grid (ព្រះរាជាណាចក្រកម្ពុជា តម្រឹមកណ្តាលក្រដាស A4) -->
+          <div style="position:relative; margin-bottom:12px; min-height:130px;">
             <!-- Left: NEC / PEC -->
-            <div style="text-align:center; min-width:240px;">
+            <div style="position:absolute; left:0; top:0; text-align:center; min-width:240px;">
               <svg width="66" height="66" viewBox="0 0 100 100" style="margin:0 auto 6px; display:block;">
                 <circle cx="50" cy="50" r="46" fill="#F8FAFC" stroke="#1E3A8A" stroke-width="2.5"/>
                 <circle cx="50" cy="50" r="41" fill="none" stroke="#1E3A8A" stroke-width="1.2" stroke-dasharray="3,2"/>
@@ -482,8 +476,8 @@
               <div style="font-size:0.80rem;">អនុគណៈកម្មការរៀបចំការប្រឡងជ្រើសរើស</div>
             </div>
 
-            <!-- Right: Royal Motto -->
-            <div style="text-align:center; min-width:280px; margin-top:6px;">
+            <!-- Center of A4 Paper: Royal Kingdom & Motto -->
+            <div style="text-align:center; width:100%; padding-top:6px;">
               <h2 style="font-family:'Moul', serif; font-size:1.18rem; margin-bottom:4px;">ព្រះរាជាណាចក្រកម្ពុជា</h2>
               <h3 style="font-family:'Moul', serif; font-size:0.96rem; margin-bottom:2px;">ជាតិ សាសនា ព្រះមហាក្សត្រ</h3>
               <svg width="130" height="12" viewBox="0 0 130 12" style="margin:2px auto 0; display:block;">
@@ -494,37 +488,33 @@
           </div>
 
           <!-- Main Title -->
-          <div style="text-align:center; margin:12px 0 20px; position:relative;">
+          <div style="text-align:center; margin:12px 0 20px;">
             <h3 class="font-moul" style="font-size:1.15rem; margin-bottom:5px;">តារាងស្រង់ពិន្ទុបេក្ខជន</h3>
             <p style="font-size:0.92rem; font-weight:600; margin-bottom:3px;">ដែលបានដាក់ពាក្យប្រឡងតាមមុខតំណែងនីមួយៗសម្រាប់បម្រើការងារនៅក្នុងគណៈកម្មការឃុំសង្កាត់</p>
             <p style="font-size:0.96rem; font-weight:700; text-decoration:underline;" id="tabReportDistrictTitle">ស្រុកអង្គរបុរី នៃខេត្តតាកែវ</p>
-            <!-- Floating Excel action buttons on right side of paper -->
-            <div class="no-print" style="position:absolute; right:0; top:4px; display:flex; flex-direction:column; gap:6px;">
-              <button class="btn-excel-pill" onclick="reorganizeTabulationList()" title="រៀបចំ និងតម្រៀបបញ្ជីបេក្ខជន">
-                រៀបចំបញ្ជី
-              </button>
-              <button class="btn-excel-pill" onclick="renderTabulationSheet()" title="បង្ហាញទិន្នន័យស្រង់ពិន្ទុ">
-                បង្ហាញ
-              </button>
-            </div>
           </div>
 
           <div id="tabulationTableContainer"></div>
 
-          <div class="paper-signatures">
-            <div class="sig-box">
-              <div class="sig-title font-moul">អ្នកស្រង់ពិន្ទុ និងបូកសរុប</div>
-              <div style="font-weight:600;">.......................................</div>
+          <!-- Official Signatures Footer (គម្រូតាមរូបទី៣) -->
+          <div class="official-signatures-layout" style="display:flex; justify-content:space-between; align-items:flex-start; margin-top:20px; font-size:0.88rem; page-break-inside:avoid;">
+            <!-- Left: បានពិនិត្យត្រឹមត្រូវ -->
+            <div style="text-align:center; min-width:320px; line-height:1.65;">
+              <div style="font-family:'Moul', serif; font-size:0.92rem; margin-bottom:4px;">បានពិនិត្យត្រឹមត្រូវ</div>
+              <div style="font-size:0.84rem;">ថ្ងៃចន្ទ ៣កើត ខែភទ្របទ ឆ្នាំមមី អដ្ឋស័ក ព.ស.២៥៧០</div>
+              <div style="font-size:0.84rem; margin-bottom:4px;">តាកែវ ថ្ងៃទី១៤ ខែកញ្ញា ឆ្នាំ២០២៦</div>
+              <div style="font-family:'Moul', serif; font-size:0.88rem;">ជ.អនុគណៈកម្មការជ្រើសរើសថ្នាក់ខេត្ត</div>
+              <div style="font-family:'Moul', serif; font-size:0.88rem; margin-top:2px;">ប្រធាន</div>
             </div>
-            <div class="sig-box">
-              <div class="sig-title font-moul">បានពិនិត្យត្រឹមត្រូវ</div>
-              <div style="font-weight:600;">.......................................</div>
-            </div>
-            <div class="sig-box">
-              <div style="font-size:0.8rem; margin-bottom:4px;" id="tabSignDate">ថ្ងៃចន្ទ ៣កើត ខែភទ្របទ ឆ្នាំមមី អដ្ឋស័ក ព.ស.២៥៧០</div>
-              <div style="font-size:0.8rem; margin-bottom:12px;">តាកែវ ថ្ងៃទី១៤ ខែកញ្ញា ឆ្នាំ២០២៦</div>
-              <div class="sig-title font-moul">ជ.អនុគណៈកម្មការជ្រើសរើសថ្នាក់ខេត្ត<br>ប្រធាន</div>
-              <div style="font-weight:600;">.......................................</div>
+
+            <!-- Right: អ្នកស្រង់ពិន្ទុ និងបូកសរុប -->
+            <div style="text-align:center; min-width:340px; line-height:1.65;">
+              <div style="font-size:0.84rem;">ថ្ងៃចន្ទ ៣កើត ខែភទ្របទ ឆ្នាំមមី អដ្ឋស័ក ព.ស.២៥៧០</div>
+              <div style="font-size:0.84rem; margin-bottom:4px;">តាកែវ ថ្ងៃទី១៤ ខែកញ្ញា ឆ្នាំ២០២៦</div>
+              <div style="font-family:'Moul', serif; font-size:0.92rem; margin-bottom:8px;">អ្នកស្រង់ពិន្ទុ និងបូកសរុប</div>
+              <div style="text-align:left; font-weight:600; font-size:0.84rem; margin-bottom:8px; padding-left:20px;">១....................................................................</div>
+              <div style="text-align:left; font-weight:600; font-size:0.84rem; margin-bottom:8px; padding-left:20px;">២....................................................................</div>
+              <div style="text-align:left; font-weight:600; font-size:0.84rem; padding-left:20px;">៣....................................................................</div>
             </div>
           </div>
         </div>
@@ -548,13 +538,7 @@
               <select id="resultReportCommune" class="form-select" style="min-width:200px;"></select>
             </div>
           </div>
-          <div class="toolbar-group" style="display:flex; align-items:center; gap:8px;">
-            <button class="btn-excel-pill" onclick="reorganizeTabulationList()" title="រៀបចំ និងតម្រៀបបញ្ជីបេក្ខជន">
-              📋 រៀបចំបញ្ជី
-            </button>
-            <button class="btn-excel-pill" onclick="renderResultsSheet()" title="បង្ហាញទិន្នន័យលទ្ធផល">
-              👁️ បង្ហាញ
-            </button>
+          <div class="toolbar-group">
             <button class="btn btn-primary" onclick="window.print()">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
               បោះពុម្ពតារាងលទ្ធផល (Print)
@@ -563,10 +547,10 @@
         </div>
 
         <div class="official-paper" id="resultsPaper">
-          <!-- Top Header Grid (ដូចក្នុងគម្រូ Excel ពិតប្រាកដ) -->
-          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
+          <!-- Top Header Grid (ព្រះរាជាណាចក្រកម្ពុជា តម្រឹមកណ្តាលក្រដាស A4) -->
+          <div style="position:relative; margin-bottom:12px; min-height:130px;">
             <!-- Left: NEC / PEC -->
-            <div style="text-align:center; min-width:240px;">
+            <div style="position:absolute; left:0; top:0; text-align:center; min-width:240px;">
               <svg width="66" height="66" viewBox="0 0 100 100" style="margin:0 auto 6px; display:block;">
                 <circle cx="50" cy="50" r="46" fill="#F8FAFC" stroke="#1E3A8A" stroke-width="2.5"/>
                 <circle cx="50" cy="50" r="41" fill="none" stroke="#1E3A8A" stroke-width="1.2" stroke-dasharray="3,2"/>
@@ -580,8 +564,8 @@
               <div style="font-size:0.80rem;">អនុគណៈកម្មការរៀបចំការប្រឡងជ្រើសរើស</div>
             </div>
 
-            <!-- Right: Royal Motto -->
-            <div style="text-align:center; min-width:280px; margin-top:6px;">
+            <!-- Center of A4 Paper: Royal Kingdom & Motto -->
+            <div style="text-align:center; width:100%; padding-top:6px;">
               <h2 style="font-family:'Moul', serif; font-size:1.18rem; margin-bottom:4px;">ព្រះរាជាណាចក្រកម្ពុជា</h2>
               <h3 style="font-family:'Moul', serif; font-size:0.96rem; margin-bottom:2px;">ជាតិ សាសនា ព្រះមហាក្សត្រ</h3>
               <svg width="130" height="12" viewBox="0 0 130 12" style="margin:2px auto 0; display:block;">
@@ -592,36 +576,32 @@
           </div>
 
           <!-- Main Title -->
-          <div style="text-align:center; margin:12px 0 20px; position:relative;">
+          <div style="text-align:center; margin:12px 0 20px;">
             <h3 class="font-moul" style="font-size:1.15rem; margin-bottom:5px;">លទ្ធផលនៃការប្រឡងជ្រើសរើសសមាសភាពក្រុមចុះឈ្មោះបោះឆ្នោត</h3>
             <p style="font-size:0.96rem; font-weight:700; text-decoration:underline;" id="resultReportDistrictTitle">ស្រុកអង្គរបូរី នៃខេត្តតាកែវ</p>
-            <!-- Floating action buttons on right side of paper -->
-            <div class="no-print" style="position:absolute; right:0; top:4px; display:flex; flex-direction:column; gap:6px;">
-              <button class="btn-excel-pill" onclick="reorganizeTabulationList()" title="រៀបចំ និងតម្រៀបបញ្ជីបេក្ខជន">
-                រៀបចំបញ្ជី
-              </button>
-              <button class="btn-excel-pill" onclick="renderResultsSheet()" title="បង្ហាញទិន្នន័យលទ្ធផល">
-                បង្ហាញ
-              </button>
-            </div>
           </div>
 
           <div id="resultsTableContainer"></div>
 
-          <div class="paper-signatures">
-            <div class="sig-box">
-              <div class="sig-title font-moul">អ្នកស្រង់ពិន្ទុ និងបូកសរុប</div>
-              <div style="font-weight:600;">.......................................</div>
+          <!-- Official Signatures Footer (គម្រូតាមរូបទី៣) -->
+          <div class="official-signatures-layout" style="display:flex; justify-content:space-between; align-items:flex-start; margin-top:20px; font-size:0.88rem; page-break-inside:avoid;">
+            <!-- Left: បានពិនិត្យត្រឹមត្រូវ -->
+            <div style="text-align:center; min-width:320px; line-height:1.65;">
+              <div style="font-family:'Moul', serif; font-size:0.92rem; margin-bottom:4px;">បានពិនិត្យត្រឹមត្រូវ</div>
+              <div style="font-size:0.84rem;">ថ្ងៃចន្ទ ៣កើត ខែភទ្របទ ឆ្នាំមមី អដ្ឋស័ក ព.ស.២៥៧០</div>
+              <div style="font-size:0.84rem; margin-bottom:4px;">តាកែវ ថ្ងៃទី១៤ ខែកញ្ញា ឆ្នាំ២០២៦</div>
+              <div style="font-family:'Moul', serif; font-size:0.88rem;">ជ.អនុគណៈកម្មការជ្រើសរើសថ្នាក់ខេត្ត</div>
+              <div style="font-family:'Moul', serif; font-size:0.88rem; margin-top:2px;">ប្រធាន</div>
             </div>
-            <div class="sig-box">
-              <div class="sig-title font-moul">បានពិនិត្យត្រឹមត្រូវ</div>
-              <div style="font-weight:600;">.......................................</div>
-            </div>
-            <div class="sig-box">
-              <div style="font-size:0.8rem; margin-bottom:4px;">ថ្ងៃចន្ទ ៣កើត ខែភទ្របទ ឆ្នាំមមី អដ្ឋស័ក ព.ស.២៥៧០</div>
-              <div style="font-size:0.8rem; margin-bottom:12px;">តាកែវ ថ្ងៃទី១៤ ខែកញ្ញា ឆ្នាំ២០២៦</div>
-              <div class="sig-title font-moul">ជ.អនុគណៈកម្មការជ្រើសរើសថ្នាក់ខេត្ត<br>ប្រធាន</div>
-              <div style="font-weight:600;">.......................................</div>
+
+            <!-- Right: អ្នកស្រង់ពិន្ទុ និងបូកសរុប -->
+            <div style="text-align:center; min-width:340px; line-height:1.65;">
+              <div style="font-size:0.84rem;">ថ្ងៃចន្ទ ៣កើត ខែភទ្របទ ឆ្នាំមមី អដ្ឋស័ក ព.ស.២៥៧០</div>
+              <div style="font-size:0.84rem; margin-bottom:4px;">តាកែវ ថ្ងៃទី១៤ ខែកញ្ញា ឆ្នាំ២០២៦</div>
+              <div style="font-family:'Moul', serif; font-size:0.92rem; margin-bottom:8px;">អ្នកស្រង់ពិន្ទុ និងបូកសរុប</div>
+              <div style="text-align:left; font-weight:600; font-size:0.84rem; margin-bottom:8px; padding-left:20px;">១....................................................................</div>
+              <div style="text-align:left; font-weight:600; font-size:0.84rem; margin-bottom:8px; padding-left:20px;">២....................................................................</div>
+              <div style="text-align:left; font-weight:600; font-size:0.84rem; padding-left:20px;">៣....................................................................</div>
             </div>
           </div>
         </div>
