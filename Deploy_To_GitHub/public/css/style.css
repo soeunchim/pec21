@@ -978,7 +978,7 @@ input[type="number"] {
     font-size: 11pt;
   }
 
-  .top-header, .nav-bar, .toolbar, .no-print, .btn, .toast-container, .modal, .modal-overlay, .modal-content, .modal-card, #instModal, #userModal, #toastContainer, .logo-nudge-bar {
+  .top-header, .nav-bar, .toolbar, .no-print, .btn, .toast-container, .modal, .modal-overlay, .modal-content, .modal-card, #instModal, #userModal, #substituteModal, #toastContainer, .logo-nudge-bar {
     display: none !important;
     visibility: hidden !important;
     opacity: 0 !important;

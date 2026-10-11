@@ -195,6 +195,14 @@ loadDatabase();
 function recomputeRanksAndStatuses() {
   if (!db || !db.candidates) return;
 
+  const minPass = (db.settings && db.settings.minPassScore) || 50;
+
+  // 1. Identify all communes that have candidates for Role B (សមាជិក ក.ច.ប ដែលជួយការងារអនុប្រធាន)
+  const communesWithRoleB = new Set();
+  db.candidates.forEach(c => {
+    if (c.roleCode === 'b') communesWithRoleB.add(c.communeCode);
+  });
+
   const groups = {};
   for (const c of db.candidates) {
     const key = `${c.communeCode}_${c.roleCode}`;
@@ -202,10 +210,11 @@ function recomputeRanksAndStatuses() {
     groups[key].push(c);
   }
 
-  const minPass = (db.settings && db.settings.minPassScore) || 50;
-
   for (const key in groups) {
     const list = groups[key];
+    const [commCode, roleCode] = key.split('_');
+    const hasRoleBInCommune = communesWithRoleB.has(commCode);
+
     list.sort((a, b) => {
       const aAbs = a.scoreTotal === 'អវត្តមាន';
       const bAbs = b.scoreTotal === 'អវត្តមាន';
@@ -216,20 +225,43 @@ function recomputeRanksAndStatuses() {
     });
 
     list.forEach((item, idx) => {
+      item.rank = idx + 1;
+
+      // If manual status was locked or substituted, preserve it
+      if (item.manualStatus && item.status) {
+        return;
+      }
+
       if (item.scoreTotal === 'អវត្តមាន') {
         item.rank = list.length;
         item.status = 'អវត្តមាន';
       } else {
         const score = Number(item.scoreTotal) || 0;
-        item.rank = idx + 1;
         if (score < minPass) {
           item.status = 'ធ្លាក់';
-        } else if (idx === 0) {
-          item.status = 'A-ជាប់';
-        } else if (idx === 1 && item.roleCode === 'c') {
-          item.status = 'A-ជាប់';
+        } else if (roleCode === 'c' && hasRoleBInCommune) {
+          // ១. ឃុំសង្កាត់ណាមួយដែលមានជ្រើសរើសមុខសមាជិក ក.ច.ប ដែលជួយការងារអនុប្រធាន ក.ច.ប 
+          //    នោះមុខតំណែងសមាជិក ក.ច.ប ការីកុំព្យូទ័រ ត្រូវជាប់២នាក់គឺ A-ជាប់ ចំនួន២នាក់
+          if (idx === 0 || idx === 1) {
+            item.status = 'A-ជាប់';
+          } else if (idx === 2) {
+            item.status = 'B-បម្រុង';
+          } else if (idx === 3) {
+            item.status = 'C-បម្រុងបន្ទាប់';
+          } else {
+            item.status = 'ធ្លាក់';
+          }
         } else {
-          item.status = 'B-បម្រុង';
+          // Normal roles or commune without Role B:
+          if (idx === 0) {
+            item.status = 'A-ជាប់';
+          } else if (idx === 1) {
+            item.status = 'B-បម្រុង';
+          } else if (idx === 2) {
+            item.status = 'C-បម្រុងបន្ទាប់';
+          } else {
+            item.status = 'ធ្លាក់';
+          }
         }
       }
     });
@@ -680,6 +712,29 @@ const server = http.createServer(async (req, res) => {
         if (body.scoreExp !== undefined) cand.scoreExp = Math.min(15, Math.max(0, Number(body.scoreExp) || 0));
         if (body.notes !== undefined) cand.notes = body.notes;
 
+        if (body.communeCode !== undefined) {
+          cand.communeCode = body.communeCode;
+          const comm = db.communes.find(k => k.code === body.communeCode);
+          if (comm) {
+            cand.communeName = comm.name;
+            cand.district = comm.district;
+          }
+        }
+        if (body.communeName !== undefined) cand.communeName = body.communeName;
+        if (body.district !== undefined) cand.district = body.district;
+        if (body.roleCode !== undefined) {
+          cand.roleCode = body.roleCode;
+          cand.role = body.role || (body.roleCode === 'a' ? 'ប្រធាន' : body.roleCode === 'b' ? 'ជំនួយការអនុ' : body.roleCode === 'c' ? 'ការីកុំព្យូទ័រ' : 'អនុប្រធាន');
+        }
+        if (body.status !== undefined) {
+          cand.status = body.status;
+          cand.manualStatus = true;
+        }
+        if (body.manualStatus !== undefined) cand.manualStatus = !!body.manualStatus;
+        if (body.originalCommuneCode !== undefined) cand.originalCommuneCode = body.originalCommuneCode;
+        if (body.originalCommuneName !== undefined) cand.originalCommuneName = body.originalCommuneName;
+        if (body.isSubstituted !== undefined) cand.isSubstituted = !!body.isSubstituted;
+
         if (session.role !== 'Trainer') {
           if (body.scorePc !== undefined) cand.scorePc = body.scorePc === 'អវត្តមាន' ? 'អវត្តមាន' : Math.max(0, Number(body.scorePc) || 0);
 
@@ -704,6 +759,64 @@ const server = http.createServer(async (req, res) => {
         saveDatabase();
 
         return sendJson(res, 200, { success: true, message: 'បានកែសម្រួលពិន្ទុជោគជ័យ!', candidate: cand });
+      }
+
+      // 7b. POST /api/candidates/:id/substitute (Substitute / Transfer reserve candidate or keep at commune)
+      if (pathname.includes('/substitute') && req.method === 'POST') {
+        const session = authenticate(req);
+        if (!session) return sendJson(res, 401, { success: false, message: 'សូមចូលប្រព័ន្ធជាមុន!' });
+
+        const id = pathname.replace('/api/candidates/', '').replace('/substitute', '');
+        const cand = db.candidates.find(c => c.id === id);
+        if (!cand) return sendJson(res, 404, { success: false, message: 'រកមិនឃើញបេក្ខជននេះទេ!' });
+
+        const body = await parseJsonBody(req);
+        const { targetDistrict, targetCommuneCode, targetRoleCode, newStatus, notes, keepOriginal } = body;
+
+        if (keepOriginal) {
+          // រក្សាទុកនៅឃុំសង្កាត់ដដែល
+          cand.status = newStatus || 'ធ្លាក់';
+          cand.manualStatus = true;
+          if (notes !== undefined) cand.notes = notes;
+        } else {
+          // យកទៅជំនួសនៅឃុំសង្កាត់ផ្សេង
+          if (!targetCommuneCode) {
+            return sendJson(res, 400, { success: false, message: 'សូមជ្រើសរើសឃុំ/សង្កាត់គោលដៅ!' });
+          }
+          const targetComm = db.communes.find(k => k.code === targetCommuneCode);
+          if (!targetComm) {
+            return sendJson(res, 404, { success: false, message: 'រកមិនឃើញឃុំ/សង្កាត់គោលដៅ!' });
+          }
+
+          cand.originalCommuneCode = cand.originalCommuneCode || cand.communeCode;
+          cand.originalCommuneName = cand.originalCommuneName || cand.communeName;
+          cand.originalDistrict = cand.originalDistrict || cand.district;
+
+          cand.communeCode = targetComm.code;
+          cand.communeName = targetComm.name;
+          cand.district = targetComm.district || targetDistrict || cand.district;
+
+          if (targetRoleCode) {
+            cand.roleCode = targetRoleCode;
+            cand.role = targetRoleCode === 'a' ? 'ប្រធាន' : targetRoleCode === 'b' ? 'ជំនួយការអនុ' : targetRoleCode === 'c' ? 'ការីកុំព្យូទ័រ' : 'អនុប្រធាន';
+          }
+
+          cand.status = newStatus || 'A-ជាប់';
+          cand.manualStatus = true;
+          cand.isSubstituted = true;
+          cand.notes = notes || `ជំនួសមកពី${cand.originalCommuneName}`;
+        }
+
+        recomputeRanksAndStatuses();
+        saveDatabase();
+
+        return sendJson(res, 200, {
+          success: true,
+          message: keepOriginal
+            ? `បានរក្សាទុកបេក្ខជន «${cand.name}» នៅ${cand.communeName} រួចរាល់!`
+            : `បានជំនួសបេក្ខជន «${cand.name}» ទៅកាន់${cand.communeName} ដោយជោគជ័យ!`,
+          candidate: cand
+        });
       }
 
       // 8. DELETE /api/candidates/:id

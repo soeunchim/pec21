@@ -1024,6 +1024,9 @@ function renderCandidatesTable() {
           <button class="btn btn-secondary btn-sm" title="កែប្រែ" onclick="openEditCandidateModal('${c.id}')" style="padding:3px 7px;">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
           </button>
+          <button class="btn btn-secondary btn-sm" title="ផ្ទេរជំនួស / រក្សាទុក" style="color:var(--primary); padding:3px 7px;" onclick="openSubstituteModal('${c.id}')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+          </button>
           <button class="btn btn-secondary btn-sm" title="លុប" style="color:var(--danger); padding:3px 7px;" onclick="deleteCandidate('${c.id}')">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
           </button>
@@ -1133,13 +1136,14 @@ function renderCandidatesTable() {
     } else {
       // Admin / SuperAdmin / PEC21
       let badgeClass = 'badge-passed';
-      if (c.status === 'B-បម្រុង') badgeClass = 'badge-reserve';
+      if (c.status === 'B-បម្រុង' || c.status === 'C-បម្រុងបន្ទាប់') badgeClass = 'badge-reserve';
       if (c.status === 'ធ្លាក់') badgeClass = 'badge-failed';
       if (c.status === 'អវត្តមាន') badgeClass = 'badge-absent';
 
       const resultCell = `
         <td style="text-align:center;">
           <span id="status-${c.id}" class="badge ${badgeClass}">${c.status}</span>
+          ${c.isSubstituted ? `<div style="font-size:0.7rem; color:var(--primary); font-weight:700; margin-top:2px;">(ជំនួស)</div>` : ''}
         </td>
       `;
 
@@ -1933,15 +1937,28 @@ function setTabReportDistrict(distName) {
 
 // Reorganize / Sort List (ប៊ូតុង "រៀបចំបញ្ជី")
 function reorganizeTabulationList() {
+  const rolePriority = { 'a': 1, 'b': 2, 'c': 3, 'd': 4 };
   state.candidates.sort((a, b) => {
     if (a.communeCode !== b.communeCode) {
       return a.communeCode.localeCompare(b.communeCode);
     }
-    if (a.roleCode !== b.roleCode) {
-      return a.roleCode.localeCompare(b.roleCode);
+    const rA = rolePriority[a.roleCode] || 99;
+    const rB = rolePriority[b.roleCode] || 99;
+    if (rA !== rB) {
+      return rA - rB;
     }
+    const aAbs = a.scoreTotal === 'អវត្តមាន';
+    const bAbs = b.scoreTotal === 'អវត្តមាន';
+    if (aAbs && !bAbs) return 1;
+    if (!aAbs && bAbs) return -1;
+    if (aAbs && bAbs) return 0;
     return (Number(b.scoreTotal) || 0) - (Number(a.scoreTotal) || 0);
   });
+
+  // Identify all communes that have Role B (សមាជិក ក.ច.ប ដែលជួយការងារអនុប្រធាន)
+  const communesWithRoleB = new Set(
+    state.candidates.filter(c => c.roleCode === 'b').map(c => c.communeCode)
+  );
 
   const groups = {};
   state.candidates.forEach(c => {
@@ -1950,21 +1967,46 @@ function reorganizeTabulationList() {
     groups[key].push(c);
   });
 
-  Object.values(groups).forEach(list => {
+  Object.entries(groups).forEach(([key, list]) => {
+    const [commCode, roleCode] = key.split('_');
+    const hasRoleB = communesWithRoleB.has(commCode);
+
     list.forEach((cand, idx) => {
       cand.rank = idx + 1;
-      if (idx === 0) {
-        cand.status = 'A-ជាប់';
-      } else if (idx === 1) {
-        cand.status = 'B-បម្រុង';
+      if (cand.manualStatus && cand.status) {
+        return; // Preserve manual/substituted status
+      }
+      if (cand.scoreTotal === 'អវត្តមាន') {
+        cand.status = 'អវត្តមាន';
+      } else if (roleCode === 'c' && hasRoleB) {
+        // Communes with Role B: Role C gets two (2) A-ជាប់
+        if (idx === 0 || idx === 1) {
+          cand.status = 'A-ជាប់';
+        } else if (idx === 2) {
+          cand.status = 'B-បម្រុង';
+        } else if (idx === 3) {
+          cand.status = 'C-បម្រុងបន្ទាប់';
+        } else {
+          cand.status = 'ធ្លាក់';
+        }
       } else {
-        cand.status = 'ធ្លាក់';
+        if (idx === 0) {
+          cand.status = 'A-ជាប់';
+        } else if (idx === 1) {
+          cand.status = 'B-បម្រុង';
+        } else if (idx === 2) {
+          cand.status = 'C-បម្រុងបន្ទាប់';
+        } else {
+          cand.status = 'ធ្លាក់';
+        }
       }
     });
   });
 
   renderTabulationSheet();
-  showToast('បានរៀបចំ និងតម្រៀបបញ្ជីបេក្ខជនតាមពិន្ទុរួចរាល់!', 'success');
+  renderResultsSheet();
+  renderCandidatesTable();
+  showToast('បានរៀបចំ និងតម្រៀបបញ្ជីបេក្ខជនតាមពិន្ទុ និងមុខតំណែងរួចរាល់!', 'success');
 }
 
 // ==============================================================================
@@ -2274,34 +2316,7 @@ function renderTabulationSheet() {
       });
     }
 
-    // 3. Role 2: មុខតំណែងសមាជិក ក.ច.ប ការីកុំព្យូទ័រ
-    const pcList = commCands.filter(c => c.roleCode === 'c');
-    if (pcList.length > 0) {
-      tableHtml += `
-        <tr class="role-banner-row">
-          <td colspan="11">មុខតំណែងសមាជិក ក.ច.ប ការីកុំព្យូទ័រ</td>
-        </tr>
-      `;
-      pcList.forEach((c, idx) => {
-        tableHtml += `
-          <tr>
-            <td>${toKhmerNumber(idx + 1)}</td>
-            <td style="text-align:left; padding-left:8px; font-weight:600;">${c.name}</td>
-            <td>${c.gender || ''}</td>
-            <td>${formatDobKhmer(c.dob)}</td>
-            <td class="excel-x-cell"></td>
-            <td>${c.scoreExp !== undefined && c.scoreExp !== null && c.scoreExp !== '' ? c.scoreExp : ''}</td>
-            <td class="excel-x-cell"></td>
-            <td>${c.scorePc !== undefined && c.scorePc !== null && c.scorePc !== '' ? Number(c.scorePc).toFixed(2) : ''}</td>
-            <td style="font-weight:700;">${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
-            <td style="font-weight:700;">${c.status || ''}</td>
-            <td>${c.notes || ''}</td>
-          </tr>
-        `;
-      });
-    }
-
-    // 4. Role 3 (Optional): មុខតំណែងសមាជិក ក.ច.ប ដែលជួយការងារអនុប្រធាន ក.ច.ប
+    // 3. Role 2: មុខតំណែងសមាជិក ក.ច.ប ដែលជួយការងារអនុប្រធាន ក.ច.ប
     const jumList = commCands.filter(c => c.roleCode === 'b');
     if (jumList.length > 0) {
       tableHtml += `
@@ -2320,6 +2335,33 @@ function renderTabulationSheet() {
             <td>${c.scoreExp !== undefined && c.scoreExp !== null && c.scoreExp !== '' ? c.scoreExp : ''}</td>
             <td>${c.scoreQcm !== undefined && c.scoreQcm !== null && c.scoreQcm !== '' ? Number(c.scoreQcm).toFixed(2) : ''}</td>
             <td class="excel-x-cell"></td>
+            <td style="font-weight:700;">${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
+            <td style="font-weight:700;">${c.status || ''}</td>
+            <td>${c.notes || ''}</td>
+          </tr>
+        `;
+      });
+    }
+
+    // 4. Role 3: មុខតំណែងសមាជិក ក.ច.ប ការីកុំព្យូទ័រ
+    const pcList = commCands.filter(c => c.roleCode === 'c');
+    if (pcList.length > 0) {
+      tableHtml += `
+        <tr class="role-banner-row">
+          <td colspan="11">មុខតំណែងសមាជិក ក.ច.ប ការីកុំព្យូទ័រ</td>
+        </tr>
+      `;
+      pcList.forEach((c, idx) => {
+        tableHtml += `
+          <tr>
+            <td>${toKhmerNumber(idx + 1)}</td>
+            <td style="text-align:left; padding-left:8px; font-weight:600;">${c.name}</td>
+            <td>${c.gender || ''}</td>
+            <td>${formatDobKhmer(c.dob)}</td>
+            <td class="excel-x-cell"></td>
+            <td>${c.scoreExp !== undefined && c.scoreExp !== null && c.scoreExp !== '' ? c.scoreExp : ''}</td>
+            <td class="excel-x-cell"></td>
+            <td>${c.scorePc !== undefined && c.scorePc !== null && c.scorePc !== '' ? Number(c.scorePc).toFixed(2) : ''}</td>
             <td style="font-weight:700;">${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
             <td style="font-weight:700;">${c.status || ''}</td>
             <td>${c.notes || ''}</td>
@@ -2479,38 +2521,14 @@ function renderResultsSheet() {
             <td>${formatDobKhmer(c.dob)}</td>
             <td style="font-weight:700;">${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
             <td style="font-weight:700;">${toKhmerNumber(c.rank || idx + 1)}</td>
-            <td style="font-weight:700; color:${c.status === 'A-ជាប់' ? '#047857' : c.status === 'B-បម្រុង' ? '#0284C7' : '#DC2626'};">${c.status || ''}</td>
+            <td style="font-weight:700; color:${c.status === 'A-ជាប់' ? '#047857' : (c.status === 'B-បម្រុង' || c.status === 'C-បម្រុងបន្ទាប់') ? '#0284C7' : '#DC2626'};">${c.status || ''}</td>
             <td>${c.notes || ''}</td>
           </tr>
         `;
       });
     }
 
-    // 3. Role 2: មុខតំណែងសមាជិក ក.ច.ប ការីកុំព្យូទ័រ
-    const pcList = commCands.filter(c => c.roleCode === 'c');
-    if (pcList.length > 0) {
-      tableHtml += `
-        <tr class="role-banner-row">
-          <td colspan="8">មុខតំណែងសមាជិក ក.ច.ប ការីកុំព្យូទ័រ</td>
-        </tr>
-      `;
-      pcList.forEach((c, idx) => {
-        tableHtml += `
-          <tr>
-            <td>${toKhmerNumber(idx + 1)}</td>
-            <td style="text-align:left; padding-left:8px; font-weight:600;">${c.name}</td>
-            <td>${c.gender || ''}</td>
-            <td>${formatDobKhmer(c.dob)}</td>
-            <td style="font-weight:700;">${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
-            <td style="font-weight:700;">${toKhmerNumber(c.rank || idx + 1)}</td>
-            <td style="font-weight:700; color:${c.status === 'A-ជាប់' ? '#047857' : c.status === 'B-បម្រុង' ? '#0284C7' : '#DC2626'};">${c.status || ''}</td>
-            <td>${c.notes || ''}</td>
-          </tr>
-        `;
-      });
-    }
-
-    // 4. Role 3 (Optional): មុខតំណែងសមាជិក ក.ច.ប ដែលជួយការងារអនុប្រធាន ក.ច.ប
+    // 3. Role 2: មុខតំណែងសមាជិក ក.ច.ប ដែលជួយការងារអនុប្រធាន ក.ច.ប
     const jumList = commCands.filter(c => c.roleCode === 'b');
     if (jumList.length > 0) {
       tableHtml += `
@@ -2527,7 +2545,31 @@ function renderResultsSheet() {
             <td>${formatDobKhmer(c.dob)}</td>
             <td style="font-weight:700;">${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
             <td style="font-weight:700;">${toKhmerNumber(c.rank || idx + 1)}</td>
-            <td style="font-weight:700; color:${c.status === 'A-ជាប់' ? '#047857' : c.status === 'B-បម្រុង' ? '#0284C7' : '#DC2626'};">${c.status || ''}</td>
+            <td style="font-weight:700; color:${c.status === 'A-ជាប់' ? '#047857' : (c.status === 'B-បម្រុង' || c.status === 'C-បម្រុងបន្ទាប់') ? '#0284C7' : '#DC2626'};">${c.status || ''}</td>
+            <td>${c.notes || ''}</td>
+          </tr>
+        `;
+      });
+    }
+
+    // 4. Role 3: មុខតំណែងសមាជិក ក.ច.ប ការីកុំព្យូទ័រ
+    const pcList = commCands.filter(c => c.roleCode === 'c');
+    if (pcList.length > 0) {
+      tableHtml += `
+        <tr class="role-banner-row">
+          <td colspan="8">មុខតំណែងសមាជិក ក.ច.ប ការីកុំព្យូទ័រ</td>
+        </tr>
+      `;
+      pcList.forEach((c, idx) => {
+        tableHtml += `
+          <tr>
+            <td>${toKhmerNumber(idx + 1)}</td>
+            <td style="text-align:left; padding-left:8px; font-weight:600;">${c.name}</td>
+            <td>${c.gender || ''}</td>
+            <td>${formatDobKhmer(c.dob)}</td>
+            <td style="font-weight:700;">${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
+            <td style="font-weight:700;">${toKhmerNumber(c.rank || idx + 1)}</td>
+            <td style="font-weight:700; color:${c.status === 'A-ជាប់' ? '#047857' : (c.status === 'B-បម្រុង' || c.status === 'C-បម្រុងបន្ទាប់') ? '#0284C7' : '#DC2626'};">${c.status || ''}</td>
             <td>${c.notes || ''}</td>
           </tr>
         `;
@@ -3675,3 +3717,161 @@ async function submitBatchCodes() {
     showToast(err.message || 'មានបញ្ហាក្នុងការបញ្ចូលទិន្នន័យជាដុំ!', 'error');
   }
 }
+
+// ==============================================================================
+// SUBSTITUTE & RETENTION HANDLERS (ការផ្ទេរជំនួស ឬ រក្សាទុកបេក្ខជន)
+// ==============================================================================
+function openSubstituteModal(candId) {
+  const cand = state.candidates.find(c => c.id === candId);
+  if (!cand) return showToast('រកមិនឃើញបេក្ខជននេះទេ!', 'error');
+
+  const modal = document.getElementById('substituteModal');
+  if (!modal) return;
+
+  document.getElementById('subCandId').value = cand.id;
+  document.getElementById('subCandName').innerText = cand.name;
+  document.getElementById('subCandGender').innerText = cand.gender || '-';
+  document.getElementById('subCandDob').innerText = cand.dob ? formatDobKhmer(cand.dob) : '-';
+  document.getElementById('subCandScore').innerText = cand.scoreTotal || '0';
+  document.getElementById('subCandRole').innerText = cand.role || cand.roleCode;
+  document.getElementById('subCandLocation').innerText = `${cand.communeName || ''} (${cand.district || ''})`;
+
+  const badgeEl = document.getElementById('subCandStatusBadge');
+  if (badgeEl) {
+    let bClass = 'badge-passed';
+    if (cand.status === 'B-បម្រុង' || cand.status === 'C-បម្រុងបន្ទាប់') bClass = 'badge-reserve';
+    if (cand.status === 'ធ្លាក់') bClass = 'badge-failed';
+    if (cand.status === 'អវត្តមាន') bClass = 'badge-absent';
+    badgeEl.className = `badge ${bClass}`;
+    badgeEl.innerText = cand.status || '-';
+  }
+
+  // Populate Target Districts
+  const distSelect = document.getElementById('subTargetDistrict');
+  if (distSelect) {
+    distSelect.innerHTML = '<option value="">-- ជ្រើសរើសស្រុក --</option>';
+    state.districts.forEach(d => {
+      distSelect.innerHTML += `<option value="${d.name}">${d.name}</option>`;
+    });
+    distSelect.value = cand.district || '';
+    onSubDistrictChange(cand.district || '');
+  }
+
+  // Populate Target Role
+  const roleSelect = document.getElementById('subTargetRole');
+  if (roleSelect) {
+    roleSelect.value = cand.roleCode || 'c';
+  }
+
+  // Pre-fill notes
+  document.getElementById('subNotes').value = cand.notes || `ជំនួសមកពី${cand.communeName || ''}`;
+
+  // Default to transfer mode
+  const transferRadio = document.getElementById('subModeTransfer');
+  if (transferRadio) transferRadio.checked = true;
+  toggleSubstituteMode('transfer');
+
+  modal.style.display = 'flex';
+}
+
+function closeSubstituteModal() {
+  const modal = document.getElementById('substituteModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function toggleSubstituteMode(mode) {
+  const transferSec = document.getElementById('subTransferSection');
+  const keepSec = document.getElementById('subKeepSection');
+  const subTargetDistrict = document.getElementById('subTargetDistrict');
+  const subTargetCommune = document.getElementById('subTargetCommune');
+
+  if (mode === 'transfer') {
+    if (transferSec) transferSec.style.display = 'block';
+    if (keepSec) keepSec.style.display = 'none';
+    if (subTargetDistrict) subTargetDistrict.required = true;
+    if (subTargetCommune) subTargetCommune.required = true;
+  } else {
+    if (transferSec) transferSec.style.display = 'none';
+    if (keepSec) keepSec.style.display = 'block';
+    if (subTargetDistrict) subTargetDistrict.required = false;
+    if (subTargetCommune) subTargetCommune.required = false;
+  }
+}
+
+function onSubDistrictChange(distName) {
+  const commSelect = document.getElementById('subTargetCommune');
+  if (!commSelect) return;
+  commSelect.innerHTML = '<option value="">-- ជ្រើសរើសឃុំ --</option>';
+
+  const filteredCommunes = state.communes.filter(c => !distName || c.district === distName);
+  filteredCommunes.forEach(c => {
+    commSelect.innerHTML += `<option value="${c.code}">${c.name} (${c.code})</option>`;
+  });
+}
+
+async function handleSubstituteSubmit(e) {
+  e.preventDefault();
+  const candId = document.getElementById('subCandId').value;
+  if (!candId) return;
+
+  const mode = document.querySelector('input[name="subMode"]:checked')?.value || 'transfer';
+  const notes = document.getElementById('subNotes').value.trim();
+
+  let payload = {};
+  if (mode === 'keep') {
+    const keepStatus = document.getElementById('subKeepStatus').value;
+    payload = {
+      keepOriginal: true,
+      newStatus: keepStatus,
+      notes: notes
+    };
+  } else {
+    const targetDistrict = document.getElementById('subTargetDistrict').value;
+    const targetCommuneCode = document.getElementById('subTargetCommune').value;
+    const targetRoleCode = document.getElementById('subTargetRole').value;
+    const newStatus = document.getElementById('subNewStatus').value;
+
+    if (!targetCommuneCode) {
+      return alert('សូមជ្រើសរើសឃុំ/សង្កាត់គោលដៅ!');
+    }
+
+    payload = {
+      keepOriginal: false,
+      targetDistrict,
+      targetCommuneCode,
+      targetRoleCode,
+      newStatus,
+      notes: notes
+    };
+  }
+
+  const submitBtn = document.getElementById('subSubmitBtn');
+  if (submitBtn) submitBtn.disabled = true;
+
+  try {
+    const res = await api(`/api/candidates/${candId}/substitute`, {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+
+    if (res.success) {
+      showToast(res.message, 'success');
+      closeSubstituteModal();
+      const candRes = await api('/api/candidates');
+      if (candRes.success) {
+        state.candidates = candRes.candidates;
+        renderCandidatesTable();
+        renderTabulationSheet();
+        renderResultsSheet();
+        updateDashboardKPIs();
+      }
+    } else {
+      showToast(res.message || 'ប្រតិបត្តិការមិនបានសម្រេច!', 'error');
+    }
+  } catch (err) {
+    showToast(err.message || 'មានបញ្ហាក្នុងការភ្ជាប់ទៅកាន់ប្រព័ន្ធ!', 'error');
+  } finally {
+    if (submitBtn) submitBtn.disabled = false;
+  }
+}
+

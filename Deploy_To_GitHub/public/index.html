@@ -388,6 +388,7 @@
                   <button class="btn btn-secondary btn-sm" onclick="filterByStatus('all')">ទាំងអស់</button>
                   <button class="btn btn-secondary btn-sm" style="color:#059669; font-weight:600;" onclick="filterByStatus('A-ជាប់')">A-ជាប់</button>
                   <button class="btn btn-secondary btn-sm" style="color:#0284C7; font-weight:600;" onclick="filterByStatus('B-បម្រុង')">B-បម្រុង</button>
+                  <button class="btn btn-secondary btn-sm" style="color:#0284C7; font-weight:600;" onclick="filterByStatus('C-បម្រុងបន្ទាប់')">C-បម្រុងបន្ទាប់</button>
                   <button class="btn btn-secondary btn-sm" style="color:#DC2626; font-weight:600;" onclick="filterByStatus('ធ្លាក់')">ធ្លាក់</button>
                 </div>
               </div>
@@ -1401,10 +1402,113 @@ AB004	អវត្តមាន" style="font-family:monospace; font-size:0.88rem;
     </div>
   </div>
 
+  <!-- Modal: ជំនួស ឬ រក្សាទុកបេក្ខជនបម្រុង / ធ្លាក់ (Substitute / Retain Modal) -->
+  <div id="substituteModal" class="modal modal-overlay no-print" style="display:none;">
+    <div class="modal-dialog" style="max-width:550px;">
+      <form id="substituteForm" onsubmit="handleSubstituteSubmit(event)">
+        <div class="modal-header">
+          <h3 class="modal-title">🔁 ការផ្ទេរជំនួស ឬ រក្សាទុកបេក្ខជន</h3>
+          <button type="button" class="btn-close" onclick="closeSubstituteModal()">✕</button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="subCandId">
+
+          <!-- Candidate Info Card -->
+          <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:6px; padding:12px; margin-bottom:16px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <span style="font-weight:700; font-size:1.05rem; color:var(--primary);" id="subCandName">-</span>
+              <span class="badge" id="subCandStatusBadge">-</span>
+            </div>
+            <div style="font-size:0.88rem; color:#475569; display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+              <div>ភេទ: <span id="subCandGender" style="font-weight:600;">-</span> | កើត: <span id="subCandDob">-</span></div>
+              <div>ពិន្ទុសរុប: <span id="subCandScore" style="font-weight:700; color:#1E3A8A;">-</span></div>
+              <div>មុខតំណែងបច្ចុប្បន្ន: <span id="subCandRole" style="font-weight:600;">-</span></div>
+              <div>ទីតាំងដើម: <span id="subCandLocation" style="font-weight:600;">-</span></div>
+            </div>
+          </div>
+
+          <!-- Mode Toggle Radio Group -->
+          <div style="margin-bottom:16px;">
+            <label class="form-label" style="font-weight:700;">ជម្រើសប្រតិបត្តិការ៖</label>
+            <div style="display:flex; gap:12px; margin-top:6px;">
+              <label style="display:flex; align-items:center; gap:6px; cursor:pointer; background:#EFF6FF; border:1px solid #BFDBFE; padding:8px 12px; border-radius:6px; flex:1;">
+                <input type="radio" name="subMode" id="subModeTransfer" value="transfer" checked onchange="toggleSubstituteMode('transfer')">
+                <span style="font-weight:600; color:#1E40AF;">ជំនួសទៅឃុំផ្សេង</span>
+              </label>
+              <label style="display:flex; align-items:center; gap:6px; cursor:pointer; background:#F8FAFC; border:1px solid #CBD5E1; padding:8px 12px; border-radius:6px; flex:1;">
+                <input type="radio" name="subMode" id="subModeKeep" value="keep" onchange="toggleSubstituteMode('keep')">
+                <span style="font-weight:600; color:#475569;">រក្សាទុកនៅឃុំដដែល</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Section A: Transfer / Substitute to another commune -->
+          <div id="subTransferSection">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+              <div>
+                <label class="form-label">ស្រុក/ក្រុង គោលដៅ <span style="color:red;">*</span></label>
+                <select id="subTargetDistrict" class="form-select" onchange="onSubDistrictChange(this.value)">
+                  <option value="">-- ជ្រើសរើសស្រុក --</option>
+                </select>
+              </div>
+              <div>
+                <label class="form-label">ឃុំ/សង្កាត់ គោលដៅ <span style="color:red;">*</span></label>
+                <select id="subTargetCommune" class="form-select">
+                  <option value="">-- ជ្រើសរើសឃុំ --</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+              <div>
+                <label class="form-label">មុខតំណែងគោលដៅ</label>
+                <select id="subTargetRole" class="form-select">
+                  <option value="c" selected>សមាជិក ក.ច.ប ការីកុំព្យូទ័រ</option>
+                  <option value="a">ប្រធាន ក.ច.ប</option>
+                  <option value="b">សមាជិក ក.ច.ប ជួយការងារអនុប្រធាន</option>
+                </select>
+              </div>
+              <div>
+                <label class="form-label">ស្ថានភាពក្រោយជំនួស</label>
+                <select id="subNewStatus" class="form-select">
+                  <option value="A-ជាប់" selected>A-ជាប់</option>
+                  <option value="B-បម្រុង">B-បម្រុង</option>
+                  <option value="C-បម្រុងបន្ទាប់">C-បម្រុងបន្ទាប់</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section B: Keep at Original Commune -->
+          <div id="subKeepSection" style="display:none; margin-bottom: 12px;">
+            <div style="margin-bottom:12px;">
+              <label class="form-label">ស្ថានភាពកំណត់</label>
+              <select id="subKeepStatus" class="form-select">
+                <option value="ធ្លាក់" selected>ធ្លាក់ (រក្សាទុកនៅឃុំដដែល)</option>
+                <option value="B-បម្រុង">B-បម្រុង (បម្រុងនៅឃុំដដែល)</option>
+                <option value="C-បម្រុងបន្ទាប់">C-បម្រុងបន្ទាប់ (បម្រុងបន្ទាប់នៅឃុំដដែល)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Notes Field -->
+          <div>
+            <label class="form-label">កំណត់សម្គាល់ (បង្ហាញក្នុងជួរ «ផ្សេងៗ» នៃតារាង)</label>
+            <input type="text" id="subNotes" class="form-control" placeholder="ឧ. ជំនួសមកពីឃុំ...">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeSubstituteModal()">បោះបង់</button>
+          <button type="submit" class="btn btn-primary" id="subSubmitBtn">អនុវត្តការផ្លាស់ប្តូរ</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Toast Notification Container -->
   <div id="toastContainer" class="toast-container"></div>
 
   <!-- Application Logic -->
-  <script src="js/app.js?v=20261011_no_underline_single_line_headers"></script>
+  <script src="js/app.js?v=20261011_substitute_role_rules"></script>
 </body>
 </html>
