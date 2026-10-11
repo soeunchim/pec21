@@ -2017,12 +2017,53 @@ function reorganizeTabulationList() {
 }
 
 // ==============================================================================
+// STORAGE SANITIZER (ជម្រះចោលទិន្នន័យខូច ឬសារប្រព័ន្ធ Render/UUID ដែលធ្លាក់ចូល LocalStorage)
+// ==============================================================================
+function isCorruptedText(val) {
+  if (!val || typeof val !== 'string') return false;
+  const lower = val.toLowerCase();
+  return lower.includes('pause') || lower.includes('deploy') || lower.includes('uuid') || lower.includes('urn:') || lower.includes('http');
+}
+
+(function sanitizeStorage() {
+  try {
+    const pageVal = localStorage.getItem('pec21_report_page_num');
+    if (isCorruptedText(pageVal) || (pageVal && pageVal.length > 8)) {
+      localStorage.setItem('pec21_report_page_num', '-១-');
+    }
+
+    const lunarVal = localStorage.getItem('pec21_report_lunar_text');
+    if (isCorruptedText(lunarVal)) {
+      localStorage.setItem('pec21_report_lunar_text', 'ថ្ងៃចន្ទ ៣កើត ខែភទ្របទ ឆ្នាំមមី អដ្ឋស័ក ព.ស.២៥៧០');
+    }
+
+    const solarVal = localStorage.getItem('pec21_report_solar_text');
+    if (isCorruptedText(solarVal)) {
+      localStorage.setItem('pec21_report_solar_text', 'តាកែវ ថ្ងៃទី១៤ ខែកញ្ញា ឆ្នាំ២០២៦');
+    }
+
+    const instVal = localStorage.getItem('pec21_inst_lines');
+    if (instVal && isCorruptedText(instVal)) {
+      localStorage.removeItem('pec21_inst_lines');
+    }
+  } catch (e) {}
+})();
+
+// ==============================================================================
 // REPORT FOOTER DATE MANAGEMENT (SYNC & PERSIST)
 // ==============================================================================
 function initReportDates() {
   const savedSolarIso = localStorage.getItem('pec21_report_solar_iso') || '2026-09-14';
-  const savedSolarText = localStorage.getItem('pec21_report_solar_text') || formatSolarKhmer(savedSolarIso);
-  const savedLunar = localStorage.getItem('pec21_report_lunar_text') || 'ថ្ងៃចន្ទ ៣កើត ខែភទ្របទ ឆ្នាំមមី អដ្ឋស័ក ព.ស.២៥៧០';
+  let savedSolarText = localStorage.getItem('pec21_report_solar_text');
+  if (!savedSolarText || isCorruptedText(savedSolarText)) {
+    savedSolarText = formatSolarKhmer(savedSolarIso);
+    localStorage.setItem('pec21_report_solar_text', savedSolarText);
+  }
+  let savedLunar = localStorage.getItem('pec21_report_lunar_text');
+  if (!savedLunar || isCorruptedText(savedLunar)) {
+    savedLunar = 'ថ្ងៃចន្ទ ៣កើត ខែភទ្របទ ឆ្នាំមមី អដ្ឋស័ក ព.ស.២៥៧០';
+    localStorage.setItem('pec21_report_lunar_text', savedLunar);
+  }
 
   applySolarDate(savedSolarIso, savedSolarText);
   applyLunarDate(savedLunar);
@@ -2049,11 +2090,13 @@ function handleSolarDateChange(isoVal) {
 }
 
 function handleLunarDateChange(lunarVal) {
+  if (isCorruptedText(lunarVal)) return;
   localStorage.setItem('pec21_report_lunar_text', lunarVal);
   applyLunarDate(lunarVal);
 }
 
 function handleFooterDirectEdit(type, textVal) {
+  if (isCorruptedText(textVal)) return;
   if (type === 'lunar') {
     handleLunarDateChange(textVal);
   } else if (type === 'solar') {
@@ -2063,25 +2106,35 @@ function handleFooterDirectEdit(type, textVal) {
 }
 
 function applySolarDate(isoVal, textVal) {
+  const cleanText = isCorruptedText(textVal) ? 'តាកែវ ថ្ងៃទី១៤ ខែកញ្ញា ឆ្នាំ២០២៦' : textVal;
   const tSolar = document.getElementById('tabReportSolarDate');
   const rSolar = document.getElementById('resReportSolarDate');
   if (tSolar && isoVal) tSolar.value = isoVal;
   if (rSolar && isoVal) rSolar.value = isoVal;
-  document.querySelectorAll('.report-solar-date').forEach(el => el.innerText = textVal);
+  document.querySelectorAll('.report-solar-date').forEach(el => el.innerText = cleanText);
 }
 
 function applyLunarDate(lunarVal) {
+  const cleanLunar = isCorruptedText(lunarVal) ? 'ថ្ងៃចន្ទ ៣កើត ខែភទ្របទ ឆ្នាំមមី អដ្ឋស័ក ព.ស.២៥៧០' : lunarVal;
   const tLunar = document.getElementById('tabReportLunarDate');
   const rLunar = document.getElementById('resReportLunarDate');
-  if (tLunar) tLunar.value = lunarVal;
-  if (rLunar) rLunar.value = lunarVal;
-  document.querySelectorAll('.report-lunar-date').forEach(el => el.innerText = lunarVal);
+  if (tLunar) tLunar.value = cleanLunar;
+  if (rLunar) rLunar.value = cleanLunar;
+  document.querySelectorAll('.report-lunar-date').forEach(el => el.innerText = cleanLunar);
 }
 
 function applySavedReportDates() {
   const savedSolarIso = localStorage.getItem('pec21_report_solar_iso') || '2026-09-14';
-  const savedSolarText = localStorage.getItem('pec21_report_solar_text') || formatSolarKhmer(savedSolarIso);
-  const savedLunar = localStorage.getItem('pec21_report_lunar_text') || 'ថ្ងៃចន្ទ ៣កើត ខែភទ្របទ ឆ្នាំមមី អដ្ឋស័ក ព.ស.២៥៧០';
+  let savedSolarText = localStorage.getItem('pec21_report_solar_text');
+  if (!savedSolarText || isCorruptedText(savedSolarText)) {
+    savedSolarText = formatSolarKhmer(savedSolarIso);
+    localStorage.setItem('pec21_report_solar_text', savedSolarText);
+  }
+  let savedLunar = localStorage.getItem('pec21_report_lunar_text');
+  if (!savedLunar || isCorruptedText(savedLunar)) {
+    savedLunar = 'ថ្ងៃចន្ទ ៣កើត ខែភទ្របទ ឆ្នាំមមី អដ្ឋស័ក ព.ស.២៥៧០';
+    localStorage.setItem('pec21_report_lunar_text', savedLunar);
+  }
   applySolarDate(savedSolarIso, savedSolarText);
   applyLunarDate(savedLunar);
 }
@@ -2090,29 +2143,37 @@ function applySavedReportDates() {
 // PAGE NUMBER MANAGEMENT (-១- , -២- , ...)
 // ==============================================================================
 function handlePageNumberChange(pageVal) {
-  localStorage.setItem('pec21_report_page_num', pageVal);
-  applyPageNumber(pageVal);
+  let val = (pageVal || '-១-').trim();
+  if (isCorruptedText(val) || val.length > 8) val = '-១-';
+  localStorage.setItem('pec21_report_page_num', val);
+  applyPageNumber(val);
 }
 
 function handlePageNumberDirectEdit(textVal) {
-  const trimmed = (textVal || '').trim();
+  let trimmed = (textVal || '').trim();
+  if (isCorruptedText(trimmed) || trimmed.length > 8) trimmed = '-១-';
   localStorage.setItem('pec21_report_page_num', trimmed);
   applyPageNumber(trimmed);
 }
 
 function applyPageNumber(pageVal) {
-  const val = pageVal || '-១-';
+  let val = (pageVal || '-១-').trim();
+  if (isCorruptedText(val) || val.length > 8) val = '-១-';
   const tSelect = document.getElementById('tabReportPageSelect');
   const rSelect = document.getElementById('resReportPageSelect');
   if (tSelect) tSelect.value = val;
   if (rSelect) rSelect.value = val;
-  document.querySelectorAll('.paper-page-number .page-num-display').forEach(el => {
-    el.innerText = val;
+  document.querySelectorAll('.paper-page-number').forEach(el => {
+    el.innerHTML = `<span class="page-num-display">${val}</span>`;
   });
 }
 
 function initPageNumber() {
-  const saved = localStorage.getItem('pec21_report_page_num') || '-១-';
+  let saved = localStorage.getItem('pec21_report_page_num') || '-១-';
+  if (isCorruptedText(saved) || saved.length > 8) {
+    saved = '-១-';
+    localStorage.setItem('pec21_report_page_num', '-១-');
+  }
   applyPageNumber(saved);
 }
 
