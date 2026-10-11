@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ប្រព័ន្ធគ្រប់គ្រងបូកស្រង់ពិន្ទុប្រឡងជ្រើសរើស ក.ច.ប (PEC21 - ខេត្តតាកែវ)</title>
-  <link rel="stylesheet" href="css/style.css?v=20261011_inst_editable_size12">
+  <link rel="stylesheet" href="css/style.css?v=20261011_inst_fontsize">
 </head>
 <body>
   <div class="app-container">
@@ -799,26 +799,62 @@
                 លោកអ្នកអាចកែសម្រួលអក្សរស្ថាប័នទាំង ៤ ជួរដែលបង្ហាញនៅខាងក្រោម Logo លើតារាងស្រង់ពិន្ទុ និងតារាងលទ្ធផលប្រឡង៖
               </p>
               <div style="display:flex; flex-direction:column; gap:12px; max-width:550px;">
-                <div>
-                  <label class="form-label">ជួរទី១</label>
-                  <input type="text" id="settingsInstLine1" class="form-control" placeholder="គណៈកម្មាធិការជាតិរៀបចំការបោះឆ្នោត">
+                <div style="display:flex; justify-content:space-between; align-items:center; background:#f8fafc; padding:8px 12px; border-radius:6px; border:1px solid #e2e8f0;">
+                  <span style="font-size:0.85rem; color:var(--gray-700); font-weight:600;">កែសម្រួលទំហំអក្សររួម (pt)៖</span>
+                  <div style="display:flex; gap:6px;">
+                    <button type="button" class="btn btn-secondary" style="padding:4px 10px; font-size:0.82rem;" onclick="adjustInstFontSizeAll(-0.5)" title="បន្ថយ 0.5pt">A- (តូចជាង)</button>
+                    <button type="button" class="btn btn-secondary" style="padding:4px 10px; font-size:0.82rem;" onclick="adjustInstFontSizeAll(0.5)" title="បង្កើន 0.5pt">A+ (ធំជាង)</button>
+                  </div>
                 </div>
-                <div>
-                  <label class="form-label">ជួរទី២</label>
-                  <input type="text" id="settingsInstLine2" class="form-control" placeholder="គណៈកម្មការរៀបចំការបោះឆ្នោតខេត្តតាកែវ">
+
+                <div style="display:grid; grid-template-columns: 1fr 105px; gap: 10px; align-items: flex-end;">
+                  <div>
+                    <label class="form-label">ជួរទី១</label>
+                    <input type="text" id="settingsInstLine1" class="form-control" placeholder="គណៈកម្មាធិការជាតិរៀបចំការបោះឆ្នោត">
+                  </div>
+                  <div>
+                    <label class="form-label" style="font-size:0.8rem;">ទំហំ (pt)</label>
+                    <input type="number" id="settingsInstSize1" class="form-control" step="0.5" min="6" max="20" placeholder="9">
+                  </div>
                 </div>
-                <div>
-                  <label class="form-label">ជួរទី៣</label>
-                  <input type="text" id="settingsInstLine3" class="form-control" placeholder="លេខាធិការដ្ឋានរៀបចំការបោះឆ្នោតខេត្តតាកែវ">
+
+                <div style="display:grid; grid-template-columns: 1fr 105px; gap: 10px; align-items: flex-end;">
+                  <div>
+                    <label class="form-label">ជួរទី២</label>
+                    <input type="text" id="settingsInstLine2" class="form-control" placeholder="គណៈកម្មការរៀបចំការបោះឆ្នោតខេត្តតាកែវ">
+                  </div>
+                  <div>
+                    <label class="form-label" style="font-size:0.8rem;">ទំហំ (pt)</label>
+                    <input type="number" id="settingsInstSize2" class="form-control" step="0.5" min="6" max="20" placeholder="8.5">
+                  </div>
                 </div>
-                <div>
-                  <label class="form-label">ជួរទី៤</label>
-                  <input type="text" id="settingsInstLine4" class="form-control" placeholder="អនុគណៈកម្មការរៀបចំការប្រឡងជ្រើសរើស">
+
+                <div style="display:grid; grid-template-columns: 1fr 105px; gap: 10px; align-items: flex-end;">
+                  <div>
+                    <label class="form-label">ជួរទី៣</label>
+                    <input type="text" id="settingsInstLine3" class="form-control" placeholder="លេខាធិការដ្ឋានរៀបចំការបោះឆ្នោតខេត្តតាកែវ">
+                  </div>
+                  <div>
+                    <label class="form-label" style="font-size:0.8rem;">ទំហំ (pt)</label>
+                    <input type="number" id="settingsInstSize3" class="form-control" step="0.5" min="6" max="20" placeholder="8.5">
+                  </div>
                 </div>
+
+                <div style="display:grid; grid-template-columns: 1fr 105px; gap: 10px; align-items: flex-end;">
+                  <div>
+                    <label class="form-label">ជួរទី៤</label>
+                    <input type="text" id="settingsInstLine4" class="form-control" placeholder="អនុគណៈកម្មការរៀបចំការប្រឡងជ្រើសរើស">
+                  </div>
+                  <div>
+                    <label class="form-label" style="font-size:0.8rem;">ទំហំ (pt)</label>
+                    <input type="number" id="settingsInstSize4" class="form-control" step="0.5" min="6" max="20" placeholder="8">
+                  </div>
+                </div>
+
                 <div style="display:flex; gap:10px; margin-top:8px;">
                   <button type="button" class="btn btn-primary" onclick="saveSettingsInstLines()">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>
-                    រក្សាទុកអក្សរស្ថាប័ន
+                    រក្សាទុកអក្សរ និងទំហំអក្សរ
                   </button>
                   <button type="button" class="btn btn-secondary" onclick="resetInstLinesToDefault()">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
@@ -1222,24 +1258,56 @@ AB004	អវត្តមាន" style="font-family:monospace; font-size:0.88rem;
       </div>
       <form id="instForm" onsubmit="handleSaveInstLines(event)">
         <div class="modal-body" style="display:flex; flex-direction:column; gap:12px;">
-          <p style="font-size:0.88rem; color:var(--gray-600); margin-bottom:4px;">
-            អក្សរទាំង ៤ ជួរនេះ នឹងបង្ហាញនៅក្រោម Logo លើតារាងស្រង់ពិន្ទុ និងតារាងលទ្ធផលប្រឡង៖
-          </p>
-          <div>
-            <label class="form-label">ជួរទី១</label>
-            <input type="text" id="modalInstLine1" class="form-control" required>
+          <div style="display:flex; justify-content:space-between; align-items:center; background:#f8fafc; padding:8px 12px; border-radius:6px; border:1px solid #e2e8f0;">
+            <span style="font-size:0.85rem; color:var(--gray-700); font-weight:600;">កែសម្រួលទំហំអក្សររួម (pt)៖</span>
+            <div style="display:flex; gap:6px;">
+              <button type="button" class="btn btn-secondary" style="padding:4px 10px; font-size:0.82rem;" onclick="adjustInstFontSizeAll(-0.5)" title="បន្ថយ 0.5pt">A- (តូចជាង)</button>
+              <button type="button" class="btn btn-secondary" style="padding:4px 10px; font-size:0.82rem;" onclick="adjustInstFontSizeAll(0.5)" title="បង្កើន 0.5pt">A+ (ធំជាង)</button>
+            </div>
           </div>
-          <div>
-            <label class="form-label">ជួរទី២</label>
-            <input type="text" id="modalInstLine2" class="form-control">
+
+          <div style="display:grid; grid-template-columns: 1fr 105px; gap: 10px; align-items: flex-end;">
+            <div>
+              <label class="form-label">ជួរទី១</label>
+              <input type="text" id="modalInstLine1" class="form-control" required>
+            </div>
+            <div>
+              <label class="form-label" style="font-size:0.8rem;">ទំហំ (pt)</label>
+              <input type="number" id="modalInstSize1" class="form-control" step="0.5" min="6" max="20" required>
+            </div>
           </div>
-          <div>
-            <label class="form-label">ជួរទី៣</label>
-            <input type="text" id="modalInstLine3" class="form-control">
+
+          <div style="display:grid; grid-template-columns: 1fr 105px; gap: 10px; align-items: flex-end;">
+            <div>
+              <label class="form-label">ជួរទី២</label>
+              <input type="text" id="modalInstLine2" class="form-control">
+            </div>
+            <div>
+              <label class="form-label" style="font-size:0.8rem;">ទំហំ (pt)</label>
+              <input type="number" id="modalInstSize2" class="form-control" step="0.5" min="6" max="20">
+            </div>
           </div>
-          <div>
-            <label class="form-label">ជួរទី៤</label>
-            <input type="text" id="modalInstLine4" class="form-control">
+
+          <div style="display:grid; grid-template-columns: 1fr 105px; gap: 10px; align-items: flex-end;">
+            <div>
+              <label class="form-label">ជួរទី៣</label>
+              <input type="text" id="modalInstLine3" class="form-control">
+            </div>
+            <div>
+              <label class="form-label" style="font-size:0.8rem;">ទំហំ (pt)</label>
+              <input type="number" id="modalInstSize3" class="form-control" step="0.5" min="6" max="20">
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns: 1fr 105px; gap: 10px; align-items: flex-end;">
+            <div>
+              <label class="form-label">ជួរទី៤</label>
+              <input type="text" id="modalInstLine4" class="form-control">
+            </div>
+            <div>
+              <label class="form-label" style="font-size:0.8rem;">ទំហំ (pt)</label>
+              <input type="number" id="modalInstSize4" class="form-control" step="0.5" min="6" max="20">
+            </div>
           </div>
         </div>
         <div class="modal-footer" style="display:flex; justify-content:space-between;">
@@ -1257,6 +1325,6 @@ AB004	អវត្តមាន" style="font-family:monospace; font-size:0.88rem;
   <div id="toastContainer" class="toast-container"></div>
 
   <!-- Application Logic -->
-  <script src="js/app.js?v=20261011_inst_editable_size12"></script>
+  <script src="js/app.js?v=20261011_inst_fontsize"></script>
 </body>
 </html>

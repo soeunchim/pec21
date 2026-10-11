@@ -2037,7 +2037,7 @@ function applySavedReportDates() {
 }
 
 // ==============================================================================
-// INSTITUTION LINES UNDER LOGO MANAGEMENT (SYNC & PERSIST)
+// INSTITUTION LINES & FONT SIZES UNDER LOGO MANAGEMENT (SYNC & PERSIST)
 // ==============================================================================
 const DEFAULT_INST_LINES = [
   'គណៈកម្មាធិការជាតិរៀបចំការបោះឆ្នោត',
@@ -2045,6 +2045,7 @@ const DEFAULT_INST_LINES = [
   'លេខាធិការដ្ឋានរៀបចំការបោះឆ្នោតខេត្តតាកែវ',
   'អនុគណៈកម្មការរៀបចំការប្រឡងជ្រើសរើស'
 ];
+const DEFAULT_INST_SIZES = [9, 8.5, 8.5, 8];
 
 function getSavedInstLines() {
   const saved = localStorage.getItem('pec21_inst_lines');
@@ -2057,36 +2058,69 @@ function getSavedInstLines() {
   return [...DEFAULT_INST_LINES];
 }
 
-function applyInstLines(lines) {
+function getSavedInstSizes() {
+  const saved = localStorage.getItem('pec21_inst_font_sizes');
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length === 4) return parsed;
+    } catch (e) {}
+  }
+  return [...DEFAULT_INST_SIZES];
+}
+
+function applyInstLines(lines, sizes) {
+  if (!lines) lines = getSavedInstLines();
+  if (!sizes) sizes = getSavedInstSizes();
+
   lines.forEach((text, idx) => {
     const lineNum = idx + 1;
+    const size = sizes[idx] !== undefined ? sizes[idx] : DEFAULT_INST_SIZES[idx];
     document.querySelectorAll(`.inst-line-${lineNum}`).forEach(el => {
       el.innerText = text;
+      el.style.fontSize = `${size}pt`;
     });
     const mInput = document.getElementById(`modalInstLine${lineNum}`);
     if (mInput) mInput.value = text;
+    const mSize = document.getElementById(`modalInstSize${lineNum}`);
+    if (mSize) mSize.value = size;
+
     const sInput = document.getElementById(`settingsInstLine${lineNum}`);
     if (sInput) sInput.value = text;
+    const sSize = document.getElementById(`settingsInstSize${lineNum}`);
+    if (sSize) sSize.value = size;
   });
 }
 
 function initInstLines() {
   const lines = getSavedInstLines();
-  applyInstLines(lines);
+  const sizes = getSavedInstSizes();
+  applyInstLines(lines, sizes);
 }
 
 function handleInstLineDirectEdit(lineNum, textVal) {
   const lines = getSavedInstLines();
   lines[lineNum - 1] = textVal.trim();
   localStorage.setItem('pec21_inst_lines', JSON.stringify(lines));
-  applyInstLines(lines);
+  applyInstLines(lines, null);
+}
+
+function adjustInstFontSizeAll(delta) {
+  const sizes = getSavedInstSizes();
+  const newSizes = sizes.map(s => Math.max(6, Math.min(20, Number((parseFloat(s) + delta).toFixed(1)))));
+  localStorage.setItem('pec21_inst_font_sizes', JSON.stringify(newSizes));
+  applyInstLines(null, newSizes);
+  showToast(`បានកែទំហំអក្សរស្ថាប័ន (${delta > 0 ? '+' : ''}${delta}pt)`, 'info');
 }
 
 function openInstModal() {
   const lines = getSavedInstLines();
+  const sizes = getSavedInstSizes();
   lines.forEach((text, idx) => {
     const input = document.getElementById(`modalInstLine${idx + 1}`);
     if (input) input.value = text;
+    const sInput = document.getElementById(`modalInstSize${idx + 1}`);
+    if (sInput) sInput.value = sizes[idx];
   });
   const modal = document.getElementById('instModal');
   if (modal) modal.classList.add('active');
@@ -2105,10 +2139,17 @@ function handleSaveInstLines(e) {
     document.getElementById('modalInstLine3').value.trim(),
     document.getElementById('modalInstLine4').value.trim()
   ];
+  const sizes = [
+    parseFloat(document.getElementById('modalInstSize1').value) || 9,
+    parseFloat(document.getElementById('modalInstSize2').value) || 8.5,
+    parseFloat(document.getElementById('modalInstSize3').value) || 8.5,
+    parseFloat(document.getElementById('modalInstSize4').value) || 8
+  ];
   localStorage.setItem('pec21_inst_lines', JSON.stringify(lines));
-  applyInstLines(lines);
+  localStorage.setItem('pec21_inst_font_sizes', JSON.stringify(sizes));
+  applyInstLines(lines, sizes);
   closeInstModal();
-  showToast('បានរក្សាទុកអក្សរនៅក្រោម Logo រួចរាល់!', 'success');
+  showToast('បានរក្សាទុកអក្សរ និងទំហំអក្សរនៅក្រោម Logo រួចរាល់!', 'success');
 }
 
 function saveSettingsInstLines() {
@@ -2118,15 +2159,23 @@ function saveSettingsInstLines() {
     document.getElementById('settingsInstLine3').value.trim(),
     document.getElementById('settingsInstLine4').value.trim()
   ];
+  const sizes = [
+    parseFloat(document.getElementById('settingsInstSize1').value) || 9,
+    parseFloat(document.getElementById('settingsInstSize2').value) || 8.5,
+    parseFloat(document.getElementById('settingsInstSize3').value) || 8.5,
+    parseFloat(document.getElementById('settingsInstSize4').value) || 8
+  ];
   localStorage.setItem('pec21_inst_lines', JSON.stringify(lines));
-  applyInstLines(lines);
-  showToast('បានរក្សាទុកអក្សរនៅក្រោម Logo រួចរាល់!', 'success');
+  localStorage.setItem('pec21_inst_font_sizes', JSON.stringify(sizes));
+  applyInstLines(lines, sizes);
+  showToast('បានរក្សាទុកអក្សរ និងទំហំអក្សរនៅក្រោម Logo រួចរាល់!', 'success');
 }
 
 function resetInstLinesToDefault() {
   localStorage.removeItem('pec21_inst_lines');
-  applyInstLines(DEFAULT_INST_LINES);
-  showToast('បានកំណត់អក្សរស្ថាប័នទៅដូចដើមវិញ (Default)!', 'success');
+  localStorage.removeItem('pec21_inst_font_sizes');
+  applyInstLines(DEFAULT_INST_LINES, DEFAULT_INST_SIZES);
+  showToast('បានកំណត់អក្សរ និងទំហំអក្សរស្ថាប័នទៅដូចដើមវិញ (Default)!', 'success');
 }
 
 // Render Continuous Official Tabulation Table
