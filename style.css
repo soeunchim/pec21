@@ -1,0 +1,1295 @@
+/* ==============================================================================
+   ប្រព័ន្ធគ្រប់គ្រងបូកស្រង់ពិន្ទុប្រឡងជ្រើសរើស ក.ច.ប (PEC21 - ខេត្តតាកែវ)
+   Complete Offline & Online Stylesheet
+   ============================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Moul&display=swap');
+
+:root {
+  --primary: #1E3A8A;       /* Deep Election Blue */
+  --primary-hover: #172554;
+  --primary-light: #EFF6FF;
+  --secondary: #D97706;     /* Royal Gold */
+  --secondary-light: #FEF3C7;
+  --accent: #059669;        /* Emerald Green - Passed */
+  --accent-light: #D1FAE5;
+  --danger: #DC2626;        /* Crimson Red - Failed */
+  --danger-light: #FEE2E2;
+  --info: #0284C7;          /* Sky Blue - Reserve */
+  --info-light: #E0F2FE;
+  --gray-50: #F8FAFC;
+  --gray-100: #F1F5F9;
+  --gray-200: #E2E8F0;
+  --gray-300: #CBD5E1;
+  --gray-400: #94A3B8;
+  --gray-500: #64748B;
+  --gray-600: #475569;
+  --gray-700: #334155;
+  --gray-800: #1E293B;
+  --gray-900: #0F172A;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Kantumruy Pro', 'Khmer OS Siemreap', 'Khmer OS Battambang', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: #F8FAFC;
+  color: var(--gray-800);
+  line-height: 1.6;
+  font-size: 14px;
+  min-height: 100vh;
+}
+
+.font-moul {
+  font-family: 'Moul', 'Khmer OS Muol Light', serif;
+}
+
+/* Layout */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Header & Navbar */
+.top-header {
+  background: linear-gradient(135deg, #1E3A8A 0%, #172554 100%);
+  color: white;
+  padding: 12px 24px;
+  box-shadow: var(--shadow-md);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.header-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.brand-logo {
+  width: 48px;
+  height: 48px;
+  background: white;
+  border-radius: 50%;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.brand-logo svg {
+  width: 36px;
+  height: 36px;
+  fill: var(--primary);
+}
+
+.brand-text h1 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  line-height: 1.3;
+}
+
+.brand-text p {
+  font-size: 0.82rem;
+  color: #93C5FD;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Navigation Tabs */
+.nav-bar {
+  background: white;
+  border-bottom: 1px solid var(--gray-200);
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 72px;
+  z-index: 40;
+}
+
+.nav-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  overflow-x: auto;
+  padding: 0 16px;
+  scrollbar-width: none;
+}
+
+.nav-container::-webkit-scrollbar {
+  display: none;
+}
+
+.nav-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 18px;
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--gray-600);
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.nav-item:hover {
+  color: var(--primary);
+  background-color: var(--gray-50);
+}
+
+.nav-item.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+  background-color: var(--primary-light);
+}
+
+/* Status Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 9999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.badge-passed {
+  background-color: var(--accent-light);
+  color: #065F46;
+  border: 1px solid #A7F3D0;
+}
+
+.badge-reserve {
+  background-color: var(--info-light);
+  color: #075985;
+  border: 1px solid #BAE6FD;
+}
+
+.badge-failed {
+  background-color: var(--danger-light);
+  color: #991B1B;
+  border: 1px solid #FECACA;
+}
+
+.badge-absent {
+  background-color: var(--gray-200);
+  color: var(--gray-700);
+  border: 1px solid var(--gray-300);
+}
+
+.badge-role {
+  background-color: var(--primary-light);
+  color: var(--primary);
+  border: 1px solid #BFDBFE;
+}
+
+.badge-district {
+  background-color: var(--secondary-light);
+  color: #92400E;
+  border: 1px solid #FDE68A;
+}
+
+/* Main Content Area */
+.main-content {
+  flex: 1;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 24px 16px;
+}
+
+.tab-pane {
+  display: none;
+  animation: fadeIn 0.25s ease-out;
+}
+
+.tab-pane.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Dashboard KPI Cards */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.kpi-card {
+  background: white;
+  border-radius: var(--radius-md);
+  padding: 18px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--gray-200);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.kpi-info h3 {
+  font-size: 0.85rem;
+  color: var(--gray-500);
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.kpi-info .kpi-num {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  line-height: 1;
+}
+
+.kpi-info .kpi-sub {
+  font-size: 0.75rem;
+  color: var(--gray-400);
+  margin-top: 4px;
+}
+
+.kpi-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kpi-icon svg {
+  width: 26px;
+  height: 26px;
+}
+
+/* Tables & Cards */
+.card {
+  background: white;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--gray-200);
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--gray-200);
+  background-color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+/* Custom Table */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* Excel-Style Grid Table */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.88rem;
+  font-family: var(--font-base);
+  background-color: white;
+  border: 1px solid #D1D5DB;
+}
+
+.data-table th {
+  background-color: #E2E8F0;
+  color: #1E293B;
+  font-weight: 700;
+  padding: 8px 10px;
+  border: 1px solid #CBD5E1;
+  white-space: nowrap;
+  font-size: 0.86rem;
+  letter-spacing: 0.2px;
+}
+
+.data-table td {
+  padding: 6px 8px;
+  border: 1px solid #E2E8F0;
+  vertical-align: middle;
+  font-size: 0.88rem;
+}
+
+.data-table tbody tr:hover {
+  background-color: #F8FAFC;
+}
+
+.data-table tbody tr:nth-child(even) {
+  background-color: #FAFAFA;
+}
+
+/* Gray hatched / shaded column (like QCM-PC column in Excel screenshot) */
+.col-shaded-excel {
+  background: repeating-linear-gradient(
+    45deg,
+    #64748B,
+    #64748B 2px,
+    #475569 2px,
+    #475569 4px
+  ) !important;
+  color: transparent !important;
+  user-select: none;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+  user-select: none;
+  text-decoration: none;
+}
+
+.btn-sm {
+  padding: 5px 10px;
+  font-size: 0.8rem;
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: white;
+}
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+}
+
+.btn-secondary {
+  background-color: white;
+  color: var(--gray-700);
+  border-color: var(--gray-300);
+}
+.btn-secondary:hover {
+  background-color: var(--gray-50);
+  border-color: var(--gray-400);
+}
+
+.btn-success {
+  background-color: var(--accent);
+  color: white;
+}
+.btn-success:hover {
+  background-color: #047857;
+}
+
+.btn-danger {
+  background-color: var(--danger);
+  color: white;
+}
+.btn-danger:hover {
+  background-color: #B91C1C;
+}
+
+/* Form Controls */
+.form-group {
+  margin-bottom: 14px;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--gray-700);
+  margin-bottom: 5px;
+}
+
+.form-control, .form-select {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--gray-300);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-family: inherit;
+  color: var(--gray-800);
+  background-color: white;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.form-control:focus, .form-select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.15);
+}
+
+/* Filter Toolbar */
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 18px;
+  background: white;
+  padding: 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--gray-200);
+}
+
+.toolbar-group {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* Inline Editing for Scores & Authentic Microsoft Excel Grid System */
+.excel-grid {
+  border-collapse: collapse;
+}
+
+.excel-grid td {
+  padding: 0 !important;
+  vertical-align: middle;
+  height: 34px;
+}
+
+.excel-grid td:has(.btn) {
+  padding: 4px 6px !important;
+}
+
+.score-input {
+  width: 100%;
+  padding: 4px 6px;
+  text-align: center;
+  font-weight: 600;
+  border: 1px solid transparent;
+  background-color: transparent;
+  box-sizing: border-box;
+}
+
+/* Hide number up/down arrow spinners completely */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none !important;
+  margin: 0 !important;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield !important;
+  appearance: textfield !important;
+}
+
+.score-input:hover {
+  background-color: rgba(241, 245, 249, 0.7);
+}
+
+.score-input:focus {
+  border: 2px solid #107C41 !important; /* Excel signature green */
+  background-color: #FFFFFF !important;
+  outline: none;
+  box-shadow: 0 0 0 1px #107C41;
+  z-index: 5;
+  position: relative;
+}
+
+.excel-cell-input {
+  width: 100%;
+  height: 100%;
+  min-height: 32px;
+  border: 1px solid transparent;
+  background: transparent;
+  padding: 4px 8px;
+  font-size: 0.92rem;
+  font-family: inherit;
+  color: #1E293B;
+  box-sizing: border-box;
+  transition: all 0.1s ease;
+}
+
+.name-input {
+  min-width: 180px !important;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.excel-cell-input:hover {
+  background-color: rgba(226, 232, 240, 0.4);
+}
+
+.excel-cell-input:focus {
+  outline: none;
+  border: 2px solid #107C41 !important; /* Authentic Microsoft Excel Green */
+  background-color: #FFFFFF !important;
+  box-shadow: 0 0 0 1px #107C41;
+  z-index: 5;
+  position: relative;
+}
+
+.excel-cell-select {
+  width: 100%;
+  height: 100%;
+  min-height: 32px;
+  border: 1px solid transparent;
+  background: transparent;
+  font-size: 0.92rem;
+  font-family: inherit;
+  font-weight: 700;
+  text-align: center;
+  text-align-last: center;
+  box-sizing: border-box;
+  cursor: pointer;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  background-image: none !important;
+  padding: 4px 6px;
+}
+
+.excel-cell-select:hover {
+  background-color: rgba(226, 232, 240, 0.4);
+}
+
+.excel-cell-select:focus {
+  outline: none;
+  border: 2px solid #107C41 !important;
+  background-color: #FFFFFF !important;
+  box-shadow: 0 0 0 1px #107C41;
+  z-index: 5;
+  position: relative;
+}
+
+.cell-flagged-red {
+  background-color: #DC2626 !important;
+  color: #FFFFFF !important;
+  font-weight: 700;
+}
+.cell-flagged-red input {
+  color: #FFFFFF !important;
+  font-weight: 700;
+}
+
+/* Modal Dialog */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s, visibility 0.2s;
+  padding: 16px;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+  transform: scale(0.95);
+  transition: transform 0.2s;
+}
+
+.modal-overlay.active .modal-card {
+  transform: scale(1);
+}
+
+.modal-header {
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--gray-200);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-body {
+  padding: 22px;
+}
+
+.modal-footer {
+  padding: 14px 22px;
+  border-top: 1px solid var(--gray-200);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  background: var(--gray-50);
+}
+
+/* Toast Notifications */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 110;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.toast {
+  background: white;
+  color: var(--gray-900);
+  padding: 12px 18px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-left: 4px solid var(--primary);
+  animation: slideIn 0.3s ease;
+  min-width: 280px;
+}
+
+.toast.toast-success { border-left-color: var(--accent); }
+.toast.toast-error { border-left-color: var(--danger); }
+.toast.toast-warning { border-left-color: var(--secondary); }
+
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* Official Print Paper Preview */
+.official-paper {
+  background: white;
+  padding: 35px 45px;
+  margin: 0 auto;
+  max-width: 1100px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--gray-300);
+  font-family: 'Kantumruy Pro', 'Khmer OS Siemreap', sans-serif;
+  color: black;
+}
+
+.paper-motto {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.paper-motto h2 {
+  font-family: 'Moul', serif;
+  font-size: 1.15rem;
+  margin-bottom: 4px;
+}
+
+.paper-motto h3 {
+  font-family: 'Moul', serif;
+  font-size: 0.95rem;
+  margin-bottom: 4px;
+}
+
+.paper-motto .dots {
+  font-size: 1.2rem;
+  letter-spacing: 3px;
+}
+
+.paper-org {
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.paper-org h4 {
+  font-family: 'Moul', serif;
+  font-size: 0.95rem;
+}
+
+.paper-org p {
+  font-size: 0.88rem;
+}
+
+.paper-title {
+  text-align: center;
+  margin: 15px 0 25px;
+}
+
+.paper-title h3 {
+  font-family: 'Moul', serif;
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+.paper-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  margin-bottom: 30px;
+}
+
+.paper-table th, .paper-table td {
+  border: 1px solid black;
+  padding: 6px 8px;
+  text-align: center;
+}
+
+.paper-table th {
+  background-color: #f5f5f5;
+  font-weight: 700;
+}
+
+/* Authentic Excel Official Tabulation Template Styling */
+.excel-official-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.86rem;
+  margin-bottom: 25px;
+  background-color: #FFFFFF;
+}
+
+.excel-official-table th,
+.excel-official-table td {
+  border: 1px solid #000000;
+  padding: 4px 6px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.excel-official-table th {
+  background-color: #FFFFFF;
+  font-weight: 700;
+}
+
+.commune-banner-row td {
+  background-color: #FFFFFF;
+  font-weight: 700;
+  font-size: 0.94rem;
+  text-align: left;
+  padding: 5px 8px;
+  border-top: 1.5px solid #000;
+  border-bottom: 1px solid #000;
+}
+
+.role-banner-row td {
+  background-color: #FFFFFF;
+  font-weight: 700;
+  font-size: 0.88rem;
+  text-align: left;
+  padding: 4px 8px;
+  border-top: 1px solid #000;
+  border-bottom: 1px solid #000;
+}
+
+.excel-x-cell {
+  background: 
+    linear-gradient(to top right, transparent calc(50% - 0.75px), #64748B calc(50% - 0.75px), #64748B calc(50% + 0.75px), transparent calc(50% + 0.75px)),
+    linear-gradient(to bottom right, transparent calc(50% - 0.75px), #64748B calc(50% - 0.75px), #64748B calc(50% + 0.75px), transparent calc(50% + 0.75px)) !important;
+  background-color: #FFFFFF !important;
+}
+
+.btn-excel-pill {
+  background: #93C5FD;
+  color: #1E3A8A;
+  border: 1.5px solid #60A5FA;
+  border-radius: 8px;
+  padding: 5px 14px;
+  font-weight: 700;
+  font-size: 0.88rem;
+  font-family: inherit;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.btn-excel-pill:hover {
+  background: #60A5FA;
+  color: #FFFFFF;
+}
+
+.paper-signatures {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+  page-break-inside: avoid;
+}
+
+.sig-box {
+  text-align: center;
+  width: 30%;
+}
+
+.sig-title {
+  font-weight: 700;
+  margin-bottom: 60px;
+}
+
+/* ==============================================================================
+   PRINT STYLES (@media print)
+   ============================================================================== */
+/* Role Tab Switcher Buttons (Like Excel tabs) */
+.btn-role-tab {
+  background: white;
+  color: var(--gray-700);
+  border: 1.5px solid var(--gray-300);
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.btn-role-tab:hover {
+  background: #EFF6FF;
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.btn-role-tab.active {
+  background: var(--primary);
+  color: white !important;
+  border-color: var(--primary) !important;
+  box-shadow: 0 2px 6px rgba(30, 58, 138, 0.25);
+}
+
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 11pt;
+  }
+
+  .top-header, .nav-bar, .toolbar, .no-print, .btn, .toast-container, .modal-overlay {
+    display: none !important;
+  }
+
+  .main-content {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .official-paper {
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .paper-table th {
+    background-color: #eee !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  @page {
+    size: A4 landscape;
+    margin: 12mm 10mm;
+  }
+}
+
+/* ==========================================================================
+   EXCEL AUTHENTIC WORKBOOK & SLICER STYLES (ដូចក្នុង MS EXCEL)
+   ========================================================================== */
+
+/* Excel Main Container Layout: Table on Left + Slicer on Right */
+.excel-view-layout {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.excel-table-container {
+  flex: 1 1 0%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* Authentic Excel Sheet Tabs Bar */
+.excel-sheet-bar {
+  display: flex;
+  align-items: stretch;
+  background: #EBF2F7;
+  border: 1px solid #CBD5E1;
+  border-radius: 6px 6px 0 0;
+  padding: 4px 6px 0 6px;
+  overflow-x: auto;
+  gap: 3px;
+  user-select: none;
+}
+
+.excel-sheet-nav-arrows {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding-right: 6px;
+  border-right: 1px solid #CBD5E1;
+  margin-right: 4px;
+}
+
+.excel-nav-btn {
+  background: transparent;
+  border: none;
+  font-size: 0.8rem;
+  color: #64748B;
+  padding: 3px 6px;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.excel-nav-btn:hover {
+  background: #CBD5E1;
+  color: #1E293B;
+}
+
+.excel-sheet-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: #475569;
+  background: #DFE7EF;
+  border: 1px solid #CBD5E1;
+  border-bottom: none;
+  border-radius: 4px 4px 0 0;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.excel-sheet-tab:hover {
+  background: #F1F5F9;
+  color: #0F172A;
+}
+
+.excel-sheet-tab.active {
+  background: #FFFFFF !important;
+  color: #107C41 !important; /* Authentic Microsoft Excel Green */
+  font-weight: 700 !important;
+  border-top: 3px solid #107C41 !important;
+  border-left: 1px solid #CBD5E1 !important;
+  border-right: 1px solid #CBD5E1 !important;
+  border-bottom: 2px solid #FFFFFF !important;
+  margin-bottom: -1px;
+  z-index: 2;
+  box-shadow: 0 -2px 5px rgba(0,0,0,0.06);
+}
+
+.excel-sheet-tab-badge {
+  font-size: 0.74rem;
+  padding: 1px 6px;
+  border-radius: 10px;
+  background: #E2E8F0;
+  color: #475569;
+}
+
+.excel-sheet-tab.active .excel-sheet-tab-badge {
+  background: #DCFCE7;
+  color: #15803D;
+}
+
+/* Excel Slicer Widget (កូដឃុំ Slicer) */
+.excel-slicer {
+  width: 285px;
+  flex-shrink: 0;
+  background: #FFFFFF;
+  border: 2px solid #ED7D31; /* Authentic Excel Peach/Orange Slicer Border */
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(237, 125, 49, 0.16);
+  position: sticky;
+  top: 10px;
+}
+
+.excel-slicer-header {
+  background: #F8CBAD; /* Soft Peach Header */
+  color: #833C0C;
+  font-weight: 700;
+  font-size: 0.88rem;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #F4B183;
+}
+
+.excel-slicer-clear-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #C00000;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.excel-slicer-clear-btn:hover {
+  background: #FCE4D6;
+}
+
+.excel-slicer-body {
+  padding: 8px;
+  max-height: 520px;
+  overflow-y: auto;
+}
+
+.excel-slicer-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+}
+
+.excel-slicer-btn {
+  background: #FCE4D6; /* Authentic Excel Slicer Button */
+  border: 1px solid #F4B183;
+  color: #1E293B;
+  font-family: monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 6px 2px;
+  text-align: center;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  user-select: none;
+}
+
+.excel-slicer-btn:hover {
+  background: #F8CBAD;
+  border-color: #ED7D31;
+}
+
+.excel-slicer-btn.active {
+  background: #ED7D31 !important;
+  color: #FFFFFF !important;
+  border-color: #C65911 !important;
+  box-shadow: 0 2px 4px rgba(237, 125, 49, 0.4);
+}
+
+.excel-slicer-btn.disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  background: #F1F5F9;
+  border-color: #E2E8F0;
+  color: #94A3B8;
+}
+
+/* Flagged Red Cell (Excel DOB underage/overage alert like row 6 in screenshot) */
+.cell-flagged-red {
+  background-color: #FF0000 !important;
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+}
+
+/* Excel Blue-Gray Table Header styling */
+.data-table th {
+  background-color: #D9E1F2 !important;
+  color: #1E293B !important;
+  font-weight: 700 !important;
+  border: 1px solid #B0C4DE !important;
+  text-align: center;
+}
+
+.data-table td {
+  border: 1px solid #CBD5E1 !important;
+}
+
+@media (max-width: 1024px) {
+  .excel-view-layout {
+    flex-direction: column;
+  }
+  .excel-slicer {
+    width: 100%;
+    position: static;
+  }
+  .excel-slicer-grid {
+    grid-template-columns: repeat(10, 1fr);
+  }
+}
+
+/* ==========================================================================
+   OFFICIAL TABULATION REPORT TABLE (ដូចក្នុងគម្រូ EXCEL ពិតប្រាកដ)
+   ========================================================================== */
+.btn-excel-pill {
+  background: #9BD0F5;
+  border: 1.5px solid #5B9BD5;
+  color: #0C4A6E;
+  font-family: 'Kantumruy Pro', 'Hanuman', sans-serif;
+  font-weight: 700;
+  font-size: 0.86rem;
+  padding: 5px 18px;
+  border-radius: 16px;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.12);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.btn-excel-pill:hover {
+  background: #7DBCEB;
+  border-color: #2563EB;
+  color: #082F49;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 7px rgba(0, 0, 0, 0.18);
+}
+
+.btn-excel-pill:active {
+  transform: translateY(0);
+}
+
+.excel-official-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Kantumruy Pro', 'Hanuman', sans-serif;
+  font-size: 0.88rem;
+  color: #000000;
+  background: #FFFFFF;
+  border: 1.5px solid #000000 !important;
+}
+
+.excel-official-table th {
+  border: 1px solid #000000 !important;
+  background-color: #FFFFFF !important;
+  color: #000000 !important;
+  font-weight: 700;
+  text-align: center;
+  padding: 6px 4px;
+  font-size: 0.86rem;
+  vertical-align: middle;
+}
+
+.excel-official-table td {
+  border: 1px solid #000000 !important;
+  padding: 4px 6px;
+  text-align: center;
+  font-size: 0.88rem;
+  height: 28px;
+  vertical-align: middle;
+}
+
+.excel-official-table .commune-banner-row td {
+  background-color: #FFFFFF !important;
+  font-weight: 700;
+  border: 1px solid #000000 !important;
+}
+
+.excel-official-table .commune-banner-row td:first-child {
+  text-align: center;
+  font-weight: 700;
+}
+
+.excel-official-table .commune-banner-row td:nth-child(2) {
+  text-align: left;
+  padding-left: 10px;
+  font-weight: 700;
+  font-size: 0.92rem;
+}
+
+.excel-official-table .role-banner-row td {
+  background-color: #FFFFFF !important;
+  font-family: 'Moul', 'Khmer OS Muol Light', serif;
+  font-size: 0.85rem;
+  text-align: left;
+  padding: 6px 10px;
+  border: 1px solid #000000 !important;
+}
+
+/* Authentic Excel X Cross Hatch Cell (ប្រអប់គូសខ្វែងអង្កត់ទ្រូង X) */
+.excel-x-cell {
+  background:
+    linear-gradient(to top right, transparent calc(50% - 0.75px), #000000 calc(50% - 0.5px), #000000 calc(50% + 0.5px), transparent calc(50% + 0.75px)),
+    linear-gradient(to bottom right, transparent calc(50% - 0.75px), #000000 calc(50% - 0.5px), #000000 calc(50% + 0.5px), transparent calc(50% + 0.75px)) !important;
+  background-color: #FFFFFF !important;
+  padding: 0 !important;
+}
+
+@media print {
+  .excel-x-cell {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  .btn-excel-pill {
+    display: none !important;
+  }
+}
+
