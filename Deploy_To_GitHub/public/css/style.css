@@ -749,7 +749,7 @@ input[type="number"] {
   to { transform: translateX(0); opacity: 1; }
 }
 
-/* Official Print Paper Preview - Authentic A4 Landscape (ក្រដាស A4 ផ្តេក) */
+/* Official Print Paper Preview - Authentic A4 Landscape (ក្រដាស A4 ផ្តេក សម្រាប់ Tab 4) */
 .official-paper {
   background: white;
   padding: 35px 45px;
@@ -761,6 +761,25 @@ input[type="number"] {
   font-family: 'Kantumruy Pro', 'Khmer OS Siemreap', sans-serif;
   color: black;
   box-sizing: border-box;
+}
+
+/* Tab 5: តារាងលទ្ធផលប្រឡង ជាក្រដាស A4 បញ្ឈរ (Portrait) */
+#resultsPaper {
+  max-width: 900px !important;
+  padding: 30px 25px;
+}
+
+#resultsPaper .official-signatures-layout {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: 2px;
+  font-size: 11pt;
+}
+
+#resultsPaper .official-signatures-layout > div {
+  flex: 1;
+  max-width: 380px;
 }
 
 .paper-motto {
@@ -906,11 +925,11 @@ input[type="number"] {
   line-height: 1.5;
 }
 
-/* ១. លេខទំព័រ តាមទម្រង់ -១- , -២- */
+/* ១. លេខទំព័រ តាមទម្រង់ -១- , -២- (Font Khmer OS Siemreap size 9) */
 .paper-page-number {
   text-align: center;
   font-family: 'Khmer OS Siemreap', 'Siemreap', sans-serif !important;
-  font-size: 12pt !important;
+  font-size: 9pt !important;
   font-weight: normal !important;
   color: #000000 !important;
   letter-spacing: 2px;
@@ -1007,7 +1026,7 @@ input[type="number"] {
   @bottom-center {
     content: "- " counter(page) " -";
     font-family: 'Khmer OS Siemreap', 'Siemreap', sans-serif !important;
-    font-size: 12pt !important;
+    font-size: 9pt !important;
     font-weight: normal !important;
   }
 }
@@ -1019,7 +1038,7 @@ input[type="number"] {
     @bottom-center {
       content: "- " counter(page) " -";
       font-family: 'Khmer OS Siemreap', 'Siemreap', sans-serif !important;
-      font-size: 12pt !important;
+      font-size: 9pt !important;
       font-weight: normal !important;
     }
   }

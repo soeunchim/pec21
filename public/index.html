@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ប្រព័ន្ធគ្រប់គ្រងបូកស្រង់ពិន្ទុប្រឡងជ្រើសរើស ក.ច.ប (PEC21 - ខេត្តតាកែវ)</title>
-  <link rel="stylesheet" href="css/style.css?v=20261011_table_font12_page_footer_tight">
+  <link rel="stylesheet" href="css/style.css?v=20261011_res_portrait_no_rank">
 </head>
 <body>
   <div class="app-container">
@@ -492,7 +492,7 @@
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
               កែអក្សរ & រំកិល Logo
             </button>
-            <button class="btn btn-primary" onclick="printOfficialReport()">
+            <button class="btn btn-primary" onclick="printOfficialReport('landscape')">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
               បោះពុម្ពតារាងស្រង់ពិន្ទុ (A4 ផ្តេក)
             </button>
@@ -574,8 +574,8 @@
               </div>
             </div>
 
-            <!-- Bottom Center Page Number: -១- , -២- -->
-            <div class="paper-page-number" contenteditable="true" onblur="handlePageNumberDirectEdit(this.innerText)" style="text-align:center; font-family:'Khmer OS Siemreap', 'Siemreap', sans-serif; font-size:12pt; margin-top:18px; color:#000000; font-weight:normal;">
+            <!-- Bottom Center Page Number: -១- , -២- (Font Khmer OS Siemreap size 9) -->
+            <div class="paper-page-number" contenteditable="true" onblur="handlePageNumberDirectEdit(this.innerText)" style="text-align:center; font-family:'Khmer OS Siemreap', 'Siemreap', sans-serif; font-size:9pt; margin-top:18px; color:#000000; font-weight:normal;">
               <span class="page-num-display">-១-</span>
             </div>
           </div>
@@ -627,15 +627,15 @@
           </div>
           <div class="toolbar-group">
             <span class="badge" style="background:#EFF6FF; color:#1E40AF; border:1px solid #BFDBFE; font-size:0.85rem; padding:6px 12px; display:inline-flex; align-items:center; gap:6px;">
-              📄 ទម្រង់ក្រដាស៖ A4 ផ្តេក (Landscape)
+              📄 ទម្រង់ក្រដាស៖ A4 បញ្ឈរ (Portrait)
             </span>
             <button class="btn btn-secondary" onclick="openInstModal()" title="កែសម្រួលអក្សរស្ថាប័ន និងរំកិលទីតាំង Logo">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
               កែអក្សរ & រំកិល Logo
             </button>
-            <button class="btn btn-primary" onclick="printOfficialReport()">
+            <button class="btn btn-primary" onclick="printOfficialReport('portrait')">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-              បោះពុម្ពតារាងលទ្ធផល (A4 ផ្តេក)
+              បោះពុម្ពតារាងលទ្ធផល (A4 បញ្ឈរ)
             </button>
           </div>
         </div>
@@ -688,12 +688,12 @@
           <!-- Official Signatures Footer (គៀកជើងតារាង) -->
           <div class="official-signatures-layout" style="display:flex; justify-content:space-between; align-items:flex-start; margin-top:2px; font-size:12pt; page-break-inside:avoid;">
             <!-- Left Column: បញ្ឈប់បញ្ជី (គៀកជើងតារាង) + បានពិនិត្យត្រឹមត្រូវ -->
-            <div style="text-align:left; min-width:340px;">
+            <div style="text-align:left; min-width:290px; flex:1; max-width:380px;">
               <div id="resStopListText" style="color:#000000; font-weight:bold; font-family:'Khmer OS Siemreap', 'Siemreap', sans-serif; font-size:12pt; margin:2px 0 16px 2px; line-height:1.4;">
                 បញ្ឈប់បញ្ជីនេះត្រឹមឈ្មោះ: - សរុប ០០ នាក់ (ស្រី ០០ នាក់)
               </div>
 
-              <div style="text-align:center; min-width:320px; line-height:1.65;">
+              <div style="text-align:center; min-width:280px; line-height:1.65;">
                 <div style="font-family:'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', serif; font-size:12pt; margin-bottom:4px; font-weight:normal;">បានពិនិត្យត្រឹមត្រូវ</div>
                 <div class="report-lunar-date" contenteditable="true" onblur="handleFooterDirectEdit('lunar', this.innerText)" style="font-family:'Khmer OS Siemreap', 'Siemreap', sans-serif; font-size:12pt; line-height:1.5;">ថ្ងៃចន្ទ ៣កើត ខែភទ្របទ ឆ្នាំមមី អដ្ឋស័ក ព.ស.២៥៧០</div>
                 <div class="report-solar-date" contenteditable="true" onblur="handleFooterDirectEdit('solar', this.innerText)" style="font-family:'Khmer OS Siemreap', 'Siemreap', sans-serif; font-size:12pt; margin-bottom:4px; line-height:1.5;">តាកែវ ថ្ងៃទី១៤ ខែកញ្ញា ឆ្នាំ២០២៦</div>
@@ -703,18 +703,18 @@
             </div>
 
             <!-- Right Column: ថ្ងៃខែឆ្នាំ គៀកជើងតារាងខាងស្តាំ -->
-            <div style="text-align:center; min-width:360px; line-height:1.65; margin-top:2px;">
+            <div style="text-align:center; min-width:310px; flex:1; max-width:380px; line-height:1.65; margin-top:2px;">
               <div class="report-lunar-date" contenteditable="true" onblur="handleFooterDirectEdit('lunar', this.innerText)" style="font-family:'Khmer OS Siemreap', 'Siemreap', sans-serif; font-size:12pt; line-height:1.5;">ថ្ងៃចន្ទ ៣កើត ខែភទ្របទ ឆ្នាំមមី អដ្ឋស័ក ព.ស.២៥៧០</div>
               <div class="report-solar-date" contenteditable="true" onblur="handleFooterDirectEdit('solar', this.innerText)" style="font-family:'Khmer OS Siemreap', 'Siemreap', sans-serif; font-size:12pt; margin-bottom:4px; line-height:1.5;">តាកែវ ថ្ងៃទី១៤ ខែកញ្ញា ឆ្នាំ២០២៦</div>
               <div style="font-family:'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', serif; font-size:12pt; margin-bottom:8px; font-weight:normal;">អ្នកស្រង់ពិន្ទុ និងបូកសរុប</div>
-              <div style="text-align:left; font-family:'Khmer OS Siemreap', 'Siemreap', sans-serif; font-size:12pt; margin-bottom:8px; padding-left:25px;">១....................................................................</div>
-              <div style="text-align:left; font-family:'Khmer OS Siemreap', 'Siemreap', sans-serif; font-size:12pt; margin-bottom:8px; padding-left:25px;">២....................................................................</div>
-              <div style="text-align:left; font-family:'Khmer OS Siemreap', 'Siemreap', sans-serif; font-size:12pt; padding-left:25px;">៣....................................................................</div>
+              <div style="text-align:left; font-family:'Khmer OS Siemreap', 'Siemreap', sans-serif; font-size:12pt; margin-bottom:8px; padding-left:20px;">១..................................................</div>
+              <div style="text-align:left; font-family:'Khmer OS Siemreap', 'Siemreap', sans-serif; font-size:12pt; margin-bottom:8px; padding-left:20px;">២..................................................</div>
+              <div style="text-align:left; font-family:'Khmer OS Siemreap', 'Siemreap', sans-serif; font-size:12pt; padding-left:20px;">៣..................................................</div>
             </div>
           </div>
 
-          <!-- Bottom Center Page Number: -១- , -២- -->
-          <div class="paper-page-number" contenteditable="true" onblur="handlePageNumberDirectEdit(this.innerText)" style="text-align:center; font-family:'Khmer OS Siemreap', 'Siemreap', sans-serif; font-size:12pt; margin-top:18px; color:#000000; font-weight:normal;">
+          <!-- Bottom Center Page Number: -១- , -២- (Font Khmer OS Siemreap size 9) -->
+          <div class="paper-page-number" contenteditable="true" onblur="handlePageNumberDirectEdit(this.innerText)" style="text-align:center; font-family:'Khmer OS Siemreap', 'Siemreap', sans-serif; font-size:9pt; margin-top:18px; color:#000000; font-weight:normal;">
             <span class="page-num-display">-១-</span>
           </div>
         </div>
@@ -1569,6 +1569,6 @@ AB004	អវត្តមាន" style="font-family:monospace; font-size:0.88rem;
   <div id="toastContainer" class="toast-container"></div>
 
   <!-- Application Logic -->
-  <script src="js/app.js?v=20261011_table_font12_page_footer_tight"></script>
+  <script src="js/app.js?v=20261011_res_portrait_no_rank"></script>
 </body>
 </html>

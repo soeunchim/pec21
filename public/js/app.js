@@ -123,8 +123,10 @@ function switchTab(tabId) {
       } else if (tabId === 'entry') {
         renderCandidatesTable();
       } else if (tabId === 'tabulation') {
+        setPrintOrientation('landscape');
         renderTabulationSheet();
       } else if (tabId === 'results') {
+        setPrintOrientation('portrait');
         renderResultsSheet();
       } else if (tabId === 'roster') {
         renderRoster();
@@ -2502,13 +2504,12 @@ function renderResultsSheet() {
       <thead>
         <tr style="font-size:10pt;">
           <th style="width:45px; font-size:10pt;">ល.រ</th>
-          <th style="width:200px; font-size:10pt;">គោត្តនាម និងនាម</th>
-          <th style="width:50px; font-size:10pt;">ភេទ</th>
+          <th style="width:210px; font-size:10pt;">គោត្តនាម និងនាម</th>
+          <th style="width:45px; font-size:10pt;">ភេទ</th>
           <th style="width:140px; font-size:10pt;">ថ្ងៃ ខែ ឆ្នាំកំណើត</th>
           <th style="width:90px; font-size:10pt;">សរុបពិន្ទុ</th>
-          <th style="width:90px; font-size:10pt;">ចំណាត់ថ្នាក់</th>
           <th style="width:100px; font-size:10pt;">លទ្ធផល</th>
-          <th style="width:90px; font-size:10pt;">ផ្សេងៗ</th>
+          <th style="width:100px; font-size:10pt;">ផ្សេងៗ</th>
         </tr>
       </thead>
       <tbody>
@@ -2517,7 +2518,7 @@ function renderResultsSheet() {
   if (communesInDist.length === 0) {
     tableHtml += `
       <tr>
-        <td colspan="8" style="padding:20px; color:#64748B;">គ្មានទិន្នន័យឃុំសម្រាប់ស្រុកនេះទេ</td>
+        <td colspan="7" style="padding:20px; color:#64748B;">គ្មានទិន្នន័យឃុំសម្រាប់ស្រុកនេះទេ</td>
       </tr>
     `;
   }
@@ -2529,10 +2530,10 @@ function renderResultsSheet() {
     const commPrefix = districtName === 'ដូនកែវ' ? 'សង្កាត់' : 'ឃុំ';
     const commCodeKhmer = toKhmerNumber(comm.code);
 
-    // 1. Commune Banner Row - Merged across all 8 columns with Times New Roman 12pt bold Roman numeral
+    // 1. Commune Banner Row - Merged across all 7 columns with Times New Roman 12pt bold Roman numeral
     tableHtml += `
       <tr class="commune-banner-row">
-        <td colspan="8"><span style="font-family:'Times New Roman', Times, serif; font-size:12pt; font-weight:bold; margin-right:6px;">${roman}-</span><span style="font-family:'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', serif; font-size:10pt;">${commPrefix}${cleanCommName} (${commCodeKhmer})</span></td>
+        <td colspan="7"><span style="font-family:'Times New Roman', Times, serif; font-size:12pt; font-weight:bold; margin-right:6px;">${roman}-</span><span style="font-family:'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', serif; font-size:10pt;">${commPrefix}${cleanCommName} (${commCodeKhmer})</span></td>
       </tr>
     `;
 
@@ -2541,7 +2542,7 @@ function renderResultsSheet() {
     if (prathanList.length > 0) {
       tableHtml += `
         <tr class="role-banner-row">
-          <td colspan="8">មុខតំណែងប្រធាន ក.ច.ប</td>
+          <td colspan="7">មុខតំណែងប្រធាន ក.ច.ប</td>
         </tr>
       `;
       prathanList.forEach((c, idx) => {
@@ -2552,7 +2553,6 @@ function renderResultsSheet() {
             <td>${c.gender || ''}</td>
             <td>${formatDobKhmer(c.dob)}</td>
             <td>${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
-            <td>${toKhmerNumber(c.rank || idx + 1)}</td>
             <td style="color:${c.status === 'A-ជាប់' ? '#047857' : (c.status === 'B-បម្រុង' || c.status === 'C-បម្រុងបន្ទាប់') ? '#0284C7' : '#DC2626'};">${c.status || ''}</td>
             <td>${c.notes || ''}</td>
           </tr>
@@ -2565,7 +2565,7 @@ function renderResultsSheet() {
     if (jumList.length > 0) {
       tableHtml += `
         <tr class="role-banner-row">
-          <td colspan="8">មុខតំណែងសមាជិក ក.ច.ប ដែលជួយការងារអនុប្រធាន ក.ច.ប</td>
+          <td colspan="7">មុខតំណែងសមាជិក ក.ច.ប ដែលជួយការងារអនុប្រធាន ក.ច.ប</td>
         </tr>
       `;
       jumList.forEach((c, idx) => {
@@ -2576,7 +2576,6 @@ function renderResultsSheet() {
             <td>${c.gender || ''}</td>
             <td>${formatDobKhmer(c.dob)}</td>
             <td>${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
-            <td>${toKhmerNumber(c.rank || idx + 1)}</td>
             <td style="color:${c.status === 'A-ជាប់' ? '#047857' : (c.status === 'B-បម្រុង' || c.status === 'C-បម្រុងបន្ទាប់') ? '#0284C7' : '#DC2626'};">${c.status || ''}</td>
             <td>${c.notes || ''}</td>
           </tr>
@@ -2589,7 +2588,7 @@ function renderResultsSheet() {
     if (pcList.length > 0) {
       tableHtml += `
         <tr class="role-banner-row">
-          <td colspan="8">មុខតំណែងសមាជិក ក.ច.ប ការីកុំព្យូទ័រ</td>
+          <td colspan="7">មុខតំណែងសមាជិក ក.ច.ប ការីកុំព្យូទ័រ</td>
         </tr>
       `;
       pcList.forEach((c, idx) => {
@@ -2600,7 +2599,6 @@ function renderResultsSheet() {
             <td>${c.gender || ''}</td>
             <td>${formatDobKhmer(c.dob)}</td>
             <td>${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
-            <td>${toKhmerNumber(c.rank || idx + 1)}</td>
             <td style="color:${c.status === 'A-ជាប់' ? '#047857' : (c.status === 'B-បម្រុង' || c.status === 'C-បម្រុងបន្ទាប់') ? '#0284C7' : '#DC2626'};">${c.status || ''}</td>
             <td>${c.notes || ''}</td>
           </tr>
@@ -3909,9 +3907,21 @@ async function handleSubstituteSubmit(e) {
 }
 
 // ==============================================================================
-// OFFICIAL REPORT PRINT HANDLER (បោះពុម្ពក្រដាស A4 ផ្តេក)
+// OFFICIAL REPORT PRINT HANDLER (កំណត់ទម្រង់ក្រដាស A4 ផ្តេក ឬ បញ្ឈរ ស្វ័យប្រវត្តិ)
 // ==============================================================================
-function printOfficialReport() {
+function setPrintOrientation(orientation) {
+  let styleEl = document.getElementById('printPageOrientationStyle');
+  if (!styleEl) {
+    styleEl = document.createElement('style');
+    styleEl.id = 'printPageOrientationStyle';
+    document.head.appendChild(styleEl);
+  }
+  styleEl.innerHTML = `@page { size: A4 ${orientation} !important; margin: 10mm 8mm 12mm 8mm; }`;
+}
+
+function printOfficialReport(orientation) {
+  const target = orientation || (state.activeTab === 'results' ? 'portrait' : 'landscape');
+  setPrintOrientation(target);
   window.print();
 }
 
