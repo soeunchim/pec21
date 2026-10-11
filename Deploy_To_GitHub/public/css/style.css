@@ -943,6 +943,14 @@ input[type="number"] {
   background-color: #FFFFFF !important;
   border: 1px solid #000000 !important;
   padding: 0 !important;
+  font-size: 0 !important;
+  line-height: 0 !important;
+  color: transparent !important;
+  text-indent: -99999px !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  user-select: none !important;
+  pointer-events: none !important;
 }
 
 .btn-excel-pill {
@@ -1018,29 +1026,27 @@ input[type="number"] {
 }
 
 /* ==============================================================================
-   A4 LANDSCAPE PRINT & PAGE CONFIGURATION (ក្រដាស A4 ផ្តេក)
+   A4 PRINT & PAGE CONFIGURATION (កំណត់ទម្រង់បោះពុម្ព A4 ផ្តេក និង បញ្ឈរ)
    ============================================================================== */
 @page {
-  size: A4 landscape !important;
-  margin: 10mm 8mm 12mm 8mm;
-  @bottom-center {
-    content: "- " counter(page) " -";
-    font-family: 'Khmer OS Siemreap', 'Siemreap', sans-serif !important;
-    font-size: 9pt !important;
-    font-weight: normal !important;
-  }
+  size: A4 landscape;
+  margin: 8mm 6mm 10mm 6mm;
 }
 
 @media print {
   @page {
+    size: A4 landscape;
+    margin: 8mm 6mm 10mm 6mm;
+  }
+
+  body.print-landscape @page {
     size: A4 landscape !important;
-    margin: 10mm 8mm 12mm 8mm;
-    @bottom-center {
-      content: "- " counter(page) " -";
-      font-family: 'Khmer OS Siemreap', 'Siemreap', sans-serif !important;
-      font-size: 9pt !important;
-      font-weight: normal !important;
-    }
+    margin: 8mm 6mm 10mm 6mm !important;
+  }
+
+  body.print-portrait @page {
+    size: A4 portrait !important;
+    margin: 10mm 8mm 12mm 8mm !important;
   }
 
   html, body {
@@ -1081,14 +1087,36 @@ input[type="number"] {
 
   .excel-official-table {
     width: 100% !important;
+    border-collapse: collapse !important;
   }
 
   .excel-official-table tr {
-    page-break-inside: avoid;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
   }
 
   .excel-official-table thead {
-    display: table-header-group;
+    display: table-header-group !important;
+  }
+
+  .excel-official-table .commune-banner-row {
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+  }
+
+  .excel-official-table .role-banner-row {
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+  }
+
+  .official-paper-footer-section {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .paper-page-number {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
   }
 }
 
@@ -1418,6 +1446,14 @@ input[type="number"] {
   background-color: #FFFFFF !important;
   border: 1px solid #000000 !important;
   padding: 0 !important;
+  font-size: 0 !important;
+  line-height: 0 !important;
+  color: transparent !important;
+  text-indent: -99999px !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  user-select: none !important;
+  pointer-events: none !important;
 }
 
 @media print {

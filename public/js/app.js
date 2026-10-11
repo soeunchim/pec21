@@ -123,9 +123,13 @@ function switchTab(tabId) {
       } else if (tabId === 'entry') {
         renderCandidatesTable();
       } else if (tabId === 'tabulation') {
+        document.body.classList.remove('print-portrait');
+        document.body.classList.add('print-landscape');
         setPrintOrientation('landscape');
         renderTabulationSheet();
       } else if (tabId === 'results') {
+        document.body.classList.remove('print-landscape');
+        document.body.classList.add('print-portrait');
         setPrintOrientation('portrait');
         renderResultsSheet();
       } else if (tabId === 'roster') {
@@ -3039,20 +3043,12 @@ function initLogoPosition() {
   initLogoDrag();
 }
 
-// Clean Printing Controller (ធានាថាមិនបង្ហាញផ្ទាំង Modal នៅពេល Print)
-function printOfficialReport() {
-  closeInstModal();
-  closeUserModal();
-  if (typeof closeCandidateModal === 'function') closeCandidateModal();
-  setTimeout(() => {
-    window.print();
-  }, 60);
-}
-
+// Clean Printing Modal Closer
 window.addEventListener('beforeprint', () => {
-  closeInstModal();
-  closeUserModal();
+  if (typeof closeInstModal === 'function') closeInstModal();
+  if (typeof closeUserModal === 'function') closeUserModal();
   if (typeof closeCandidateModal === 'function') closeCandidateModal();
+  if (typeof closeSubstituteModal === 'function') closeSubstituteModal();
 });
 
 function getLogoHtml(logoSrc, size = 66) {
@@ -3916,13 +3912,25 @@ function setPrintOrientation(orientation) {
     styleEl.id = 'printPageOrientationStyle';
     document.head.appendChild(styleEl);
   }
-  styleEl.innerHTML = `@page { size: A4 ${orientation} !important; margin: 10mm 8mm 12mm 8mm; }`;
+  const isLandscape = orientation === 'landscape';
+  styleEl.innerHTML = `@page { size: A4 ${isLandscape ? 'landscape' : 'portrait'} !important; margin: ${isLandscape ? '8mm 6mm 10mm 6mm' : '10mm 8mm 12mm 8mm'} !important; }`;
 }
 
 function printOfficialReport(orientation) {
   const target = orientation || (state.activeTab === 'results' ? 'portrait' : 'landscape');
+  document.body.classList.remove('print-portrait', 'print-landscape');
+  document.body.classList.add(target === 'portrait' ? 'print-portrait' : 'print-landscape');
   setPrintOrientation(target);
-  window.print();
+
+  if (typeof closeInstModal === 'function') closeInstModal();
+  if (typeof closeUserModal === 'function') closeUserModal();
+  if (typeof closeCandidateModal === 'function') closeCandidateModal();
+  if (typeof closeSubstituteModal === 'function') closeSubstituteModal();
+
+  setTimeout(() => {
+    window.print();
+  }, 60);
 }
+
 
 
