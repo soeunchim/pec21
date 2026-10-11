@@ -41,6 +41,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupTabNavigation();
   setupFilterEvents();
 
+  // Load custom logo immediately from localStorage
+  const savedLogo = localStorage.getItem('pec21_custom_logo');
+  if (savedLogo) applySystemLogo(savedLogo);
+
   const cTable = document.getElementById('codesTable');
   if (cTable) cTable.addEventListener('paste', handleCodesTablePaste);
   const cBody = document.getElementById('codesTableBody');
@@ -396,12 +400,13 @@ function applyUserSession(user) {
 // ==============================================================================
 async function loadInitialData() {
   try {
-    const [distRes, commRes, candRes, statsRes, codesRes] = await Promise.all([
+    const [distRes, commRes, candRes, statsRes, codesRes, settRes] = await Promise.all([
       api('/api/districts'),
       api('/api/communes'),
       api('/api/candidates'),
       api('/api/stats'),
-      api('/api/codes')
+      api('/api/codes'),
+      api('/api/settings').catch(() => ({ settings: {} }))
     ]);
 
     state.districts = distRes.districts || [];
@@ -409,6 +414,14 @@ async function loadInitialData() {
     state.candidates = candRes.candidates || [];
     state.stats = statsRes;
     state.codes = codesRes.codes || [];
+
+    if (settRes && settRes.settings && settRes.settings.logo) {
+      localStorage.setItem('pec21_custom_logo', settRes.settings.logo);
+      applySystemLogo(settRes.settings.logo);
+    } else {
+      const cached = localStorage.getItem('pec21_custom_logo');
+      applySystemLogo(cached || '');
+    }
 
     populateDropdowns();
     populateCodesDatalist();
@@ -1951,6 +1964,7 @@ function reorganizeTabulationList() {
 
 // Render Continuous Official Tabulation Table
 function renderTabulationSheet() {
+  if (state.customLogo) applySystemLogo(state.customLogo);
   const districtName = state.tabReport.district || (state.districts[0] ? state.districts[0].name : 'អង្គរបូរី');
   const communeCode = state.tabReport.communeCode;
 
@@ -2244,6 +2258,7 @@ function setResReportDistrict(distName) {
 }
 
 function renderResultsSheet() {
+  if (state.customLogo) applySystemLogo(state.customLogo);
   const districtName = state.resultReport.district || (state.districts[0] ? state.districts[0].name : 'អង្គរបូរី');
   const communeCode = state.resultReport.communeCode;
 
@@ -2680,6 +2695,249 @@ async function syncFromCloudDirectly() {
     }
   } catch (err) {
     showToast('កំហុសតភ្ជាប់: ' + err.message, 'danger');
+  }
+}
+
+// ==============================================================================
+// SYSTEM LOGO & SETTINGS MANAGEMENT
+// ==============================================================================
+const DEFAULT_NEC_SVG = `
+  <svg width="66" height="66" viewBox="0 0 100 100" style="margin:0 auto; display:block;">
+    <circle cx="50" cy="50" r="46" fill="#F8FAFC" stroke="#1E3A8A" stroke-width="2.5"/>
+    <circle cx="50" cy="50" r="41" fill="none" stroke="#1E3A8A" stroke-width="1.2" stroke-dasharray="3,2"/>
+    <circle cx="50" cy="50" r="33" fill="none" stroke="#1E3A8A" stroke-width="1.5"/>
+    <path d="M50 22 L50 74 M32 38 L68 38 M32 38 L26 54 L38 54 Z M68 38 L62 54 L74 54 Z" fill="#93C5FD" stroke="#1E3A8A" stroke-width="2" stroke-linejoin="round"/>
+    <circle cx="50" cy="74" r="3.5" fill="#1E3A8A"/>
+  </svg>
+`;
+
+const DEFAULT_HEADER_SVG = `
+  <svg viewBox="0 0 24 24">
+    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+  </svg>
+`;
+
+function applySystemLogo(logoSrc) {
+  state.customLogo = logoSrc || '';
+
+  // 1. Header Brand Logo (រូបទី១)
+  const headerLogoEl = document.getElementById('headerBrandLogo');
+  if (headerLogoEl) {
+    if (logoSrc) {
+      headerLogoEl.innerHTML = `<img src="${logoSrc}" style="width:100%; height:100%; object-fit:contain; border-radius:50%; display:block;" alt="App Logo">`;
+    } else {
+      headerLogoEl.innerHTML = DEFAULT_HEADER_SVG;
+    }
+  }
+
+  // 2. Tab 4: Tabulation Paper Logo (រូបទី២)
+  const tabLogoEl = document.getElementById('tabulationLogoContainer');
+  if (tabLogoEl) {
+    if (logoSrc) {
+      tabLogoEl.innerHTML = `<img src="${logoSrc}" style="width:66px; height:66px; object-fit:contain; margin:0 auto; display:block;" alt="NEC Logo">`;
+    } else {
+      tabLogoEl.innerHTML = DEFAULT_NEC_SVG;
+    }
+  }
+
+  // 3. Tab 5: Results Paper Logo
+  const resLogoEl = document.getElementById('resultsLogoContainer');
+  if (resLogoEl) {
+    if (logoSrc) {
+      resLogoEl.innerHTML = `<img src="${logoSrc}" style="width:66px; height:66px; object-fit:contain; margin:0 auto; display:block;" alt="NEC Logo">`;
+    } else {
+      resLogoEl.innerHTML = DEFAULT_NEC_SVG;
+    }
+  }
+
+  // 4. Tab 8: Settings Preview
+  const previewEl = document.getElementById('settingsLogoPreview');
+  const statusEl = document.getElementById('settingsLogoStatus');
+  if (previewEl) {
+    if (logoSrc) {
+      previewEl.innerHTML = `<img src="${logoSrc}" style="width:100%; height:100%; object-fit:contain; border-radius:50%; display:block;" alt="Preview">`;
+      if (statusEl) statusEl.innerHTML = `<span style="color:#2563EB;">✓ Logo ផ្ទាល់ខ្លួន (កំពុងប្រើ)</span>`;
+    } else {
+      previewEl.innerHTML = `
+        <svg width="44" height="44" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="46" fill="#F8FAFC" stroke="#1E3A8A" stroke-width="2.5"/>
+          <circle cx="50" cy="50" r="41" fill="none" stroke="#1E3A8A" stroke-width="1.2" stroke-dasharray="3,2"/>
+          <circle cx="50" cy="50" r="33" fill="none" stroke="#1E3A8A" stroke-width="1.5"/>
+          <path d="M50 22 L50 74 M32 38 L68 38 M32 38 L26 54 L38 54 Z M68 38 L62 54 L74 54 Z" fill="#93C5FD" stroke="#1E3A8A" stroke-width="2" stroke-linejoin="round"/>
+          <circle cx="50" cy="74" r="3.5" fill="#1E3A8A"/>
+        </svg>
+      `;
+      if (statusEl) statusEl.innerHTML = `Logo ដើម (គ.ជ.ប)`;
+    }
+  }
+}
+
+function handleLogoFileSelect(e) {
+  const file = e.target.files && e.target.files[0];
+  if (!file) return;
+
+  if (file.size > 10 * 1024 * 1024) {
+    alert('ទំហំរូបភាពធំពេក (អតិបរមា 10MB)!');
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = (evt) => {
+    const dataUrl = evt.target.result;
+    state.pendingLogo = dataUrl;
+    const previewEl = document.getElementById('settingsLogoPreview');
+    if (previewEl) {
+      previewEl.innerHTML = `<img src="${dataUrl}" style="width:100%; height:100%; object-fit:contain; border-radius:50%; display:block;" alt="Preview">`;
+    }
+    const statusEl = document.getElementById('settingsLogoStatus');
+    if (statusEl) {
+      statusEl.innerHTML = `<span style="color:#D97706;">⚠️ រូបថ្មី (មិនទាន់ Save)</span>`;
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+async function saveCustomLogo() {
+  const logoToSave = state.pendingLogo || state.customLogo;
+  if (!logoToSave) {
+    return alert('សូមជ្រើសរើសរូបភាព Logo ជាមុនសិន!');
+  }
+
+  try {
+    showToast('កំពុងរក្សាទុក Logo...', 'info');
+    localStorage.setItem('pec21_custom_logo', logoToSave);
+    applySystemLogo(logoToSave);
+
+    await api('/api/settings', {
+      method: 'POST',
+      body: JSON.stringify({ logo: logoToSave })
+    }).catch(err => console.warn('Could not sync logo to server:', err));
+
+    showToast('🎉 បានរក្សាទុក និងកំណត់ Logo ដោយជោគជ័យ!', 'success');
+  } catch (err) {
+    showToast('កំហុសរក្សាទុក: ' + err.message, 'danger');
+  }
+}
+
+async function resetDefaultLogo() {
+  if (!confirm('តើលោកអ្នកចង់ត្រឡប់ទៅប្រើរូបសញ្ញា Logo ដើម (គ.ជ.ប) វិញមែនទេ?')) return;
+  try {
+    localStorage.removeItem('pec21_custom_logo');
+    state.pendingLogo = null;
+    applySystemLogo(null);
+
+    const fileInput = document.getElementById('logoFileInput');
+    if (fileInput) fileInput.value = '';
+
+    await api('/api/settings', {
+      method: 'POST',
+      body: JSON.stringify({ logo: '' })
+    }).catch(err => console.warn('Could not sync to server:', err));
+
+    showToast('បានត្រឡប់ទៅប្រើ Logo ដើម (គ.ជ.ប) រួចរាល់!', 'success');
+  } catch (err) {
+    showToast('កំហុស: ' + err.message, 'danger');
+  }
+}
+
+// ------------------------------------------------------------------------------
+// SYSTEM RESET (កំណត់ឡើងវិញ ដោយទទេស្អាត)
+// ------------------------------------------------------------------------------
+async function confirmResetSystem() {
+  const isConfirmed = confirm(
+    '⚠️ ការព្រមានសំខាន់បំផុត៖\n\n' +
+    'តើលោកអ្នកពិតជាចង់កំណត់ប្រព័ន្ធឡើងវិញ ដោយលុបទិន្នន័យបេក្ខជន ពិន្ទុ និងលេខកូដទាំងអស់ឱ្យនៅទទេស្អាត (០ នាក់) មែនទេ?\n\n' +
+    '(សកម្មភាពនេះមិនអាចត្រឡប់ក្រោយវិញបានឡើយ!)'
+  );
+  if (!isConfirmed) return;
+
+  const doubleCheck = prompt('ដើម្បីបញ្ជាក់ការ Reset សូមវាយពាក្យ «RESET» ឬ «យល់ព្រម» ខាងក្រោម៖');
+  if (!doubleCheck || (doubleCheck.trim().toUpperCase() !== 'RESET' && doubleCheck.trim() !== 'យល់ព្រម')) {
+    return alert('ការ Reset ត្រូវបានលុបចោល!');
+  }
+
+  try {
+    showToast('កំពុង Reset ប្រព័ន្ធ...', 'info');
+    const res = await api('/api/reset', { method: 'POST' });
+    if (res.success) {
+      state.candidates = [];
+      state.codes = [];
+      renderDashboard();
+      renderCandidatesTable();
+      renderCodesTable();
+      renderTabulationSheet();
+      renderResultsSheet();
+      updateRoleCounts();
+      showToast(res.message || '🎉 បានកំណត់ប្រព័ន្ធឡើងវិញដោយទទេស្អាត (០ នាក់) រួចរាល់!', 'success');
+    } else {
+      showToast(res.message || 'បរាជ័យក្នុងការ Reset!', 'danger');
+    }
+  } catch (err) {
+    showToast('កំហុស Reset: ' + err.message, 'danger');
+  }
+}
+
+// ------------------------------------------------------------------------------
+// CLEAR ALL CODES (លុបលេខកូដទាំងអស់)
+// ------------------------------------------------------------------------------
+async function confirmClearAllCodes() {
+  if (!confirm('តើលោកអ្នកពិតជាចង់លុបលេខកូដសម្ងាត់ និងពិន្ទុ QCM ទាំងអស់ចេញពីប្រព័ន្ធមែនទេ?')) return;
+  try {
+    showToast('កំពុងលុបលេខកូដទាំងអស់...', 'info');
+    const res = await api('/api/codes/clear-all', { method: 'POST' });
+    if (res.success) {
+      state.codes = [];
+      state.candidates.forEach(c => {
+        if (c.roleCode !== 'c' && c.roleCode !== 'd') {
+          c.scoreQcm = 0;
+          c.candidateCode = '';
+        }
+      });
+      renderCodesTable();
+      renderCandidatesTable();
+      renderDashboard();
+      populateCodesDatalist();
+      showToast('🎉 បានលុបលេខកូដទាំងអស់រួចរាល់!', 'success');
+    } else {
+      showToast(res.message || 'បរាជ័យក្នុងការលុប!', 'danger');
+    }
+  } catch (err) {
+    showToast('កំហុស: ' + err.message, 'danger');
+  }
+}
+
+// ------------------------------------------------------------------------------
+// CLEAR ALL CANDIDATES (លុបបេក្ខជនទាំងអស់)
+// ------------------------------------------------------------------------------
+async function confirmClearAllCandidates() {
+  const currentRole = state.filters.roleCode;
+  let promptMsg = '⚠️ តើលោកអ្នកពិតជាចង់លុបទិន្នន័យបេក្ខជនទាំងអស់មែនទេ?';
+  if (currentRole && currentRole !== 'all') {
+    const roleName = currentRole === 'a' ? 'ប្រធាន' : currentRole === 'b' ? 'ជំនួយការអនុ' : currentRole === 'c' ? 'ការីកុំព្យូទ័រ' : 'អនុប្រធាន';
+    promptMsg = `⚠️ តើលោកអ្នកពិតជាចង់លុបទិន្នន័យបេក្ខជនទាំងអស់ (មុខតំណែង ${roleName}) មែនទេ?`;
+  }
+
+  if (!confirm(promptMsg)) return;
+
+  try {
+    showToast('កំពុងលុបទិន្នន័យបេក្ខជន...', 'info');
+    const res = await api('/api/candidates/clear-all', {
+      method: 'POST',
+      body: JSON.stringify({ roleCode: 'all' })
+    });
+    if (res.success) {
+      state.candidates = [];
+      renderCandidatesTable();
+      renderDashboard();
+      updateRoleCounts();
+      renderCommuneSlicer();
+      populateCodesDatalist();
+      showToast('🎉 បានលុបទិន្នន័យបេក្ខជនទាំងអស់រួចរាល់!', 'success');
+    } else {
+      showToast(res.message || 'បរាជ័យក្នុងការលុប!', 'danger');
+    }
+  } catch (err) {
+    showToast('កំហុស: ' + err.message, 'danger');
   }
 }
 

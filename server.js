@@ -727,6 +727,30 @@ const server = http.createServer(async (req, res) => {
         return sendJson(res, 200, { success: true, message: 'បានលុបបេក្ខជនដោយជោគជ័យ!' });
       }
 
+      // 8b. POST /api/candidates/clear-all (Clear all candidates or by role)
+      if (pathname === '/api/candidates/clear-all' && req.method === 'POST') {
+        const session = authenticate(req);
+        if (!session) return sendJson(res, 401, { success: false, message: 'សូមចូលប្រព័ន្ធជាមុន!' });
+        if (session.role === 'Trainer') {
+          return sendJson(res, 403, { success: false, message: 'គណនីគ្រូប្រចាំក្រុង/ស្រុក មិនមានសិទ្ធិលុបបេក្ខជនឡើយ!' });
+        }
+
+        const body = await parseJsonBody(req);
+        const { roleCode, district } = body;
+
+        if (roleCode && roleCode !== 'all') {
+          db.candidates = db.candidates.filter(c => c.roleCode !== roleCode);
+        } else if (district && district !== 'all') {
+          db.candidates = db.candidates.filter(c => c.district !== district);
+        } else {
+          db.candidates = [];
+        }
+
+        recomputeRanksAndStatuses();
+        saveDatabase();
+        return sendJson(res, 200, { success: true, message: 'បានលុបទិន្នន័យបេក្ខជនទាំងអស់រួចរាល់!' });
+      }
+
       // ---------------------------------------------------------
       // CODES MANAGEMENT (NEW TAB: លេខកូដ)
       // ---------------------------------------------------------
@@ -911,6 +935,27 @@ const server = http.createServer(async (req, res) => {
         return sendJson(res, 200, { success: true, message: `បានលុបលេខកូដ ${delCode} រួចរាល់!` });
       }
 
+      // 13b. POST /api/codes/clear-all (Clear all exam codes)
+      if (pathname === '/api/codes/clear-all' && req.method === 'POST') {
+        const session = authenticate(req);
+        if (!session) return sendJson(res, 401, { success: false, message: 'សូមចូលប្រព័ន្ធជាមុន!' });
+        if (session.role === 'Trainer') {
+          return sendJson(res, 403, { success: false, message: 'សិទ្ធិមិនគ្រប់គ្រាន់!' });
+        }
+
+        db.examCodes = [];
+        db.candidates.forEach(c => {
+          if (c.roleCode !== 'c' && c.roleCode !== 'd') {
+            c.scoreQcm = 0;
+            c.candidateCode = '';
+            computeCandidateTotal(c);
+          }
+        });
+        recomputeRanksAndStatuses();
+        saveDatabase();
+        return sendJson(res, 200, { success: true, message: 'បានលុបលេខកូដទាំងអស់រួចរាល់!' });
+      }
+
       // 14. GET /api/stats (Overall and by district)
       if (pathname === '/api/stats' && req.method === 'GET') {
         let candidates = db.candidates;
@@ -1062,6 +1107,41 @@ const server = http.createServer(async (req, res) => {
         } else {
           return sendJson(res, 400, { success: false, message: 'ឯកសារទិន្នន័យមិនត្រឹមត្រូវ!' });
         }
+      }
+
+      // 16b. GET & POST /api/settings (System Settings & Custom Logo)
+      if (pathname === '/api/settings' && req.method === 'GET') {
+        if (!db.settings) db.settings = {};
+        return sendJson(res, 200, { success: true, settings: db.settings });
+      }
+
+      if (pathname === '/api/settings' && req.method === 'POST') {
+        const session = authenticate(req);
+        if (!session || (session.role !== 'SuperAdmin' && session.role !== 'Admin' && session.role !== 'PEC21')) {
+          return sendJson(res, 403, { success: false, message: 'សិទ្ធិមិនគ្រប់គ្រាន់!' });
+        }
+        const body = await parseJsonBody(req);
+        if (!db.settings) db.settings = {};
+        if (body.logo !== undefined) db.settings.logo = body.logo;
+        if (body.appName !== undefined) db.settings.appName = body.appName;
+        saveDatabase();
+        return sendJson(res, 200, { success: true, message: 'បានរក្សាទុកការកំណត់ដោយជោគជ័យ!', settings: db.settings });
+      }
+
+      // 16c. POST /api/reset (Reset System Entirely to Blank / Empty State)
+      if (pathname === '/api/reset' && req.method === 'POST') {
+        const session = authenticate(req);
+        if (!session || (session.role !== 'SuperAdmin' && session.role !== 'Admin' && session.role !== 'PEC21')) {
+          return sendJson(res, 403, { success: false, message: 'មានតែ Admin/SuperAdmin ប៉ុណ្ណោះដែលអាច Reset ប្រព័ន្ធបាន!' });
+        }
+        db.candidates = [];
+        db.examCodes = [];
+        recomputeRanksAndStatuses();
+        saveDatabase();
+        return sendJson(res, 200, {
+          success: true,
+          message: 'បានកំណត់ប្រព័ន្ធឡើងវិញដោយជោគជ័យ! ទិន្នន័យបេក្ខជន និងពិន្ទុទាំងអស់ត្រូវបានជម្រះទទេស្អាត (០ នាក់)។'
+        });
       }
 
       // 17. Export CSV
