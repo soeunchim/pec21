@@ -3,7 +3,7 @@
    Complete Offline & Online Stylesheet
    ============================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Moul&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Moul&family=Siemreap&display=swap');
 
 :root {
   --primary: #1E3A8A;       /* Deep Election Blue */
@@ -50,8 +50,14 @@ body {
   min-height: 100vh;
 }
 
-.font-moul {
-  font-family: 'Moul', 'Khmer OS Muol Light', serif;
+.font-moul,
+.font-muol-light {
+  font-family: 'Khmer OS Muol Light', 'Khmer OS MuolLight', 'Khmer OS Muol', 'Moul', serif !important;
+  font-weight: normal;
+}
+
+.font-siemreap {
+  font-family: 'Khmer OS Siemreap', 'Siemreap', sans-serif !important;
 }
 
 /* Layout */
@@ -809,49 +815,80 @@ input[type="number"] {
 .excel-official-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.86rem;
+  font-family: 'Khmer OS Siemreap', 'Siemreap', sans-serif !important;
+  font-size: 0.88rem;
   margin-bottom: 25px;
   background-color: #FFFFFF;
+  border: 1.5px solid #000000 !important;
 }
 
 .excel-official-table th,
 .excel-official-table td {
-  border: 1px solid #000000;
+  border: 1px solid #000000 !important;
   padding: 4px 6px;
   text-align: center;
   vertical-align: middle;
 }
 
-.excel-official-table th {
-  background-color: #FFFFFF;
-  font-weight: 700;
+/* ៤. ក្បាលតារាងសុំប្តូរមក Font Khmer OS MuolLight */
+.excel-official-table thead th {
+  font-family: 'Khmer OS Muol Light', 'Khmer OS MuolLight', 'Khmer OS Muol', 'Moul', serif !important;
+  font-weight: normal !important;
+  font-size: 0.80rem;
+  line-height: 1.45;
+  background-color: #FFFFFF !important;
+  color: #000000 !important;
+  padding: 6px 4px;
 }
 
-.commune-banner-row td {
-  background-color: #FFFFFF;
-  font-weight: 700;
-  font-size: 0.94rem;
+/* ២. នៅក្នុងតារាងសូមជា Font Khmer OS Siemreap ទាំងអស់ */
+.excel-official-table tbody td {
+  font-family: 'Khmer OS Siemreap', 'Siemreap', sans-serif !important;
+  font-size: 0.88rem;
+}
+
+/* ២. លើកលែងកន្លែងគូសប្រអប់ (I- ឃុំ... និង មុខតំណែង...) សុំជា Font Khmer OS MuolLight */
+.excel-official-table .commune-banner-row td,
+.excel-official-table .role-banner-row td {
+  font-family: 'Khmer OS Muol Light', 'Khmer OS MuolLight', 'Khmer OS Muol', 'Moul', serif !important;
+  font-weight: normal !important;
+  background-color: #FFFFFF !important;
+  border: 1px solid #000000 !important;
+}
+
+.excel-official-table .commune-banner-row td {
+  font-size: 0.90rem;
   text-align: left;
   padding: 5px 8px;
-  border-top: 1.5px solid #000;
-  border-bottom: 1px solid #000;
+  border-top: 1.5px solid #000 !important;
+  border-bottom: 1px solid #000 !important;
 }
 
-.role-banner-row td {
-  background-color: #FFFFFF;
-  font-weight: 700;
-  font-size: 0.88rem;
+.excel-official-table .commune-banner-row td:first-child {
+  text-align: center;
+}
+
+.excel-official-table .commune-banner-row td:nth-child(2) {
   text-align: left;
-  padding: 4px 8px;
-  border-top: 1px solid #000;
-  border-bottom: 1px solid #000;
+  padding-left: 10px;
 }
 
+.excel-official-table .role-banner-row td {
+  font-size: 0.86rem;
+  text-align: left;
+  padding: 5px 10px;
+  border-top: 1px solid #000 !important;
+  border-bottom: 1px solid #000 !important;
+}
+
+/* ៣. ការគូសខ្វែងនៅក្នុងក្រឡា សូមជាបន្ទាត់ខ្មៅធម្មតា */
 .excel-x-cell {
   background: 
-    linear-gradient(to top right, transparent calc(50% - 0.75px), #64748B calc(50% - 0.75px), #64748B calc(50% + 0.75px), transparent calc(50% + 0.75px)),
-    linear-gradient(to bottom right, transparent calc(50% - 0.75px), #64748B calc(50% - 0.75px), #64748B calc(50% + 0.75px), transparent calc(50% + 0.75px)) !important;
+    linear-gradient(to top right, transparent calc(50% - 0.75px), #000000 calc(50% - 0.75px), #000000 calc(50% + 0.75px), transparent calc(50% + 0.75px)),
+    linear-gradient(to bottom right, transparent calc(50% - 0.75px), #000000 calc(50% - 0.75px), #000000 calc(50% + 0.75px), transparent calc(50% + 0.75px)) !important;
   background-color: #FFFFFF !important;
+  border: 1px solid #000000 !important;
+  padding: 0 !important;
 }
 
 .btn-excel-pill {
@@ -1227,25 +1264,28 @@ input[type="number"] {
 .excel-official-table {
   width: 100%;
   border-collapse: collapse;
-  font-family: 'Kantumruy Pro', 'Hanuman', sans-serif;
+  font-family: 'Khmer OS Siemreap', 'Siemreap', sans-serif !important;
   font-size: 0.88rem;
   color: #000000;
   background: #FFFFFF;
   border: 1.5px solid #000000 !important;
 }
 
-.excel-official-table th {
+.excel-official-table thead th {
   border: 1px solid #000000 !important;
   background-color: #FFFFFF !important;
   color: #000000 !important;
-  font-weight: 700;
+  font-family: 'Khmer OS Muol Light', 'Khmer OS MuolLight', 'Khmer OS Muol', 'Moul', serif !important;
+  font-weight: normal !important;
   text-align: center;
   padding: 6px 4px;
-  font-size: 0.86rem;
+  font-size: 0.80rem;
+  line-height: 1.45;
   vertical-align: middle;
 }
 
-.excel-official-table td {
+.excel-official-table tbody td {
+  font-family: 'Khmer OS Siemreap', 'Siemreap', sans-serif !important;
   border: 1px solid #000000 !important;
   padding: 4px 6px;
   text-align: center;
@@ -1256,37 +1296,42 @@ input[type="number"] {
 
 .excel-official-table .commune-banner-row td {
   background-color: #FFFFFF !important;
-  font-weight: 700;
+  font-family: 'Khmer OS Muol Light', 'Khmer OS MuolLight', 'Khmer OS Muol', 'Moul', serif !important;
+  font-weight: normal !important;
   border: 1px solid #000000 !important;
+  border-top: 1.5px solid #000 !important;
+  border-bottom: 1px solid #000 !important;
 }
 
 .excel-official-table .commune-banner-row td:first-child {
   text-align: center;
-  font-weight: 700;
 }
 
 .excel-official-table .commune-banner-row td:nth-child(2) {
   text-align: left;
   padding-left: 10px;
-  font-weight: 700;
-  font-size: 0.92rem;
+  font-size: 0.90rem;
 }
 
 .excel-official-table .role-banner-row td {
   background-color: #FFFFFF !important;
-  font-family: 'Moul', 'Khmer OS Muol Light', serif;
-  font-size: 0.85rem;
+  font-family: 'Khmer OS Muol Light', 'Khmer OS MuolLight', 'Khmer OS Muol', 'Moul', serif !important;
+  font-weight: normal !important;
+  font-size: 0.86rem;
   text-align: left;
-  padding: 6px 10px;
+  padding: 5px 10px;
   border: 1px solid #000000 !important;
+  border-top: 1px solid #000 !important;
+  border-bottom: 1px solid #000 !important;
 }
 
-/* Authentic Excel X Cross Hatch Cell (ប្រអប់គូសខ្វែងអង្កត់ទ្រូង X) */
+/* Authentic Excel X Cross Hatch Cell (ប្រអប់គូសខ្វែងអង្កត់ទ្រូង X - បន្ទាត់ខ្មៅធម្មតា) */
 .excel-x-cell {
   background:
-    linear-gradient(to top right, transparent calc(50% - 0.75px), #000000 calc(50% - 0.5px), #000000 calc(50% + 0.5px), transparent calc(50% + 0.75px)),
-    linear-gradient(to bottom right, transparent calc(50% - 0.75px), #000000 calc(50% - 0.5px), #000000 calc(50% + 0.5px), transparent calc(50% + 0.75px)) !important;
+    linear-gradient(to top right, transparent calc(50% - 0.75px), #000000 calc(50% - 0.75px), #000000 calc(50% + 0.75px), transparent calc(50% + 0.75px)),
+    linear-gradient(to bottom right, transparent calc(50% - 0.75px), #000000 calc(50% - 0.75px), #000000 calc(50% + 0.75px), transparent calc(50% + 0.75px)) !important;
   background-color: #FFFFFF !important;
+  border: 1px solid #000000 !important;
   padding: 0 !important;
 }
 
