@@ -1348,5 +1348,25 @@ input[type="number"] {
   .btn-excel-pill {
     display: none !important;
   }
+  [contenteditable="true"] {
+    background-color: transparent !important;
+    box-shadow: none !important;
+  }
+}
+
+[contenteditable="true"] {
+  outline: none;
+  cursor: text;
+  border-radius: 2px;
+  transition: background-color 0.15s ease;
+}
+
+[contenteditable="true"]:hover {
+  background-color: rgba(30, 58, 138, 0.05);
+}
+
+[contenteditable="true"]:focus {
+  background-color: rgba(30, 58, 138, 0.08);
+  box-shadow: 0 0 0 1px rgba(30, 58, 138, 0.3);
 }
 

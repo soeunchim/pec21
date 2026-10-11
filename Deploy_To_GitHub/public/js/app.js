@@ -45,8 +45,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   const savedLogo = localStorage.getItem('pec21_custom_logo');
   if (savedLogo) applySystemLogo(savedLogo);
 
-  // Initialize report footer dates from localStorage
+  // Initialize report footer dates & institution lines from localStorage
   initReportDates();
+  initInstLines();
 
   const cTable = document.getElementById('codesTable');
   if (cTable) cTable.addEventListener('paste', handleCodesTablePaste);
@@ -2035,6 +2036,99 @@ function applySavedReportDates() {
   applyLunarDate(savedLunar);
 }
 
+// ==============================================================================
+// INSTITUTION LINES UNDER LOGO MANAGEMENT (SYNC & PERSIST)
+// ==============================================================================
+const DEFAULT_INST_LINES = [
+  'គណៈកម្មាធិការជាតិរៀបចំការបោះឆ្នោត',
+  'គណៈកម្មការរៀបចំការបោះឆ្នោតខេត្តតាកែវ',
+  'លេខាធិការដ្ឋានរៀបចំការបោះឆ្នោតខេត្តតាកែវ',
+  'អនុគណៈកម្មការរៀបចំការប្រឡងជ្រើសរើស'
+];
+
+function getSavedInstLines() {
+  const saved = localStorage.getItem('pec21_inst_lines');
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length === 4) return parsed;
+    } catch (e) {}
+  }
+  return [...DEFAULT_INST_LINES];
+}
+
+function applyInstLines(lines) {
+  lines.forEach((text, idx) => {
+    const lineNum = idx + 1;
+    document.querySelectorAll(`.inst-line-${lineNum}`).forEach(el => {
+      el.innerText = text;
+    });
+    const mInput = document.getElementById(`modalInstLine${lineNum}`);
+    if (mInput) mInput.value = text;
+    const sInput = document.getElementById(`settingsInstLine${lineNum}`);
+    if (sInput) sInput.value = text;
+  });
+}
+
+function initInstLines() {
+  const lines = getSavedInstLines();
+  applyInstLines(lines);
+}
+
+function handleInstLineDirectEdit(lineNum, textVal) {
+  const lines = getSavedInstLines();
+  lines[lineNum - 1] = textVal.trim();
+  localStorage.setItem('pec21_inst_lines', JSON.stringify(lines));
+  applyInstLines(lines);
+}
+
+function openInstModal() {
+  const lines = getSavedInstLines();
+  lines.forEach((text, idx) => {
+    const input = document.getElementById(`modalInstLine${idx + 1}`);
+    if (input) input.value = text;
+  });
+  const modal = document.getElementById('instModal');
+  if (modal) modal.classList.add('active');
+}
+
+function closeInstModal() {
+  const modal = document.getElementById('instModal');
+  if (modal) modal.classList.remove('active');
+}
+
+function handleSaveInstLines(e) {
+  if (e) e.preventDefault();
+  const lines = [
+    document.getElementById('modalInstLine1').value.trim(),
+    document.getElementById('modalInstLine2').value.trim(),
+    document.getElementById('modalInstLine3').value.trim(),
+    document.getElementById('modalInstLine4').value.trim()
+  ];
+  localStorage.setItem('pec21_inst_lines', JSON.stringify(lines));
+  applyInstLines(lines);
+  closeInstModal();
+  showToast('បានរក្សាទុកអក្សរនៅក្រោម Logo រួចរាល់!', 'success');
+}
+
+function saveSettingsInstLines() {
+  const lines = [
+    document.getElementById('settingsInstLine1').value.trim(),
+    document.getElementById('settingsInstLine2').value.trim(),
+    document.getElementById('settingsInstLine3').value.trim(),
+    document.getElementById('settingsInstLine4').value.trim()
+  ];
+  localStorage.setItem('pec21_inst_lines', JSON.stringify(lines));
+  applyInstLines(lines);
+  showToast('បានរក្សាទុកអក្សរនៅក្រោម Logo រួចរាល់!', 'success');
+}
+
+function resetInstLinesToDefault() {
+  localStorage.removeItem('pec21_inst_lines');
+  applyInstLines(DEFAULT_INST_LINES);
+  showToast('បានកំណត់អក្សរស្ថាប័នទៅដូចដើមវិញ (Default)!', 'success');
+}
+
 // Render Continuous Official Tabulation Table
 function renderTabulationSheet() {
   if (state.customLogo) applySystemLogo(state.customLogo);
@@ -2210,6 +2304,7 @@ function renderTabulationSheet() {
 
   container.innerHTML = tableHtml;
   applySavedReportDates();
+  initInstLines();
 }
 
 // ==============================================================================
@@ -2414,6 +2509,7 @@ function renderResultsSheet() {
 
   container.innerHTML = tableHtml;
   applySavedReportDates();
+  initInstLines();
 }
 
 // ==============================================================================

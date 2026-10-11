@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ប្រព័ន្ធគ្រប់គ្រងបូកស្រង់ពិន្ទុប្រឡងជ្រើសរើស ក.ច.ប (PEC21 - ខេត្តតាកែវ)</title>
-  <link rel="stylesheet" href="css/style.css?v=20261011_tacteing_size13">
+  <link rel="stylesheet" href="css/style.css?v=20261011_inst_editable_size12">
 </head>
 <body>
   <div class="app-container">
@@ -469,6 +469,10 @@
             </div>
           </div>
           <div class="toolbar-group">
+            <button class="btn btn-secondary" onclick="openInstModal()" title="កែសម្រួលអក្សរស្ថាប័ននៅក្រោម Logo">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              កែអក្សរក្រោម Logo
+            </button>
             <button class="btn btn-primary" onclick="window.print()">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
               បោះពុម្ពតារាងស្រង់ពិន្ទុ (Print)
@@ -479,7 +483,7 @@
         <div class="official-paper" id="tabulationPaper">
           <!-- Top Header Grid (ព្រះរាជាណាចក្រកម្ពុជា តម្រឹមកណ្តាលក្រដាស A4) -->
           <div style="position:relative; margin-bottom:12px; min-height:130px;">
-            <!-- Left: NEC / PEC (អក្សរនៅខាងក្រោម Logo តម្រឹមឆ្វេង) -->
+            <!-- Left: NEC / PEC (អក្សរនៅខាងក្រោម Logo តម្រឹមឆ្វេង និងអាចវាយបញ្ចូលបាន) -->
             <div style="position:absolute; left:0; top:0; text-align:left; font-family:'Khmer OS Muol Light', 'Khmer OS MuolLight', 'Khmer OS Muol', 'Moul', serif;">
               <div id="tabulationLogoContainer" style="margin:0 auto 6px; display:block; text-align:center;">
                 <svg width="66" height="66" viewBox="0 0 100 100" style="margin:0 auto; display:block;">
@@ -490,10 +494,10 @@
                   <circle cx="50" cy="74" r="3.5" fill="#1E3A8A"/>
                 </svg>
               </div>
-              <div style="font-size:0.86rem; margin-bottom:2px; line-height:1.4; text-align:left;">គណៈកម្មាធិការជាតិរៀបចំការបោះឆ្នោត</div>
-              <div style="font-size:0.84rem; margin-bottom:1px; text-align:left;">គណៈកម្មការរៀបចំការបោះឆ្នោតខេត្តតាកែវ</div>
-              <div style="font-size:0.82rem; margin-bottom:1px; text-align:left;">លេខាធិការដ្ឋានរៀបចំការបោះឆ្នោតខេត្តតាកែវ</div>
-              <div style="font-size:0.80rem; text-align:left;">អនុគណៈកម្មការរៀបចំការប្រឡងជ្រើសរើស</div>
+              <div class="inst-line-1" contenteditable="true" onblur="handleInstLineDirectEdit(1, this.innerText)" style="font-size:0.86rem; margin-bottom:2px; line-height:1.4; text-align:left; outline:none;" title="ចុចដើម្បីវាយបញ្ចូល ឬកែសម្រួល">គណៈកម្មាធិការជាតិរៀបចំការបោះឆ្នោត</div>
+              <div class="inst-line-2" contenteditable="true" onblur="handleInstLineDirectEdit(2, this.innerText)" style="font-size:0.84rem; margin-bottom:1px; text-align:left; outline:none;" title="ចុចដើម្បីវាយបញ្ចូល ឬកែសម្រួល">គណៈកម្មការរៀបចំការបោះឆ្នោតខេត្តតាកែវ</div>
+              <div class="inst-line-3" contenteditable="true" onblur="handleInstLineDirectEdit(3, this.innerText)" style="font-size:0.82rem; margin-bottom:1px; text-align:left; outline:none;" title="ចុចដើម្បីវាយបញ្ចូល ឬកែសម្រួល">លេខាធិការដ្ឋានរៀបចំការបោះឆ្នោតខេត្តតាកែវ</div>
+              <div class="inst-line-4" contenteditable="true" onblur="handleInstLineDirectEdit(4, this.innerText)" style="font-size:0.80rem; text-align:left; outline:none;" title="ចុចដើម្បីវាយបញ្ចូល ឬកែសម្រួល">អនុគណៈកម្មការរៀបចំការប្រឡងជ្រើសរើស</div>
             </div>
 
             <!-- Center of A4 Paper: Royal Kingdom & Motto (Font Tacteing លេខ ៣) -->
@@ -504,11 +508,11 @@
             </div>
           </div>
 
-          <!-- Main Title (ពាក្យ តារាងស្រង់ពិន្ទុបេក្ខជន ទំហំ Size 13) -->
+          <!-- Main Title (ពាក្យ តារាងស្រង់ពិន្ទុបេក្ខជន ទំហំ Size 13, អក្សរខាងក្រោម Size: 12) -->
           <div style="text-align:center; margin:12px 0 18px; font-family:'Khmer OS Muol Light', 'Khmer OS MuolLight', 'Khmer OS Muol', 'Moul', serif;">
-            <h3 style="font-size:13pt; margin-bottom:5px; font-weight:normal;">តារាងស្រង់ពិន្ទុបេក្ខជន</h3>
-            <p style="font-size:10pt; margin-bottom:3px; font-weight:normal;">ដែលបានដាក់ពាក្យប្រឡងតាមមុខតំណែងនីមួយៗសម្រាប់បម្រើការងារនៅក្នុងគណៈកម្មការឃុំសង្កាត់</p>
-            <p style="font-size:11pt; text-decoration:underline; font-weight:normal;" id="tabReportDistrictTitle">ស្រុកអង្គរបុរី នៃខេត្តតាកែវ</p>
+            <h3 style="font-size:13pt; margin-bottom:6px; font-weight:normal;">តារាងស្រង់ពិន្ទុបេក្ខជន</h3>
+            <p style="font-size:12pt; margin-bottom:4px; font-weight:normal;">ដែលបានដាក់ពាក្យប្រឡងតាមមុខតំណែងនីមួយៗសម្រាប់បម្រើការងារនៅក្នុងគណៈកម្មការឃុំសង្កាត់</p>
+            <p style="font-size:12pt; text-decoration:underline; font-weight:normal;" id="tabReportDistrictTitle">ស្រុកអង្គរបុរី នៃខេត្តតាកែវ</p>
           </div>
 
           <div id="tabulationTableContainer"></div>
@@ -566,6 +570,10 @@
             </div>
           </div>
           <div class="toolbar-group">
+            <button class="btn btn-secondary" onclick="openInstModal()" title="កែសម្រួលអក្សរស្ថាប័ននៅក្រោម Logo">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              កែអក្សរក្រោម Logo
+            </button>
             <button class="btn btn-primary" onclick="window.print()">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
               បោះពុម្ពតារាងលទ្ធផល (Print)
@@ -576,7 +584,7 @@
         <div class="official-paper" id="resultsPaper">
           <!-- Top Header Grid (ព្រះរាជាណាចក្រកម្ពុជា តម្រឹមកណ្តាលក្រដាស A4) -->
           <div style="position:relative; margin-bottom:12px; min-height:130px;">
-            <!-- Left: NEC / PEC (អក្សរនៅខាងក្រោម Logo តម្រឹមឆ្វេង) -->
+            <!-- Left: NEC / PEC (អក្សរនៅខាងក្រោម Logo តម្រឹមឆ្វេង និងអាចវាយបញ្ចូលបាន) -->
             <div style="position:absolute; left:0; top:0; text-align:left; font-family:'Khmer OS Muol Light', 'Khmer OS MuolLight', 'Khmer OS Muol', 'Moul', serif;">
               <div id="resultsLogoContainer" style="margin:0 auto 6px; display:block; text-align:center;">
                 <svg width="66" height="66" viewBox="0 0 100 100" style="margin:0 auto; display:block;">
@@ -587,10 +595,10 @@
                   <circle cx="50" cy="74" r="3.5" fill="#1E3A8A"/>
                 </svg>
               </div>
-              <div style="font-size:0.86rem; margin-bottom:2px; line-height:1.4; text-align:left;">គណៈកម្មាធិការជាតិរៀបចំការបោះឆ្នោត</div>
-              <div style="font-size:0.84rem; margin-bottom:1px; text-align:left;">គណៈកម្មការរៀបចំការបោះឆ្នោតខេត្តតាកែវ</div>
-              <div style="font-size:0.82rem; margin-bottom:1px; text-align:left;">លេខាធិការដ្ឋានរៀបចំការបោះឆ្នោតខេត្តតាកែវ</div>
-              <div style="font-size:0.80rem; text-align:left;">អនុគណៈកម្មការរៀបចំការប្រឡងជ្រើសរើស</div>
+              <div class="inst-line-1" contenteditable="true" onblur="handleInstLineDirectEdit(1, this.innerText)" style="font-size:0.86rem; margin-bottom:2px; line-height:1.4; text-align:left; outline:none;" title="ចុចដើម្បីវាយបញ្ចូល ឬកែសម្រួល">គណៈកម្មាធិការជាតិរៀបចំការបោះឆ្នោត</div>
+              <div class="inst-line-2" contenteditable="true" onblur="handleInstLineDirectEdit(2, this.innerText)" style="font-size:0.84rem; margin-bottom:1px; text-align:left; outline:none;" title="ចុចដើម្បីវាយបញ្ចូល ឬកែសម្រួល">គណៈកម្មការរៀបចំការបោះឆ្នោតខេត្តតាកែវ</div>
+              <div class="inst-line-3" contenteditable="true" onblur="handleInstLineDirectEdit(3, this.innerText)" style="font-size:0.82rem; margin-bottom:1px; text-align:left; outline:none;" title="ចុចដើម្បីវាយបញ្ចូល ឬកែសម្រួល">លេខាធិការដ្ឋានរៀបចំការបោះឆ្នោតខេត្តតាកែវ</div>
+              <div class="inst-line-4" contenteditable="true" onblur="handleInstLineDirectEdit(4, this.innerText)" style="font-size:0.80rem; text-align:left; outline:none;" title="ចុចដើម្បីវាយបញ្ចូល ឬកែសម្រួល">អនុគណៈកម្មការរៀបចំការប្រឡងជ្រើសរើស</div>
             </div>
 
             <!-- Center of A4 Paper: Royal Kingdom & Motto (Font Tacteing លេខ ៣) -->
@@ -601,10 +609,10 @@
             </div>
           </div>
 
-          <!-- Main Title (ពាក្យ លទ្ធផលនៃការប្រឡង... ទំហំ Size 13) -->
+          <!-- Main Title (ពាក្យ លទ្ធផលនៃការប្រឡង... ទំហំ Size 13, អក្សរខាងក្រោម Size: 12) -->
           <div style="text-align:center; margin:12px 0 18px; font-family:'Khmer OS Muol Light', 'Khmer OS MuolLight', 'Khmer OS Muol', 'Moul', serif;">
-            <h3 style="font-size:13pt; margin-bottom:5px; font-weight:normal;">លទ្ធផលនៃការប្រឡងជ្រើសរើសសមាសភាពក្រុមចុះឈ្មោះបោះឆ្នោត</h3>
-            <p style="font-size:11pt; text-decoration:underline; font-weight:normal;" id="resultReportDistrictTitle">ស្រុកអង្គរបូរី នៃខេត្តតាកែវ</p>
+            <h3 style="font-size:13pt; margin-bottom:6px; font-weight:normal;">លទ្ធផលនៃការប្រឡងជ្រើសរើសសមាសភាពក្រុមចុះឈ្មោះបោះឆ្នោត</h3>
+            <p style="font-size:12pt; text-decoration:underline; font-weight:normal;" id="resultReportDistrictTitle">ស្រុកអង្គរបូរី នៃខេត្តតាកែវ</p>
           </div>
 
           <div id="resultsTableContainer"></div>
@@ -778,12 +786,55 @@
             </div>
           </div>
 
-          <!-- SECTION 2: RESET SYSTEM (កំណត់ឡើងវិញ ដោយទទេស្អាត) -->
+          <!-- SECTION 2: INSTITUTION LINES UNDER LOGO -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                ២. ការកំណត់អក្សរនៅក្រោម Logo (Institutional Header Text)
+              </div>
+            </div>
+            <div class="card-body">
+              <p style="font-size:0.88rem; color:var(--gray-600); margin-bottom:14px;">
+                លោកអ្នកអាចកែសម្រួលអក្សរស្ថាប័នទាំង ៤ ជួរដែលបង្ហាញនៅខាងក្រោម Logo លើតារាងស្រង់ពិន្ទុ និងតារាងលទ្ធផលប្រឡង៖
+              </p>
+              <div style="display:flex; flex-direction:column; gap:12px; max-width:550px;">
+                <div>
+                  <label class="form-label">ជួរទី១</label>
+                  <input type="text" id="settingsInstLine1" class="form-control" placeholder="គណៈកម្មាធិការជាតិរៀបចំការបោះឆ្នោត">
+                </div>
+                <div>
+                  <label class="form-label">ជួរទី២</label>
+                  <input type="text" id="settingsInstLine2" class="form-control" placeholder="គណៈកម្មការរៀបចំការបោះឆ្នោតខេត្តតាកែវ">
+                </div>
+                <div>
+                  <label class="form-label">ជួរទី៣</label>
+                  <input type="text" id="settingsInstLine3" class="form-control" placeholder="លេខាធិការដ្ឋានរៀបចំការបោះឆ្នោតខេត្តតាកែវ">
+                </div>
+                <div>
+                  <label class="form-label">ជួរទី៤</label>
+                  <input type="text" id="settingsInstLine4" class="form-control" placeholder="អនុគណៈកម្មការរៀបចំការប្រឡងជ្រើសរើស">
+                </div>
+                <div style="display:flex; gap:10px; margin-top:8px;">
+                  <button type="button" class="btn btn-primary" onclick="saveSettingsInstLines()">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>
+                    រក្សាទុកអក្សរស្ថាប័ន
+                  </button>
+                  <button type="button" class="btn btn-secondary" onclick="resetInstLinesToDefault()">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                    កំណត់ឡើងវិញ (Default)
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 3: RESET SYSTEM (កំណត់ឡើងវិញ ដោយទទេស្អាត) -->
           <div class="card" style="border:1px solid #FECACA;">
             <div class="card-header" style="background:#FEF2F2; border-bottom:1px solid #FEE2E2;">
               <div class="card-title" style="color:#B91C1C;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                ២. កំណត់ប្រព័ន្ធឡើងវិញ ដោយទទេស្អាត (System Reset)
+                ៣. កំណត់ប្រព័ន្ធឡើងវិញ ដោយទទេស្អាត (System Reset)
               </div>
             </div>
             <div class="card-body">
@@ -1162,10 +1213,50 @@ AB004	អវត្តមាន" style="font-family:monospace; font-size:0.88rem;
     </div>
   </div>
 
+  <!-- Modal: កែសម្រួលអក្សរក្រោម Logo -->
+  <div id="instModal" class="modal">
+    <div class="modal-content" style="max-width:550px;">
+      <div class="modal-header">
+        <h3 class="modal-title">កែសម្រួលអក្សរនៅក្រោម Logo</h3>
+        <button class="modal-close" onclick="closeInstModal()">&times;</button>
+      </div>
+      <form id="instForm" onsubmit="handleSaveInstLines(event)">
+        <div class="modal-body" style="display:flex; flex-direction:column; gap:12px;">
+          <p style="font-size:0.88rem; color:var(--gray-600); margin-bottom:4px;">
+            អក្សរទាំង ៤ ជួរនេះ នឹងបង្ហាញនៅក្រោម Logo លើតារាងស្រង់ពិន្ទុ និងតារាងលទ្ធផលប្រឡង៖
+          </p>
+          <div>
+            <label class="form-label">ជួរទី១</label>
+            <input type="text" id="modalInstLine1" class="form-control" required>
+          </div>
+          <div>
+            <label class="form-label">ជួរទី២</label>
+            <input type="text" id="modalInstLine2" class="form-control">
+          </div>
+          <div>
+            <label class="form-label">ជួរទី៣</label>
+            <input type="text" id="modalInstLine3" class="form-control">
+          </div>
+          <div>
+            <label class="form-label">ជួរទី៤</label>
+            <input type="text" id="modalInstLine4" class="form-control">
+          </div>
+        </div>
+        <div class="modal-footer" style="display:flex; justify-content:space-between;">
+          <button type="button" class="btn btn-secondary" onclick="resetInstLinesToDefault()">កំណត់ឡើងវិញ (Default)</button>
+          <div style="display:flex; gap:8px;">
+            <button type="button" class="btn btn-secondary" onclick="closeInstModal()">បោះបង់</button>
+            <button type="submit" class="btn btn-primary">រក្សាទុក</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Toast Notification Container -->
   <div id="toastContainer" class="toast-container"></div>
 
   <!-- Application Logic -->
-  <script src="js/app.js?v=20261011_tacteing_size13"></script>
+  <script src="js/app.js?v=20261011_inst_editable_size12"></script>
 </body>
 </html>
