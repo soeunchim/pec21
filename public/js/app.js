@@ -48,6 +48,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Initialize report footer dates & institution lines from localStorage
   initReportDates();
   initInstLines();
+  initLogoPosition();
 
   const cTable = document.getElementById('codesTable');
   if (cTable) cTable.addEventListener('paste', handleCodesTablePaste);
@@ -2354,6 +2355,7 @@ function renderTabulationSheet() {
   container.innerHTML = tableHtml;
   applySavedReportDates();
   initInstLines();
+  initLogoPosition();
 }
 
 // ==============================================================================
@@ -2559,6 +2561,7 @@ function renderResultsSheet() {
   container.innerHTML = tableHtml;
   applySavedReportDates();
   initInstLines();
+  initLogoPosition();
 }
 
 // ==============================================================================
@@ -2813,6 +2816,187 @@ async function syncFromCloudDirectly() {
 // ==============================================================================
 // SYSTEM LOGO & SETTINGS MANAGEMENT
 // ==============================================================================
+// ==============================================================================
+// LOGO POSITIONING & INTERACTIVE DRAG-AND-DROP (រំកិលទីតាំង Logo)
+// ==============================================================================
+const DEFAULT_LOGO_POS = { x: 0, y: 0, size: 66 };
+let isDraggingLogo = false;
+
+function getSavedLogoPos() {
+  const saved = localStorage.getItem('pec21_logo_pos');
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      return {
+        x: Number(parsed.x) || 0,
+        y: Number(parsed.y) || 0,
+        size: Number(parsed.size) || 66
+      };
+    } catch (e) {}
+  }
+  return { ...DEFAULT_LOGO_POS };
+}
+
+function applyLogoPos(pos) {
+  if (!pos) pos = getSavedLogoPos();
+
+  ['tabulationLogoContainer', 'resultsLogoContainer'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.style.transform = `translate(${pos.x}px, ${pos.y}px)`;
+      el.style.transition = isDraggingLogo ? 'none' : 'transform 0.12s ease-out';
+      const img = el.querySelector('img');
+      if (img) {
+        img.style.width = `${pos.size}px`;
+        img.style.height = `${pos.size}px`;
+      }
+      const svg = el.querySelector('svg');
+      if (svg) {
+        svg.setAttribute('width', pos.size);
+        svg.setAttribute('height', pos.size);
+      }
+    }
+  });
+
+  ['modalLogoPosX', 'settingsLogoPosX'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && document.activeElement !== el) el.value = pos.x;
+  });
+  ['modalLogoPosY', 'settingsLogoPosY'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && document.activeElement !== el) el.value = pos.y;
+  });
+  ['modalLogoSize', 'settingsLogoSize'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && document.activeElement !== el) el.value = pos.size;
+  });
+
+  document.querySelectorAll('.logo-pos-display').forEach(lbl => {
+    lbl.textContent = `X: ${pos.x > 0 ? '+' : ''}${pos.x}px, Y: ${pos.y > 0 ? '+' : ''}${pos.y}px (${pos.size}px)`;
+  });
+}
+
+function nudgeLogoPos(dx, dy, dSize = 0) {
+  const pos = getSavedLogoPos();
+  pos.x += dx;
+  pos.y += dy;
+  if (dSize) pos.size = Math.max(30, Math.min(150, pos.size + dSize));
+  localStorage.setItem('pec21_logo_pos', JSON.stringify(pos));
+  applyLogoPos(pos);
+}
+
+function resetLogoPos() {
+  localStorage.removeItem('pec21_logo_pos');
+  applyLogoPos(DEFAULT_LOGO_POS);
+  showToast('បានកំណត់ទីតាំង Logo ទៅកណ្តាលដើមវិញ (Default)!', 'success');
+}
+
+function handleManualLogoPosChange() {
+  const mX = document.getElementById('modalLogoPosX');
+  const mY = document.getElementById('modalLogoPosY');
+  const mS = document.getElementById('modalLogoSize');
+  const sX = document.getElementById('settingsLogoPosX');
+  const sY = document.getElementById('settingsLogoPosY');
+  const sS = document.getElementById('settingsLogoSize');
+
+  const x = parseFloat((mX && mX.value) || (sX && sX.value) || 0);
+  const y = parseFloat((mY && mY.value) || (sY && sY.value) || 0);
+  const size = parseFloat((mS && mS.value) || (sS && sS.value) || 66);
+
+  const pos = { x, y, size: Math.max(30, Math.min(150, size)) };
+  localStorage.setItem('pec21_logo_pos', JSON.stringify(pos));
+  applyLogoPos(pos);
+}
+
+function initLogoDrag() {
+  ['tabulationLogoContainer', 'resultsLogoContainer'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el || el.dataset.dragInitialized) return;
+    el.dataset.dragInitialized = 'true';
+
+    let dragStartX = 0;
+    let dragStartY = 0;
+    let dragStartPosX = 0;
+    let dragStartPosY = 0;
+
+    const onMouseDown = (e) => {
+      if (e.button !== 0) return;
+      isDraggingLogo = true;
+      el.style.cursor = 'grabbing';
+      const curPos = getSavedLogoPos();
+      dragStartX = e.clientX;
+      dragStartY = e.clientY;
+      dragStartPosX = curPos.x;
+      dragStartPosY = curPos.y;
+      e.preventDefault();
+
+      const onMouseMove = (ev) => {
+        if (!isDraggingLogo) return;
+        const deltaX = Math.round(ev.clientX - dragStartX);
+        const deltaY = Math.round(ev.clientY - dragStartY);
+        applyLogoPos({ x: dragStartPosX + deltaX, y: dragStartPosY + deltaY, size: curPos.size });
+      };
+
+      const onMouseUp = (ev) => {
+        if (!isDraggingLogo) return;
+        isDraggingLogo = false;
+        el.style.cursor = 'grab';
+        window.removeEventListener('mousemove', onMouseMove);
+        window.removeEventListener('mouseup', onMouseUp);
+
+        const deltaX = Math.round(ev.clientX - dragStartX);
+        const deltaY = Math.round(ev.clientY - dragStartY);
+        const finalPos = { x: dragStartPosX + deltaX, y: dragStartPosY + deltaY, size: curPos.size };
+        localStorage.setItem('pec21_logo_pos', JSON.stringify(finalPos));
+        applyLogoPos(finalPos);
+        showToast(`បានរំកិលទីតាំង Logo: X: ${finalPos.x}px, Y: ${finalPos.y}px`, 'info');
+      };
+
+      window.addEventListener('mousemove', onMouseMove);
+      window.addEventListener('mouseup', onMouseUp);
+    };
+
+    el.addEventListener('mousedown', onMouseDown);
+  });
+}
+
+function initLogoPosition() {
+  const pos = getSavedLogoPos();
+  applyLogoPos(pos);
+  initLogoDrag();
+}
+
+// Clean Printing Controller (ធានាថាមិនបង្ហាញផ្ទាំង Modal នៅពេល Print)
+function printOfficialReport() {
+  closeInstModal();
+  closeUserModal();
+  if (typeof closeCandidateModal === 'function') closeCandidateModal();
+  setTimeout(() => {
+    window.print();
+  }, 60);
+}
+
+window.addEventListener('beforeprint', () => {
+  closeInstModal();
+  closeUserModal();
+  if (typeof closeCandidateModal === 'function') closeCandidateModal();
+});
+
+function getLogoHtml(logoSrc, size = 66) {
+  if (logoSrc) {
+    return `<img src="${logoSrc}" style="width:${size}px; height:${size}px; object-fit:contain; margin:0 auto; display:block; pointer-events:none;" alt="NEC Logo">`;
+  }
+  return `
+    <svg width="${size}" height="${size}" viewBox="0 0 100 100" style="margin:0 auto; display:block; pointer-events:none;">
+      <circle cx="50" cy="50" r="46" fill="#F8FAFC" stroke="#1E3A8A" stroke-width="2.5"/>
+      <circle cx="50" cy="50" r="41" fill="none" stroke="#1E3A8A" stroke-width="1.2" stroke-dasharray="3,2"/>
+      <circle cx="50" cy="50" r="33" fill="none" stroke="#1E3A8A" stroke-width="1.5"/>
+      <path d="M50 22 L50 74 M32 38 L68 38 M32 38 L26 54 L38 54 Z M68 38 L62 54 L74 54 Z" fill="#93C5FD" stroke="#1E3A8A" stroke-width="2" stroke-linejoin="round"/>
+      <circle cx="50" cy="74" r="3.5" fill="#1E3A8A"/>
+    </svg>
+  `;
+}
+
 const DEFAULT_NEC_SVG = `
   <svg width="66" height="66" viewBox="0 0 100 100" style="margin:0 auto; display:block;">
     <circle cx="50" cy="50" r="46" fill="#F8FAFC" stroke="#1E3A8A" stroke-width="2.5"/>
@@ -2831,6 +3015,7 @@ const DEFAULT_HEADER_SVG = `
 
 function applySystemLogo(logoSrc) {
   state.customLogo = logoSrc || '';
+  const pos = getSavedLogoPos();
 
   // 1. Header Brand Logo (រូបទី១)
   const headerLogoEl = document.getElementById('headerBrandLogo');
@@ -2845,22 +3030,17 @@ function applySystemLogo(logoSrc) {
   // 2. Tab 4: Tabulation Paper Logo (រូបទី២)
   const tabLogoEl = document.getElementById('tabulationLogoContainer');
   if (tabLogoEl) {
-    if (logoSrc) {
-      tabLogoEl.innerHTML = `<img src="${logoSrc}" style="width:66px; height:66px; object-fit:contain; margin:0 auto; display:block;" alt="NEC Logo">`;
-    } else {
-      tabLogoEl.innerHTML = DEFAULT_NEC_SVG;
-    }
+    tabLogoEl.innerHTML = getLogoHtml(logoSrc, pos.size);
   }
 
   // 3. Tab 5: Results Paper Logo
   const resLogoEl = document.getElementById('resultsLogoContainer');
   if (resLogoEl) {
-    if (logoSrc) {
-      resLogoEl.innerHTML = `<img src="${logoSrc}" style="width:66px; height:66px; object-fit:contain; margin:0 auto; display:block;" alt="NEC Logo">`;
-    } else {
-      resLogoEl.innerHTML = DEFAULT_NEC_SVG;
-    }
+    resLogoEl.innerHTML = getLogoHtml(logoSrc, pos.size);
   }
+
+  applyLogoPos(pos);
+  initLogoDrag();
 
   // 4. Tab 8: Settings Preview
   const previewEl = document.getElementById('settingsLogoPreview');

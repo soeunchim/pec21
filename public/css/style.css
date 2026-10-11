@@ -661,26 +661,25 @@ input[type="number"] {
 }
 
 /* Modal Dialog */
+.modal,
 .modal-overlay {
   position: fixed;
   inset: 0;
   background: rgba(15, 23, 42, 0.6);
   backdrop-filter: blur(2px);
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
-  z-index: 100;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.2s, visibility 0.2s;
+  z-index: 9999;
   padding: 16px;
 }
 
+.modal.active,
 .modal-overlay.active {
-  opacity: 1;
-  visibility: visible;
+  display: flex !important;
 }
 
+.modal-content,
 .modal-card {
   background: white;
   border-radius: var(--radius-lg);
@@ -688,13 +687,9 @@ input[type="number"] {
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: var(--shadow-lg);
-  transform: scale(0.95);
-  transition: transform 0.2s;
-}
-
-.modal-overlay.active .modal-card {
+  box-shadow: var(--shadow-2xl, 0 25px 50px -12px rgba(0, 0, 0, 0.25));
   transform: scale(1);
+  transition: transform 0.2s;
 }
 
 .modal-header {
@@ -983,8 +978,10 @@ input[type="number"] {
     font-size: 11pt;
   }
 
-  .top-header, .nav-bar, .toolbar, .no-print, .btn, .toast-container, .modal-overlay {
+  .top-header, .nav-bar, .toolbar, .no-print, .btn, .toast-container, .modal, .modal-overlay, .modal-content, .modal-card, #instModal, #userModal, #toastContainer, .logo-nudge-bar {
     display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
   }
 
   .main-content {
@@ -1369,4 +1366,52 @@ input[type="number"] {
   background-color: rgba(30, 58, 138, 0.08);
   box-shadow: 0 0 0 1px rgba(30, 58, 138, 0.3);
 }
+
+/* Draggable Logo & Position Nudge Controls */
+.draggable-logo {
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  display: inline-block;
+}
+
+.draggable-logo:active {
+  cursor: grabbing;
+}
+
+.draggable-logo:hover {
+  outline: 1.5px dashed #3B82F6;
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+@media print {
+  .draggable-logo:hover {
+    outline: none !important;
+  }
+  .draggable-logo {
+    cursor: default !important;
+  }
+}
+
+.btn-nudge {
+  border: 1px solid #CBD5E1;
+  background: #FFFFFF;
+  color: #1E293B;
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 2px 7px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.4;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.btn-nudge:hover {
+  background: #E2E8F0;
+  border-color: #94A3B8;
+  transform: translateY(-1px);
+}
+
 

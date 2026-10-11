@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ប្រព័ន្ធគ្រប់គ្រងបូកស្រង់ពិន្ទុប្រឡងជ្រើសរើស ក.ច.ប (PEC21 - ខេត្តតាកែវ)</title>
-  <link rel="stylesheet" href="css/style.css?v=20261011_inst_fontsize">
+  <link rel="stylesheet" href="css/style.css?v=20261011_logo_position_print_fix">
 </head>
 <body>
   <div class="app-container">
@@ -469,11 +469,11 @@
             </div>
           </div>
           <div class="toolbar-group">
-            <button class="btn btn-secondary" onclick="openInstModal()" title="កែសម្រួលអក្សរស្ថាប័ននៅក្រោម Logo">
+            <button class="btn btn-secondary" onclick="openInstModal()" title="កែសម្រួលអក្សរស្ថាប័ន និងរំកិលទីតាំង Logo">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-              កែអក្សរក្រោម Logo
+              កែអក្សរ & រំកិល Logo
             </button>
-            <button class="btn btn-primary" onclick="window.print()">
+            <button class="btn btn-primary" onclick="printOfficialReport()">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
               បោះពុម្ពតារាងស្រង់ពិន្ទុ (Print)
             </button>
@@ -485,14 +485,23 @@
           <div style="position:relative; margin-bottom:12px; min-height:130px;">
             <!-- Left: NEC / PEC (អក្សរនៅខាងក្រោម Logo តម្រឹមឆ្វេង និងអាចវាយបញ្ចូលបាន) -->
             <div style="position:absolute; left:0; top:0; text-align:left; font-family:'Khmer OS Muol Light', 'Khmer OS MuolLight', 'Khmer OS Muol', 'Moul', serif;">
-              <div id="tabulationLogoContainer" style="margin:0 auto 6px; display:block; text-align:center;">
-                <svg width="66" height="66" viewBox="0 0 100 100" style="margin:0 auto; display:block;">
-                  <circle cx="50" cy="50" r="46" fill="#F8FAFC" stroke="#1E3A8A" stroke-width="2.5"/>
-                  <circle cx="50" cy="50" r="41" fill="none" stroke="#1E3A8A" stroke-width="1.2" stroke-dasharray="3,2"/>
-                  <circle cx="50" cy="50" r="33" fill="none" stroke="#1E3A8A" stroke-width="1.5"/>
-                  <path d="M50 22 L50 74 M32 38 L68 38 M32 38 L26 54 L38 54 Z M68 38 L62 54 L74 54 Z" fill="#93C5FD" stroke="#1E3A8A" stroke-width="2" stroke-linejoin="round"/>
-                  <circle cx="50" cy="74" r="3.5" fill="#1E3A8A"/>
-                </svg>
+              <div style="margin:0 auto 6px; text-align:center; position:relative;">
+                <div id="tabulationLogoContainer" class="draggable-logo" style="margin:0 auto; display:inline-block;" title="ចុចអូស (Drag) ឬប្រើប៊ូតុងព្រួញដើម្បីរំកិលទីតាំង Logo">
+                  <svg width="66" height="66" viewBox="0 0 100 100" style="margin:0 auto; display:block; pointer-events:none;">
+                    <circle cx="50" cy="50" r="46" fill="#F8FAFC" stroke="#1E3A8A" stroke-width="2.5"/>
+                    <circle cx="50" cy="50" r="41" fill="none" stroke="#1E3A8A" stroke-width="1.2" stroke-dasharray="3,2"/>
+                    <circle cx="50" cy="50" r="33" fill="none" stroke="#1E3A8A" stroke-width="1.5"/>
+                    <path d="M50 22 L50 74 M32 38 L68 38 M32 38 L26 54 L38 54 Z M68 38 L62 54 L74 54 Z" fill="#93C5FD" stroke="#1E3A8A" stroke-width="2" stroke-linejoin="round"/>
+                    <circle cx="50" cy="74" r="3.5" fill="#1E3A8A"/>
+                  </svg>
+                </div>
+                <div class="logo-nudge-bar no-print" style="margin-top:2px; display:flex; justify-content:center; gap:2px;">
+                  <button type="button" class="btn-nudge" onclick="nudgeLogoPos(-3,0)" title="រំកិលទៅឆ្វេង 3px">⬅️</button>
+                  <button type="button" class="btn-nudge" onclick="nudgeLogoPos(3,0)" title="រំកិលទៅស្តាំ 3px">➡️</button>
+                  <button type="button" class="btn-nudge" onclick="nudgeLogoPos(0,-3)" title="រំកិលឡើងលើ 3px">⬆️</button>
+                  <button type="button" class="btn-nudge" onclick="nudgeLogoPos(0,3)" title="រំកិលចុះក្រោម 3px">⬇️</button>
+                  <button type="button" class="btn-nudge" onclick="resetLogoPos()" title="កំណត់ទីតាំងកណ្តាលដើម">🔄</button>
+                </div>
               </div>
               <div class="inst-line-1" contenteditable="true" onblur="handleInstLineDirectEdit(1, this.innerText)" style="font-size:0.86rem; margin-bottom:2px; line-height:1.4; text-align:left; outline:none;" title="ចុចដើម្បីវាយបញ្ចូល ឬកែសម្រួល">គណៈកម្មាធិការជាតិរៀបចំការបោះឆ្នោត</div>
               <div class="inst-line-2" contenteditable="true" onblur="handleInstLineDirectEdit(2, this.innerText)" style="font-size:0.84rem; margin-bottom:1px; text-align:left; outline:none;" title="ចុចដើម្បីវាយបញ្ចូល ឬកែសម្រួល">គណៈកម្មការរៀបចំការបោះឆ្នោតខេត្តតាកែវ</div>
@@ -570,11 +579,11 @@
             </div>
           </div>
           <div class="toolbar-group">
-            <button class="btn btn-secondary" onclick="openInstModal()" title="កែសម្រួលអក្សរស្ថាប័ននៅក្រោម Logo">
+            <button class="btn btn-secondary" onclick="openInstModal()" title="កែសម្រួលអក្សរស្ថាប័ន និងរំកិលទីតាំង Logo">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-              កែអក្សរក្រោម Logo
+              កែអក្សរ & រំកិល Logo
             </button>
-            <button class="btn btn-primary" onclick="window.print()">
+            <button class="btn btn-primary" onclick="printOfficialReport()">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
               បោះពុម្ពតារាងលទ្ធផល (Print)
             </button>
@@ -586,14 +595,23 @@
           <div style="position:relative; margin-bottom:12px; min-height:130px;">
             <!-- Left: NEC / PEC (អក្សរនៅខាងក្រោម Logo តម្រឹមឆ្វេង និងអាចវាយបញ្ចូលបាន) -->
             <div style="position:absolute; left:0; top:0; text-align:left; font-family:'Khmer OS Muol Light', 'Khmer OS MuolLight', 'Khmer OS Muol', 'Moul', serif;">
-              <div id="resultsLogoContainer" style="margin:0 auto 6px; display:block; text-align:center;">
-                <svg width="66" height="66" viewBox="0 0 100 100" style="margin:0 auto; display:block;">
-                  <circle cx="50" cy="50" r="46" fill="#F8FAFC" stroke="#1E3A8A" stroke-width="2.5"/>
-                  <circle cx="50" cy="50" r="41" fill="none" stroke="#1E3A8A" stroke-width="1.2" stroke-dasharray="3,2"/>
-                  <circle cx="50" cy="50" r="33" fill="none" stroke="#1E3A8A" stroke-width="1.5"/>
-                  <path d="M50 22 L50 74 M32 38 L68 38 M32 38 L26 54 L38 54 Z M68 38 L62 54 L74 54 Z" fill="#93C5FD" stroke="#1E3A8A" stroke-width="2" stroke-linejoin="round"/>
-                  <circle cx="50" cy="74" r="3.5" fill="#1E3A8A"/>
-                </svg>
+              <div style="margin:0 auto 6px; text-align:center; position:relative;">
+                <div id="resultsLogoContainer" class="draggable-logo" style="margin:0 auto; display:inline-block;" title="ចុចអូស (Drag) ឬប្រើប៊ូតុងព្រួញដើម្បីរំកិលទីតាំង Logo">
+                  <svg width="66" height="66" viewBox="0 0 100 100" style="margin:0 auto; display:block; pointer-events:none;">
+                    <circle cx="50" cy="50" r="46" fill="#F8FAFC" stroke="#1E3A8A" stroke-width="2.5"/>
+                    <circle cx="50" cy="50" r="41" fill="none" stroke="#1E3A8A" stroke-width="1.2" stroke-dasharray="3,2"/>
+                    <circle cx="50" cy="50" r="33" fill="none" stroke="#1E3A8A" stroke-width="1.5"/>
+                    <path d="M50 22 L50 74 M32 38 L68 38 M32 38 L26 54 L38 54 Z M68 38 L62 54 L74 54 Z" fill="#93C5FD" stroke="#1E3A8A" stroke-width="2" stroke-linejoin="round"/>
+                    <circle cx="50" cy="74" r="3.5" fill="#1E3A8A"/>
+                  </svg>
+                </div>
+                <div class="logo-nudge-bar no-print" style="margin-top:2px; display:flex; justify-content:center; gap:2px;">
+                  <button type="button" class="btn-nudge" onclick="nudgeLogoPos(-3,0)" title="រំកិលទៅឆ្វេង 3px">⬅️</button>
+                  <button type="button" class="btn-nudge" onclick="nudgeLogoPos(3,0)" title="រំកិលទៅស្តាំ 3px">➡️</button>
+                  <button type="button" class="btn-nudge" onclick="nudgeLogoPos(0,-3)" title="រំកិលឡើងលើ 3px">⬆️</button>
+                  <button type="button" class="btn-nudge" onclick="nudgeLogoPos(0,3)" title="រំកិលចុះក្រោម 3px">⬇️</button>
+                  <button type="button" class="btn-nudge" onclick="resetLogoPos()" title="កំណត់ទីតាំងកណ្តាលដើម">🔄</button>
+                </div>
               </div>
               <div class="inst-line-1" contenteditable="true" onblur="handleInstLineDirectEdit(1, this.innerText)" style="font-size:0.86rem; margin-bottom:2px; line-height:1.4; text-align:left; outline:none;" title="ចុចដើម្បីវាយបញ្ចូល ឬកែសម្រួល">គណៈកម្មាធិការជាតិរៀបចំការបោះឆ្នោត</div>
               <div class="inst-line-2" contenteditable="true" onblur="handleInstLineDirectEdit(2, this.innerText)" style="font-size:0.84rem; margin-bottom:1px; text-align:left; outline:none;" title="ចុចដើម្បីវាយបញ្ចូល ឬកែសម្រួល">គណៈកម្មការរៀបចំការបោះឆ្នោតខេត្តតាកែវ</div>
@@ -780,6 +798,36 @@
                   <div style="margin-top:14px; font-size:0.82rem; color:var(--gray-500); line-height:1.6;">
                     ✓ គាំទ្រឯកសារ: PNG, JPG, JPEG, SVG, WebP<br>
                     ✓ រូប Logo នឹងត្រូវប្តូរដោយស្វ័យប្រវត្តិតាមពេលវេលាជាក់ស្តែង (Real-time) នៅ Header និងតារាងផ្លូវការទាំងអស់
+                  </div>
+
+                  <!-- Logo Position & Size Settings -->
+                  <div style="margin-top:16px; padding-top:14px; border-top:1px dashed var(--gray-300);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                      <span style="font-weight:700; font-size:0.86rem; color:var(--gray-800);">រំកិលទីតាំង និងទំហំ Logo លើតារាងផ្លូវការ៖</span>
+                      <span class="logo-pos-display" style="font-size:0.75rem; color:#475569; font-family:monospace; background:#f1f5f9; padding:2px 6px; border-radius:4px; border:1px solid #cbd5e1;">X: 0px, Y: 0px (66px)</span>
+                    </div>
+                    <div style="display:flex; gap:6px; align-items:center; margin-bottom:10px; flex-wrap:wrap;">
+                      <span style="font-size:0.8rem; color:var(--gray-600);">រំកិលលឿន:</span>
+                      <button type="button" class="btn btn-secondary" style="padding:3px 8px; font-size:0.8rem;" onclick="nudgeLogoPos(-5, 0)" title="ទៅឆ្វេង 5px">⬅️ ឆ្វេង</button>
+                      <button type="button" class="btn btn-secondary" style="padding:3px 8px; font-size:0.8rem;" onclick="nudgeLogoPos(5, 0)" title="ទៅស្តាំ 5px">➡️ ស្តាំ</button>
+                      <button type="button" class="btn btn-secondary" style="padding:3px 8px; font-size:0.8rem;" onclick="nudgeLogoPos(0, -5)" title="ឡើងលើ 5px">⬆️ លើ</button>
+                      <button type="button" class="btn btn-secondary" style="padding:3px 8px; font-size:0.8rem;" onclick="nudgeLogoPos(0, 5)" title="ចុះក្រោម 5px">⬇️ ក្រោម</button>
+                      <button type="button" class="btn btn-secondary" style="padding:3px 8px; font-size:0.8rem;" onclick="resetLogoPos()" title="កំណត់ទីតាំងដើម">🔄 ដើម</button>
+                    </div>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+                      <div>
+                        <label class="form-label" style="font-size:0.76rem;">ឆ្វេង/ស្តាំ X (px)</label>
+                        <input type="number" id="settingsLogoPosX" class="form-control" style="padding:4px 8px; font-size:0.85rem;" oninput="handleManualLogoPosChange()" step="1">
+                      </div>
+                      <div>
+                        <label class="form-label" style="font-size:0.76rem;">លើ/ក្រោម Y (px)</label>
+                        <input type="number" id="settingsLogoPosY" class="form-control" style="padding:4px 8px; font-size:0.85rem;" oninput="handleManualLogoPosChange()" step="1">
+                      </div>
+                      <div>
+                        <label class="form-label" style="font-size:0.76rem;">ទំហំ Logo (px)</label>
+                        <input type="number" id="settingsLogoSize" class="form-control" style="padding:4px 8px; font-size:0.85rem;" oninput="handleManualLogoPosChange()" min="30" max="150" step="2">
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1212,7 +1260,7 @@ AB004	អវត្តមាន" style="font-family:monospace; font-size:0.88rem;
   </div>
 
   <!-- 5. EDIT USER MODAL -->
-  <div id="userModal" class="modal-overlay">
+  <div id="userModal" class="modal modal-overlay no-print">
     <div class="modal-card" style="max-width:440px;">
       <div class="modal-header">
         <h3 style="font-weight:700;">កែសម្រួលគណនី</h3>
@@ -1249,15 +1297,47 @@ AB004	អវត្តមាន" style="font-family:monospace; font-size:0.88rem;
     </div>
   </div>
 
-  <!-- Modal: កែសម្រួលអក្សរក្រោម Logo -->
-  <div id="instModal" class="modal">
+  <!-- Modal: កែសម្រួលអក្សរ និងរំកិលទីតាំង Logo -->
+  <div id="instModal" class="modal no-print">
     <div class="modal-content" style="max-width:550px;">
       <div class="modal-header">
-        <h3 class="modal-title">កែសម្រួលអក្សរនៅក្រោម Logo</h3>
+        <h3 class="modal-title">កែសម្រួលអក្សរ & រំកិលទីតាំង Logo</h3>
         <button class="modal-close" onclick="closeInstModal()">&times;</button>
       </div>
       <form id="instForm" onsubmit="handleSaveInstLines(event)">
         <div class="modal-body" style="display:flex; flex-direction:column; gap:12px;">
+
+          <!-- SECTION: រំកិលទីតាំង Logo -->
+          <div style="background:#f1f5f9; padding:10px 12px; border-radius:6px; border:1px solid #cbd5e1;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <span style="font-size:0.85rem; color:var(--gray-800); font-weight:700;">រំកិលទីតាំង និងទំហំ Logo (Position & Size)៖</span>
+              <span class="logo-pos-display" style="font-size:0.75rem; color:#475569; font-family:monospace; background:#fff; padding:2px 6px; border-radius:4px; border:1px solid #cbd5e1;">X: 0px, Y: 0px (66px)</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:6px;">
+              <div style="display:flex; gap:4px; align-items:center;">
+                <button type="button" class="btn btn-secondary" style="padding:3px 8px; font-size:0.8rem;" onclick="nudgeLogoPos(-3, 0)" title="ទៅឆ្វេង 3px">⬅️ ឆ្វេង</button>
+                <button type="button" class="btn btn-secondary" style="padding:3px 8px; font-size:0.8rem;" onclick="nudgeLogoPos(3, 0)" title="ទៅស្តាំ 3px">➡️ ស្តាំ</button>
+                <button type="button" class="btn btn-secondary" style="padding:3px 8px; font-size:0.8rem;" onclick="nudgeLogoPos(0, -3)" title="ឡើងលើ 3px">⬆️ លើ</button>
+                <button type="button" class="btn btn-secondary" style="padding:3px 8px; font-size:0.8rem;" onclick="nudgeLogoPos(0, 3)" title="ចុះក្រោម 3px">⬇️ ក្រោម</button>
+                <button type="button" class="btn btn-secondary" style="padding:3px 8px; font-size:0.8rem;" onclick="resetLogoPos()" title="កំណត់ទីតាំងដើម">🔄 ដើម</button>
+              </div>
+            </div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+              <div>
+                <label class="form-label" style="font-size:0.75rem; margin-bottom:2px;">ឆ្វេង/ស្តាំ X (px)</label>
+                <input type="number" id="modalLogoPosX" class="form-control" style="padding:4px 6px; font-size:0.85rem;" oninput="handleManualLogoPosChange()" step="1">
+              </div>
+              <div>
+                <label class="form-label" style="font-size:0.75rem; margin-bottom:2px;">លើ/ក្រោម Y (px)</label>
+                <input type="number" id="modalLogoPosY" class="form-control" style="padding:4px 6px; font-size:0.85rem;" oninput="handleManualLogoPosChange()" step="1">
+              </div>
+              <div>
+                <label class="form-label" style="font-size:0.75rem; margin-bottom:2px;">ទំហំ Logo (px)</label>
+                <input type="number" id="modalLogoSize" class="form-control" style="padding:4px 6px; font-size:0.85rem;" oninput="handleManualLogoPosChange()" min="30" max="150" step="2">
+              </div>
+            </div>
+          </div>
+
           <div style="display:flex; justify-content:space-between; align-items:center; background:#f8fafc; padding:8px 12px; border-radius:6px; border:1px solid #e2e8f0;">
             <span style="font-size:0.85rem; color:var(--gray-700); font-weight:600;">កែសម្រួលទំហំអក្សររួម (pt)៖</span>
             <div style="display:flex; gap:6px;">
@@ -1325,6 +1405,6 @@ AB004	អវត្តមាន" style="font-family:monospace; font-size:0.88rem;
   <div id="toastContainer" class="toast-container"></div>
 
   <!-- Application Logic -->
-  <script src="js/app.js?v=20261011_inst_fontsize"></script>
+  <script src="js/app.js?v=20261011_logo_position_print_fix"></script>
 </body>
 </html>
