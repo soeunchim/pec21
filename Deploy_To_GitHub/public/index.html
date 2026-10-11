@@ -459,6 +459,16 @@
             </div>
           </div>
           <div class="toolbar-group">
+            <div>
+              <label class="form-label">កាលបរិច្ឆេទ (សូរិយគតិ)</label>
+              <input type="date" id="tabReportSolarDate" class="form-control" style="width:145px;" onchange="handleSolarDateChange(this.value)">
+            </div>
+            <div>
+              <label class="form-label">កាលបរិច្ឆេទ (ចន្ទគតិ)</label>
+              <input type="text" id="tabReportLunarDate" class="form-control" placeholder="ថ្ងៃចន្ទ ៣កើត ខែភទ្របទ..." style="min-width:260px;" oninput="handleLunarDateChange(this.value)">
+            </div>
+          </div>
+          <div class="toolbar-group">
             <button class="btn btn-primary" onclick="window.print()">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
               បោះពុម្ពតារាងស្រង់ពិន្ទុ (Print)
@@ -510,18 +520,18 @@
           <div class="official-signatures-layout" style="display:flex; justify-content:space-between; align-items:flex-start; margin-top:20px; font-size:0.88rem; page-break-inside:avoid;">
             <!-- Left: បានពិនិត្យត្រឹមត្រូវ -->
             <div style="text-align:center; min-width:320px; line-height:1.65;">
-              <div style="font-family:'Moul', serif; font-size:0.92rem; margin-bottom:4px;">បានពិនិត្យត្រឹមត្រូវ</div>
-              <div style="font-size:0.84rem;">ថ្ងៃចន្ទ ៣កើត ខែភទ្របទ ឆ្នាំមមី អដ្ឋស័ក ព.ស.២៥៧០</div>
-              <div style="font-size:0.84rem; margin-bottom:4px;">តាកែវ ថ្ងៃទី១៤ ខែកញ្ញា ឆ្នាំ២០២៦</div>
-              <div style="font-family:'Moul', serif; font-size:0.88rem;">ជ.អនុគណៈកម្មការជ្រើសរើសថ្នាក់ខេត្ត</div>
-              <div style="font-family:'Moul', serif; font-size:0.88rem; margin-top:2px;">ប្រធាន</div>
+              <div style="font-family:'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', serif; font-size:0.92rem; margin-bottom:4px;">បានពិនិត្យត្រឹមត្រូវ</div>
+              <div class="report-lunar-date" contenteditable="true" onblur="handleFooterDirectEdit('lunar', this.innerText)" style="font-size:0.84rem;">ថ្ងៃចន្ទ ៣កើត ខែភទ្របទ ឆ្នាំមមី អដ្ឋស័ក ព.ស.២៥៧០</div>
+              <div class="report-solar-date" contenteditable="true" onblur="handleFooterDirectEdit('solar', this.innerText)" style="font-size:0.84rem; margin-bottom:4px;">តាកែវ ថ្ងៃទី១៤ ខែកញ្ញា ឆ្នាំ២០២៦</div>
+              <div style="font-family:'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', serif; font-size:0.88rem;">ជ.អនុគណៈកម្មការជ្រើសរើសថ្នាក់ខេត្ត</div>
+              <div style="font-family:'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', serif; font-size:0.88rem; margin-top:2px;">ប្រធាន</div>
             </div>
 
             <!-- Right: អ្នកស្រង់ពិន្ទុ និងបូកសរុប -->
             <div style="text-align:center; min-width:340px; line-height:1.65;">
-              <div style="font-size:0.84rem;">ថ្ងៃចន្ទ ៣កើត ខែភទ្របទ ឆ្នាំមមី អដ្ឋស័ក ព.ស.២៥៧០</div>
-              <div style="font-size:0.84rem; margin-bottom:4px;">តាកែវ ថ្ងៃទី១៤ ខែកញ្ញា ឆ្នាំ២០២៦</div>
-              <div style="font-family:'Moul', serif; font-size:0.92rem; margin-bottom:8px;">អ្នកស្រង់ពិន្ទុ និងបូកសរុប</div>
+              <div class="report-lunar-date" contenteditable="true" onblur="handleFooterDirectEdit('lunar', this.innerText)" style="font-size:0.84rem;">ថ្ងៃចន្ទ ៣កើត ខែភទ្របទ ឆ្នាំមមី អដ្ឋស័ក ព.ស.២៥៧០</div>
+              <div class="report-solar-date" contenteditable="true" onblur="handleFooterDirectEdit('solar', this.innerText)" style="font-size:0.84rem; margin-bottom:4px;">តាកែវ ថ្ងៃទី១៤ ខែកញ្ញា ឆ្នាំ២០២៦</div>
+              <div style="font-family:'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', serif; font-size:0.92rem; margin-bottom:8px;">អ្នកស្រង់ពិន្ទុ និងបូកសរុប</div>
               <div style="text-align:left; font-weight:600; font-size:0.84rem; margin-bottom:8px; padding-left:20px;">១....................................................................</div>
               <div style="text-align:left; font-weight:600; font-size:0.84rem; margin-bottom:8px; padding-left:20px;">២....................................................................</div>
               <div style="text-align:left; font-weight:600; font-size:0.84rem; padding-left:20px;">៣....................................................................</div>
@@ -546,6 +556,16 @@
             <div>
               <label class="form-label">ជ្រើសរើសឃុំ/សង្កាត់</label>
               <select id="resultReportCommune" class="form-select" style="min-width:200px;"></select>
+            </div>
+          </div>
+          <div class="toolbar-group">
+            <div>
+              <label class="form-label">កាលបរិច្ឆេទ (សូរិយគតិ)</label>
+              <input type="date" id="resReportSolarDate" class="form-control" style="width:145px;" onchange="handleSolarDateChange(this.value)">
+            </div>
+            <div>
+              <label class="form-label">កាលបរិច្ឆេទ (ចន្ទគតិ)</label>
+              <input type="text" id="resReportLunarDate" class="form-control" placeholder="ថ្ងៃចន្ទ ៣កើត ខែភទ្របទ..." style="min-width:260px;" oninput="handleLunarDateChange(this.value)">
             </div>
           </div>
           <div class="toolbar-group">
@@ -599,18 +619,18 @@
           <div class="official-signatures-layout" style="display:flex; justify-content:space-between; align-items:flex-start; margin-top:20px; font-size:0.88rem; page-break-inside:avoid;">
             <!-- Left: បានពិនិត្យត្រឹមត្រូវ -->
             <div style="text-align:center; min-width:320px; line-height:1.65;">
-              <div style="font-family:'Moul', serif; font-size:0.92rem; margin-bottom:4px;">បានពិនិត្យត្រឹមត្រូវ</div>
-              <div style="font-size:0.84rem;">ថ្ងៃចន្ទ ៣កើត ខែភទ្របទ ឆ្នាំមមី អដ្ឋស័ក ព.ស.២៥៧០</div>
-              <div style="font-size:0.84rem; margin-bottom:4px;">តាកែវ ថ្ងៃទី១៤ ខែកញ្ញា ឆ្នាំ២០២៦</div>
-              <div style="font-family:'Moul', serif; font-size:0.88rem;">ជ.អនុគណៈកម្មការជ្រើសរើសថ្នាក់ខេត្ត</div>
-              <div style="font-family:'Moul', serif; font-size:0.88rem; margin-top:2px;">ប្រធាន</div>
+              <div style="font-family:'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', serif; font-size:0.92rem; margin-bottom:4px;">បានពិនិត្យត្រឹមត្រូវ</div>
+              <div class="report-lunar-date" contenteditable="true" onblur="handleFooterDirectEdit('lunar', this.innerText)" style="font-size:0.84rem;">ថ្ងៃចន្ទ ៣កើត ខែភទ្របទ ឆ្នាំមមី អដ្ឋស័ក ព.ស.២៥៧០</div>
+              <div class="report-solar-date" contenteditable="true" onblur="handleFooterDirectEdit('solar', this.innerText)" style="font-size:0.84rem; margin-bottom:4px;">តាកែវ ថ្ងៃទី១៤ ខែកញ្ញា ឆ្នាំ២០២៦</div>
+              <div style="font-family:'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', serif; font-size:0.88rem;">ជ.អនុគណៈកម្មការជ្រើសរើសថ្នាក់ខេត្ត</div>
+              <div style="font-family:'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', serif; font-size:0.88rem; margin-top:2px;">ប្រធាន</div>
             </div>
 
             <!-- Right: អ្នកស្រង់ពិន្ទុ និងបូកសរុប -->
             <div style="text-align:center; min-width:340px; line-height:1.65;">
-              <div style="font-size:0.84rem;">ថ្ងៃចន្ទ ៣កើត ខែភទ្របទ ឆ្នាំមមី អដ្ឋស័ក ព.ស.២៥៧០</div>
-              <div style="font-size:0.84rem; margin-bottom:4px;">តាកែវ ថ្ងៃទី១៤ ខែកញ្ញា ឆ្នាំ២០២៦</div>
-              <div style="font-family:'Moul', serif; font-size:0.92rem; margin-bottom:8px;">អ្នកស្រង់ពិន្ទុ និងបូកសរុប</div>
+              <div class="report-lunar-date" contenteditable="true" onblur="handleFooterDirectEdit('lunar', this.innerText)" style="font-size:0.84rem;">ថ្ងៃចន្ទ ៣កើត ខែភទ្របទ ឆ្នាំមមី អដ្ឋស័ក ព.ស.២៥៧០</div>
+              <div class="report-solar-date" contenteditable="true" onblur="handleFooterDirectEdit('solar', this.innerText)" style="font-size:0.84rem; margin-bottom:4px;">តាកែវ ថ្ងៃទី១៤ ខែកញ្ញា ឆ្នាំ២០២៦</div>
+              <div style="font-family:'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', serif; font-size:0.92rem; margin-bottom:8px;">អ្នកស្រង់ពិន្ទុ និងបូកសរុប</div>
               <div style="text-align:left; font-weight:600; font-size:0.84rem; margin-bottom:8px; padding-left:20px;">១....................................................................</div>
               <div style="text-align:left; font-weight:600; font-size:0.84rem; margin-bottom:8px; padding-left:20px;">២....................................................................</div>
               <div style="text-align:left; font-weight:600; font-size:0.84rem; padding-left:20px;">៣....................................................................</div>

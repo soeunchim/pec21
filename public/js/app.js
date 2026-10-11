@@ -45,6 +45,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   const savedLogo = localStorage.getItem('pec21_custom_logo');
   if (savedLogo) applySystemLogo(savedLogo);
 
+  // Initialize report footer dates from localStorage
+  initReportDates();
+
   const cTable = document.getElementById('codesTable');
   if (cTable) cTable.addEventListener('paste', handleCodesTablePaste);
   const cBody = document.getElementById('codesTableBody');
@@ -1962,6 +1965,76 @@ function reorganizeTabulationList() {
   showToast('បានរៀបចំ និងតម្រៀបបញ្ជីបេក្ខជនតាមពិន្ទុរួចរាល់!', 'success');
 }
 
+// ==============================================================================
+// REPORT FOOTER DATE MANAGEMENT (SYNC & PERSIST)
+// ==============================================================================
+function initReportDates() {
+  const savedSolarIso = localStorage.getItem('pec21_report_solar_iso') || '2026-09-14';
+  const savedSolarText = localStorage.getItem('pec21_report_solar_text') || formatSolarKhmer(savedSolarIso);
+  const savedLunar = localStorage.getItem('pec21_report_lunar_text') || 'ថ្ងៃចន្ទ ៣កើត ខែភទ្របទ ឆ្នាំមមី អដ្ឋស័ក ព.ស.២៥៧០';
+
+  applySolarDate(savedSolarIso, savedSolarText);
+  applyLunarDate(savedLunar);
+}
+
+function formatSolarKhmer(isoDateStr) {
+  if (!isoDateStr) return '';
+  const parts = isoDateStr.split('-');
+  if (parts.length !== 3) return isoDateStr;
+  const year = toKhmerNumber(parts[0]);
+  const monthIdx = parseInt(parts[1], 10) - 1;
+  const day = toKhmerNumber(parseInt(parts[2], 10));
+  const khmerMonths = ['មករា', 'កុម្ភៈ', 'មីនា', 'មេសា', 'ឧសភា', 'មិថុនា', 'កក្កដា', 'សីហា', 'កញ្ញា', 'តុលា', 'វិច្ឆិកា', 'ធ្នូ'];
+  const monthName = khmerMonths[monthIdx] || parts[1];
+  return `តាកែវ ថ្ងៃទី${day} ខែ${monthName} ឆ្នាំ${year}`;
+}
+
+function handleSolarDateChange(isoVal) {
+  if (!isoVal) return;
+  const solarText = formatSolarKhmer(isoVal);
+  localStorage.setItem('pec21_report_solar_iso', isoVal);
+  localStorage.setItem('pec21_report_solar_text', solarText);
+  applySolarDate(isoVal, solarText);
+}
+
+function handleLunarDateChange(lunarVal) {
+  localStorage.setItem('pec21_report_lunar_text', lunarVal);
+  applyLunarDate(lunarVal);
+}
+
+function handleFooterDirectEdit(type, textVal) {
+  if (type === 'lunar') {
+    handleLunarDateChange(textVal);
+  } else if (type === 'solar') {
+    localStorage.setItem('pec21_report_solar_text', textVal);
+    document.querySelectorAll('.report-solar-date').forEach(el => el.innerText = textVal);
+  }
+}
+
+function applySolarDate(isoVal, textVal) {
+  const tSolar = document.getElementById('tabReportSolarDate');
+  const rSolar = document.getElementById('resReportSolarDate');
+  if (tSolar && isoVal) tSolar.value = isoVal;
+  if (rSolar && isoVal) rSolar.value = isoVal;
+  document.querySelectorAll('.report-solar-date').forEach(el => el.innerText = textVal);
+}
+
+function applyLunarDate(lunarVal) {
+  const tLunar = document.getElementById('tabReportLunarDate');
+  const rLunar = document.getElementById('resReportLunarDate');
+  if (tLunar) tLunar.value = lunarVal;
+  if (rLunar) rLunar.value = lunarVal;
+  document.querySelectorAll('.report-lunar-date').forEach(el => el.innerText = lunarVal);
+}
+
+function applySavedReportDates() {
+  const savedSolarIso = localStorage.getItem('pec21_report_solar_iso') || '2026-09-14';
+  const savedSolarText = localStorage.getItem('pec21_report_solar_text') || formatSolarKhmer(savedSolarIso);
+  const savedLunar = localStorage.getItem('pec21_report_lunar_text') || 'ថ្ងៃចន្ទ ៣កើត ខែភទ្របទ ឆ្នាំមមី អដ្ឋស័ក ព.ស.២៥៧០';
+  applySolarDate(savedSolarIso, savedSolarText);
+  applyLunarDate(savedLunar);
+}
+
 // Render Continuous Official Tabulation Table
 function renderTabulationSheet() {
   if (state.customLogo) applySystemLogo(state.customLogo);
@@ -2023,23 +2096,21 @@ function renderTabulationSheet() {
     const commPrefix = districtName === 'ដូនកែវ' ? 'សង្កាត់' : 'ឃុំ';
     const commCodeKhmer = toKhmerNumber(comm.code);
 
-    // 1. Commune Banner Row (e.g. I | ឃុំអង្គរបូរី (០០១))
+    // 1. Commune Banner Row - Merged across all 11 columns with Times New Roman 12pt bold Roman numeral
     tableHtml += `
       <tr class="commune-banner-row">
-        <td>${roman}</td>
-        <td colspan="10">${commPrefix}${cleanCommName} (${commCodeKhmer})</td>
+        <td colspan="11"><span style="font-family:'Times New Roman', Times, serif; font-size:12pt; font-weight:bold; margin-right:6px;">${roman}-</span><span style="font-family:'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', serif; font-size:10pt;">${commPrefix}${cleanCommName} (${commCodeKhmer})</span></td>
       </tr>
     `;
 
     // 2. Role 1: មុខតំណែងប្រធាន ក.ច.ប
     const prathanList = commCands.filter(c => c.roleCode === 'a');
-    tableHtml += `
-      <tr class="role-banner-row">
-        <td colspan="11">មុខតំណែងប្រធាន ក.ច.ប</td>
-      </tr>
-    `;
-
     if (prathanList.length > 0) {
+      tableHtml += `
+        <tr class="role-banner-row">
+          <td colspan="11">មុខតំណែងប្រធាន ក.ច.ប</td>
+        </tr>
+      `;
       prathanList.forEach((c, idx) => {
         tableHtml += `
           <tr>
@@ -2057,53 +2128,16 @@ function renderTabulationSheet() {
           </tr>
         `;
       });
-      // Add empty template row like Excel if candidates < 2
-      if (prathanList.length < 2) {
-        tableHtml += `
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td class="excel-x-cell"></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-        `;
-      }
-    } else {
-      for (let k = 0; k < 2; k++) {
-        tableHtml += `
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td class="excel-x-cell"></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-        `;
-      }
     }
 
     // 3. Role 2: មុខតំណែងសមាជិក ក.ច.ប ការីកុំព្យូទ័រ
     const pcList = commCands.filter(c => c.roleCode === 'c');
-    tableHtml += `
-      <tr class="role-banner-row">
-        <td colspan="11">មុខតំណែងសមាជិក ក.ច.ប ការីកុំព្យូទ័រ</td>
-      </tr>
-    `;
-
     if (pcList.length > 0) {
+      tableHtml += `
+        <tr class="role-banner-row">
+          <td colspan="11">មុខតំណែងសមាជិក ក.ច.ប ការីកុំព្យូទ័រ</td>
+        </tr>
+      `;
       pcList.forEach((c, idx) => {
         tableHtml += `
           <tr>
@@ -2121,42 +2155,6 @@ function renderTabulationSheet() {
           </tr>
         `;
       });
-      // Add empty template row if candidates < 2
-      if (pcList.length < 2) {
-        tableHtml += `
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td class="excel-x-cell"></td>
-            <td></td>
-            <td class="excel-x-cell"></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-        `;
-      }
-    } else {
-      for (let k = 0; k < 2; k++) {
-        tableHtml += `
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td class="excel-x-cell"></td>
-            <td></td>
-            <td class="excel-x-cell"></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-        `;
-      }
     }
 
     // 4. Role 3 (Optional): មុខតំណែងសមាជិក ក.ច.ប ដែលជួយការងារអនុប្រធាន ក.ច.ប
@@ -2192,7 +2190,7 @@ function renderTabulationSheet() {
     </table>
   `;
 
-  // Dynamic summary line below table (គម្រូតាមរូបទី៣)
+  // Dynamic summary line below table (គម្រូតាមរូបទី៣: អក្សរពណ៌ខ្មៅដិត ដាក់ជាប់នឹងតារាងខាងលើ)
   let allTabCands = [];
   communesInDist.forEach(comm => {
     const cands = state.candidates.filter(c => c.communeCode === comm.code);
@@ -2205,12 +2203,13 @@ function renderTabulationSheet() {
   const femTabCountStr = String(femTabCount).padStart(2, '0');
 
   tableHtml += `
-    <div style="color:#DC2626; font-weight:700; font-size:0.92rem; margin:10px 0 15px 4px; text-align:left;">
+    <div style="color:#000000; font-weight:bold; font-size:10pt; margin:3px 0 12px 2px; text-align:left; line-height:1.4;">
       បញ្ឈប់បញ្ជីនេះត្រឹមឈ្មោះ: ${lastTabCandName} សរុប ${toKhmerNumber(totalTabCands)} នាក់ (ស្រី ${toKhmerNumber(femTabCountStr)} នាក់)
     </div>
   `;
 
   container.innerHTML = tableHtml;
+  applySavedReportDates();
 }
 
 // ==============================================================================
@@ -2310,23 +2309,21 @@ function renderResultsSheet() {
     const commPrefix = districtName === 'ដូនកែវ' ? 'សង្កាត់' : 'ឃុំ';
     const commCodeKhmer = toKhmerNumber(comm.code);
 
-    // 1. Commune Banner Row
+    // 1. Commune Banner Row - Merged across all 8 columns with Times New Roman 12pt bold Roman numeral
     tableHtml += `
       <tr class="commune-banner-row">
-        <td>${roman}</td>
-        <td colspan="7">${commPrefix}${cleanCommName} (${commCodeKhmer})</td>
+        <td colspan="8"><span style="font-family:'Times New Roman', Times, serif; font-size:12pt; font-weight:bold; margin-right:6px;">${roman}-</span><span style="font-family:'Khmer OS Muol Light', 'Khmer OS Muol', 'Moul', serif; font-size:10pt;">${commPrefix}${cleanCommName} (${commCodeKhmer})</span></td>
       </tr>
     `;
 
     // 2. Role 1: មុខតំណែងប្រធាន ក.ច.ប
     const prathanList = commCands.filter(c => c.roleCode === 'a');
-    tableHtml += `
-      <tr class="role-banner-row">
-        <td colspan="8">មុខតំណែងប្រធាន ក.ច.ប</td>
-      </tr>
-    `;
-
     if (prathanList.length > 0) {
+      tableHtml += `
+        <tr class="role-banner-row">
+          <td colspan="8">មុខតំណែងប្រធាន ក.ច.ប</td>
+        </tr>
+      `;
       prathanList.forEach((c, idx) => {
         tableHtml += `
           <tr>
@@ -2341,32 +2338,16 @@ function renderResultsSheet() {
           </tr>
         `;
       });
-      if (prathanList.length < 2) {
-        tableHtml += `
-          <tr>
-            <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-          </tr>
-        `;
-      }
-    } else {
-      for (let k = 0; k < 2; k++) {
-        tableHtml += `
-          <tr>
-            <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-          </tr>
-        `;
-      }
     }
 
     // 3. Role 2: មុខតំណែងសមាជិក ក.ច.ប ការីកុំព្យូទ័រ
     const pcList = commCands.filter(c => c.roleCode === 'c');
-    tableHtml += `
-      <tr class="role-banner-row">
-        <td colspan="8">មុខតំណែងសមាជិក ក.ច.ប ការីកុំព្យូទ័រ</td>
-      </tr>
-    `;
-
     if (pcList.length > 0) {
+      tableHtml += `
+        <tr class="role-banner-row">
+          <td colspan="8">មុខតំណែងសមាជិក ក.ច.ប ការីកុំព្យូទ័រ</td>
+        </tr>
+      `;
       pcList.forEach((c, idx) => {
         tableHtml += `
           <tr>
@@ -2381,21 +2362,6 @@ function renderResultsSheet() {
           </tr>
         `;
       });
-      if (pcList.length < 2) {
-        tableHtml += `
-          <tr>
-            <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-          </tr>
-        `;
-      }
-    } else {
-      for (let k = 0; k < 2; k++) {
-        tableHtml += `
-          <tr>
-            <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-          </tr>
-        `;
-      }
     }
 
     // 4. Role 3 (Optional): មុខតំណែងសមាជិក ក.ច.ប ដែលជួយការងារអនុប្រធាន ក.ច.ប
@@ -2428,7 +2394,7 @@ function renderResultsSheet() {
     </table>
   `;
 
-  // Dynamic summary line below table (គម្រូតាមរូបទី៣)
+  // Dynamic summary line below table (គម្រូតាមរូបទី៣: អក្សរពណ៌ខ្មៅដិត ដាក់ជាប់នឹងតារាងខាងលើ)
   let allResCands = [];
   communesInDist.forEach(comm => {
     const cands = state.candidates.filter(c => c.communeCode === comm.code);
@@ -2441,12 +2407,13 @@ function renderResultsSheet() {
   const femResCountStr = String(femResCount).padStart(2, '0');
 
   tableHtml += `
-    <div style="color:#DC2626; font-weight:700; font-size:0.92rem; margin:10px 0 15px 4px; text-align:left;">
+    <div style="color:#000000; font-weight:bold; font-size:10pt; margin:3px 0 12px 2px; text-align:left; line-height:1.4;">
       បញ្ឈប់បញ្ជីនេះត្រឹមឈ្មោះ: ${lastResCandName} សរុប ${toKhmerNumber(totalResCands)} នាក់ (ស្រី ${toKhmerNumber(femResCountStr)} នាក់)
     </div>
   `;
 
   container.innerHTML = tableHtml;
+  applySavedReportDates();
 }
 
 // ==============================================================================
