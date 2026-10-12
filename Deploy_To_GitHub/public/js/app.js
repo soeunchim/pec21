@@ -2000,6 +2000,15 @@ function toKhmerNumber(val) {
   return String(val).replace(/[0-9]/g, d => khmerDigits[parseInt(d, 10)]);
 }
 
+// Helper: Format total score with Khmer numerals and 2 decimal places in Khmer OS Siemreap (e.g. 94.00 -> ៩៤.០០, អវត្តមាន -> អវត្តមាន)
+function formatTotalScoreKhmer(score) {
+  if (score === undefined || score === null || score === '' || isCorruptedText(score)) return '';
+  if (score === 'អវត្តមាន' || String(score).trim() === 'អវត្តមាន') return 'អវត្តមាន';
+  const num = Number(score);
+  if (isNaN(num)) return sanitizeText(score);
+  return toKhmerNumber(num.toFixed(2));
+}
+
 // Khmer month dictionary for DOB formatting (e.g. 05-05-1966 -> ០៥-ឧសភា-១៩៦៦)
 const KHMER_MONTHS_MAP = {
   '01': 'មករា', '1': 'មករា',
@@ -2076,6 +2085,34 @@ function setTabReportDistrict(distName) {
   if (distSelect) distSelect.value = distName;
   updateCommuneDropdowns();
   renderTabulationSheet();
+}
+
+// Helper: Sort candidates by score descending and rank ascending (Rank 1 -> Rank 2 -> Rank 3...)
+function sortCandidatesByRankAndScore(list) {
+  if (!list || !Array.isArray(list)) return [];
+  return [...list].sort((a, b) => {
+    const aAbs = a.scoreTotal === 'អវត្តមាន';
+    const bAbs = b.scoreTotal === 'អវត្តមាន';
+    if (aAbs && !bAbs) return 1;
+    if (!aAbs && bAbs) return -1;
+    if (aAbs && bAbs) return 0;
+
+    // Highest total score first
+    const scoreA = Number(a.scoreTotal);
+    const scoreB = Number(b.scoreTotal);
+    if (!isNaN(scoreA) && !isNaN(scoreB) && scoreB !== scoreA) {
+      return scoreB - scoreA;
+    }
+
+    // Rank ascending (1, 2, 3...)
+    const rankA = Number(a.rank) || 999;
+    const rankB = Number(b.rank) || 999;
+    if (rankA !== rankB) {
+      return rankA - rankB;
+    }
+
+    return (a.name || '').localeCompare(b.name || '');
+  });
 }
 
 // Reorganize / Sort List (ប៊ូតុង "រៀបចំបញ្ជី")
@@ -2637,7 +2674,7 @@ function renderTabulationSheet() {
     `;
 
     // 2. Role 1: មុខតំណែងប្រធាន ក.ច.ប
-    const prathanList = commCands.filter(c => c.roleCode === 'a');
+    const prathanList = sortCandidatesByRankAndScore(commCands.filter(c => c.roleCode === 'a'));
     if (prathanList.length > 0) {
       tableHtml += `
         <tr class="role-banner-row">
@@ -2655,8 +2692,8 @@ function renderTabulationSheet() {
             <td>${c.scoreExp !== undefined && c.scoreExp !== null && c.scoreExp !== '' && !isCorruptedText(c.scoreExp) ? c.scoreExp : ''}</td>
             <td>${c.scoreQcm !== undefined && c.scoreQcm !== null && c.scoreQcm !== '' && !isCorruptedText(c.scoreQcm) ? Number(c.scoreQcm).toFixed(2) : ''}</td>
             <td class="excel-x-cell"></td>
-            <td>${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' && !isCorruptedText(c.scoreTotal) ? (isNaN(Number(c.scoreTotal)) ? sanitizeText(c.scoreTotal) : Number(c.scoreTotal).toFixed(2)) : ''}</td>
-            <td>${sanitizeText(c.status)}</td>
+            <td style="font-family:'Khmer OS Siemreap', 'Siemreap', sans-serif; font-size:12pt;">${formatTotalScoreKhmer(c.scoreTotal)}</td>
+            <td class="col-status" style="text-align:left; padding-left:8px;">${sanitizeText(c.status)}</td>
             <td>${sanitizeText(c.notes)}</td>
           </tr>
         `;
@@ -2664,7 +2701,7 @@ function renderTabulationSheet() {
     }
 
     // 3. Role 2: មុខតំណែងសមាជិក ក.ច.ប ដែលជួយការងារអនុប្រធាន ក.ច.ប
-    const jumList = commCands.filter(c => c.roleCode === 'b');
+    const jumList = sortCandidatesByRankAndScore(commCands.filter(c => c.roleCode === 'b'));
     if (jumList.length > 0) {
       tableHtml += `
         <tr class="role-banner-row">
@@ -2682,8 +2719,8 @@ function renderTabulationSheet() {
             <td>${c.scoreExp !== undefined && c.scoreExp !== null && c.scoreExp !== '' && !isCorruptedText(c.scoreExp) ? c.scoreExp : ''}</td>
             <td>${c.scoreQcm !== undefined && c.scoreQcm !== null && c.scoreQcm !== '' && !isCorruptedText(c.scoreQcm) ? Number(c.scoreQcm).toFixed(2) : ''}</td>
             <td class="excel-x-cell"></td>
-            <td>${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' && !isCorruptedText(c.scoreTotal) ? (isNaN(Number(c.scoreTotal)) ? sanitizeText(c.scoreTotal) : Number(c.scoreTotal).toFixed(2)) : ''}</td>
-            <td>${sanitizeText(c.status)}</td>
+            <td style="font-family:'Khmer OS Siemreap', 'Siemreap', sans-serif; font-size:12pt;">${formatTotalScoreKhmer(c.scoreTotal)}</td>
+            <td class="col-status" style="text-align:left; padding-left:8px;">${sanitizeText(c.status)}</td>
             <td>${sanitizeText(c.notes)}</td>
           </tr>
         `;
@@ -2691,7 +2728,7 @@ function renderTabulationSheet() {
     }
 
     // 4. Role 3: មុខតំណែងសមាជិក ក.ច.ប ការីកុំព្យូទ័រ
-    const pcList = commCands.filter(c => c.roleCode === 'c');
+    const pcList = sortCandidatesByRankAndScore(commCands.filter(c => c.roleCode === 'c'));
     if (pcList.length > 0) {
       tableHtml += `
         <tr class="role-banner-row">
@@ -2709,8 +2746,8 @@ function renderTabulationSheet() {
             <td>${c.scoreExp !== undefined && c.scoreExp !== null && c.scoreExp !== '' && !isCorruptedText(c.scoreExp) ? c.scoreExp : ''}</td>
             <td class="excel-x-cell"></td>
             <td>${c.scorePc !== undefined && c.scorePc !== null && c.scorePc !== '' && !isCorruptedText(c.scorePc) ? Number(c.scorePc).toFixed(2) : ''}</td>
-            <td>${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' && !isCorruptedText(c.scoreTotal) ? (isNaN(Number(c.scoreTotal)) ? sanitizeText(c.scoreTotal) : Number(c.scoreTotal).toFixed(2)) : ''}</td>
-            <td>${sanitizeText(c.status)}</td>
+            <td style="font-family:'Khmer OS Siemreap', 'Siemreap', sans-serif; font-size:12pt;">${formatTotalScoreKhmer(c.scoreTotal)}</td>
+            <td class="col-status" style="text-align:left; padding-left:8px;">${sanitizeText(c.status)}</td>
             <td>${sanitizeText(c.notes)}</td>
           </tr>
         `;
@@ -2854,7 +2891,7 @@ function renderResultsSheet() {
     `;
 
     // 2. Role 1: មុខតំណែងប្រធាន ក.ច.ប
-    const prathanList = commCands.filter(c => c.roleCode === 'a');
+    const prathanList = sortCandidatesByRankAndScore(commCands.filter(c => c.roleCode === 'a'));
     if (prathanList.length > 0) {
       tableHtml += `
         <tr class="role-banner-row">
@@ -2868,8 +2905,8 @@ function renderResultsSheet() {
             <td style="text-align:left; padding-left:8px;">${sanitizeText(c.name)}</td>
             <td>${sanitizeText(c.gender)}</td>
             <td class="col-dob" style="white-space:nowrap !important; width:145px; min-width:145px;"><span style="display:inline-block; white-space:nowrap !important;">${formatDobKhmer(c.dob)}</span></td>
-            <td>${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' && !isCorruptedText(c.scoreTotal) ? (isNaN(Number(c.scoreTotal)) ? sanitizeText(c.scoreTotal) : Number(c.scoreTotal).toFixed(2)) : ''}</td>
-            <td style="color:${c.status === 'A-ជាប់' ? '#047857' : (c.status === 'B-បម្រុង' || c.status === 'C-បម្រុងបន្ទាប់') ? '#0284C7' : '#DC2626'};">${sanitizeText(c.status)}</td>
+            <td style="font-family:'Khmer OS Siemreap', 'Siemreap', sans-serif; font-size:12pt;">${formatTotalScoreKhmer(c.scoreTotal)}</td>
+            <td class="col-status" style="text-align:left; padding-left:8px; color:${c.status === 'A-ជាប់' ? '#047857' : (c.status === 'B-បម្រុង' || c.status === 'C-បម្រុងបន្ទាប់') ? '#0284C7' : '#DC2626'};">${sanitizeText(c.status)}</td>
             <td>${sanitizeText(c.notes)}</td>
           </tr>
         `;
@@ -2877,7 +2914,7 @@ function renderResultsSheet() {
     }
 
     // 3. Role 2: មុខតំណែងសមាជិក ក.ច.ប ដែលជួយការងារអនុប្រធាន ក.ច.ប
-    const jumList = commCands.filter(c => c.roleCode === 'b');
+    const jumList = sortCandidatesByRankAndScore(commCands.filter(c => c.roleCode === 'b'));
     if (jumList.length > 0) {
       tableHtml += `
         <tr class="role-banner-row">
@@ -2891,8 +2928,8 @@ function renderResultsSheet() {
             <td style="text-align:left; padding-left:8px;">${sanitizeText(c.name)}</td>
             <td>${sanitizeText(c.gender)}</td>
             <td class="col-dob" style="white-space:nowrap !important; width:145px; min-width:145px;"><span style="display:inline-block; white-space:nowrap !important;">${formatDobKhmer(c.dob)}</span></td>
-            <td>${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' && !isCorruptedText(c.scoreTotal) ? (isNaN(Number(c.scoreTotal)) ? sanitizeText(c.scoreTotal) : Number(c.scoreTotal).toFixed(2)) : ''}</td>
-            <td style="color:${c.status === 'A-ជាប់' ? '#047857' : (c.status === 'B-បម្រុង' || c.status === 'C-បម្រុងបន្ទាប់') ? '#0284C7' : '#DC2626'};">${sanitizeText(c.status)}</td>
+            <td style="font-family:'Khmer OS Siemreap', 'Siemreap', sans-serif; font-size:12pt;">${formatTotalScoreKhmer(c.scoreTotal)}</td>
+            <td class="col-status" style="text-align:left; padding-left:8px; color:${c.status === 'A-ជាប់' ? '#047857' : (c.status === 'B-បម្រុង' || c.status === 'C-បម្រុងបន្ទាប់') ? '#0284C7' : '#DC2626'};">${sanitizeText(c.status)}</td>
             <td>${sanitizeText(c.notes)}</td>
           </tr>
         `;
@@ -2900,7 +2937,7 @@ function renderResultsSheet() {
     }
 
     // 4. Role 3: មុខតំណែងសមាជិក ក.ច.ប ការីកុំព្យូទ័រ
-    const pcList = commCands.filter(c => c.roleCode === 'c');
+    const pcList = sortCandidatesByRankAndScore(commCands.filter(c => c.roleCode === 'c'));
     if (pcList.length > 0) {
       tableHtml += `
         <tr class="role-banner-row">
@@ -2914,8 +2951,8 @@ function renderResultsSheet() {
             <td style="text-align:left; padding-left:8px;">${sanitizeText(c.name)}</td>
             <td>${sanitizeText(c.gender)}</td>
             <td class="col-dob" style="white-space:nowrap !important; width:145px; min-width:145px;"><span style="display:inline-block; white-space:nowrap !important;">${formatDobKhmer(c.dob)}</span></td>
-            <td>${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' && !isCorruptedText(c.scoreTotal) ? (isNaN(Number(c.scoreTotal)) ? sanitizeText(c.scoreTotal) : Number(c.scoreTotal).toFixed(2)) : ''}</td>
-            <td style="color:${c.status === 'A-ជាប់' ? '#047857' : (c.status === 'B-បម្រុង' || c.status === 'C-បម្រុងបន្ទាប់') ? '#0284C7' : '#DC2626'};">${sanitizeText(c.status)}</td>
+            <td style="font-family:'Khmer OS Siemreap', 'Siemreap', sans-serif; font-size:12pt;">${formatTotalScoreKhmer(c.scoreTotal)}</td>
+            <td class="col-status" style="text-align:left; padding-left:8px; color:${c.status === 'A-ជាប់' ? '#047857' : (c.status === 'B-បម្រុង' || c.status === 'C-បម្រុងបន្ទាប់') ? '#0284C7' : '#DC2626'};">${sanitizeText(c.status)}</td>
             <td>${sanitizeText(c.notes)}</td>
           </tr>
         `;

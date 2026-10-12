@@ -908,6 +908,13 @@ input[type="number"] {
   display: inline-block !important;
 }
 
+/* ជួរឈរ លទ្ធផល សុំតម្រឹមឆ្វេង */
+.col-status,
+.excel-official-table td.col-status {
+  text-align: left !important;
+  padding-left: 8px !important;
+}
+
 /* ២. លើកលែងកន្លែងគូសប្រអប់ (I- ឃុំ... និង មុខតំណែង...) សុំជា Font Khmer OS MuolLight */
 .excel-official-table .commune-banner-row td,
 .excel-official-table .role-banner-row td {
@@ -1136,6 +1143,13 @@ input[type="number"] {
   .col-dob * {
     white-space: nowrap !important;
     display: inline-block !important;
+  }
+
+  /* ជួរឈរ លទ្ធផល សុំតម្រឹមឆ្វេង */
+  .col-status,
+  .excel-official-table td.col-status {
+    text-align: left !important;
+    padding-left: 8px !important;
   }
 
   .excel-official-table tr {
