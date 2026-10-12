@@ -2673,8 +2673,8 @@ function renderTabulationSheet() {
       </tr>
     `;
 
-    // 2. Role 1: មុខតំណែងប្រធាន ក.ច.ប
-    const prathanList = sortCandidatesByRankAndScore(commCands.filter(c => c.roleCode === 'a'));
+    // 2. Role 1: មុខតំណែងប្រធាន ក.ច.ប (រក្សាតាមលំដាប់ឈ្មោះដែលបានបញ្ចូលពីដើមមក)
+    const prathanList = commCands.filter(c => c.roleCode === 'a').sort((a, b) => (parseInt(a.id.replace(/\D/g, '')) || 0) - (parseInt(b.id.replace(/\D/g, '')) || 0));
     if (prathanList.length > 0) {
       tableHtml += `
         <tr class="role-banner-row">
@@ -2700,8 +2700,8 @@ function renderTabulationSheet() {
       });
     }
 
-    // 3. Role 2: មុខតំណែងសមាជិក ក.ច.ប ដែលជួយការងារអនុប្រធាន ក.ច.ប
-    const jumList = sortCandidatesByRankAndScore(commCands.filter(c => c.roleCode === 'b'));
+    // 3. Role 2: មុខតំណែងសមាជិក ក.ច.ប ដែលជួយការងារអនុប្រធាន ក.ច.ប (រក្សាតាមលំដាប់ឈ្មោះដែលបានបញ្ចូលពីដើមមក)
+    const jumList = commCands.filter(c => c.roleCode === 'b').sort((a, b) => (parseInt(a.id.replace(/\D/g, '')) || 0) - (parseInt(b.id.replace(/\D/g, '')) || 0));
     if (jumList.length > 0) {
       tableHtml += `
         <tr class="role-banner-row">
@@ -2727,8 +2727,8 @@ function renderTabulationSheet() {
       });
     }
 
-    // 4. Role 3: មុខតំណែងសមាជិក ក.ច.ប ការីកុំព្យូទ័រ
-    const pcList = sortCandidatesByRankAndScore(commCands.filter(c => c.roleCode === 'c'));
+    // 4. Role 3: មុខតំណែងសមាជិក ក.ច.ប ការីកុំព្យូទ័រ (រក្សាតាមលំដាប់ឈ្មោះដែលបានបញ្ចូលពីដើមមក)
+    const pcList = commCands.filter(c => c.roleCode === 'c').sort((a, b) => (parseInt(a.id.replace(/\D/g, '')) || 0) - (parseInt(b.id.replace(/\D/g, '')) || 0));
     if (pcList.length > 0) {
       tableHtml += `
         <tr class="role-banner-row">
