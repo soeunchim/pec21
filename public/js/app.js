@@ -144,6 +144,88 @@ function switchTab(tabId) {
 }
 
 // ==============================================================================
+// GLOBAL DATA & DOM SANITIZER (លុបបំបាត់សារខូច Vercel/Render Pause/UUID គ្រប់ទីកន្លែង)
+// ==============================================================================
+function isCorruptedText(val) {
+  if (!val || typeof val !== 'string') return false;
+  const lower = val.toLowerCase();
+  return lower.includes('pause') || 
+         lower.includes('deploy') || 
+         lower.includes('uuid') || 
+         lower.includes('urn:') || 
+         lower.includes('http') ||
+         lower.includes('pts4d') ||
+         lower.includes('9m455') ||
+         lower.includes('vercel');
+}
+
+function sanitizeText(val) {
+  if (!val || typeof val !== 'string') return '';
+  if (isCorruptedText(val)) return '';
+  return val.trim();
+}
+
+function sanitizeCandidate(c) {
+  if (!c || typeof c !== 'object') return c;
+  ['notes', 'name', 'status', 'dob', 'gender', 'roleCode', 'communeCode'].forEach(key => {
+    if (typeof c[key] === 'string' && isCorruptedText(c[key])) {
+      c[key] = (key === 'status') ? 'ធ្លាក់' : '';
+    }
+  });
+  return c;
+}
+
+function purgeAllCorruptedDOMElements() {
+  // 1. Sanitize all candidates in memory
+  if (Array.isArray(state.candidates)) {
+    state.candidates.forEach(sanitizeCandidate);
+  }
+
+  // 2. Clear all keys in localStorage that contain corrupted text
+  try {
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+      const k = localStorage.key(i);
+      if (k) {
+        const val = localStorage.getItem(k);
+        if (isCorruptedText(k) || isCorruptedText(val)) {
+          localStorage.removeItem(k);
+        }
+      }
+    }
+  } catch(e) {}
+
+  // 3. Scan and scrub all text nodes inside document
+  const roots = [
+    document.getElementById('tabulationPaper'),
+    document.getElementById('resultsPaper'),
+    document.getElementById('tabulationTableContainer'),
+    document.getElementById('resultsTableContainer'),
+    document.getElementById('toastContainer')
+  ];
+  roots.forEach(root => {
+    if (!root) return;
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    while (walker.nextNode()) {
+      if (walker.currentNode && isCorruptedText(walker.currentNode.nodeValue)) {
+        nodes.push(walker.currentNode);
+      }
+    }
+    nodes.forEach(n => {
+      n.nodeValue = '';
+      if (n.parentElement && n.parentElement.tagName !== 'TD' && n.parentElement.tagName !== 'TH') {
+        n.parentElement.remove();
+      }
+    });
+  });
+
+  // 4. Purge all toast elements
+  const toastCont = document.getElementById('toastContainer');
+  if (toastCont) toastCont.innerHTML = '';
+  document.querySelectorAll('.toast').forEach(t => t.remove());
+}
+
+// ==============================================================================
 // API CALL HELPER
 // ==============================================================================
 async function api(endpoint, options = {}) {
@@ -158,6 +240,9 @@ async function api(endpoint, options = {}) {
   try {
     const res = await fetch(endpoint, { ...options, headers });
     const data = await res.json();
+    if (data && Array.isArray(data.candidates)) {
+      data.candidates = data.candidates.map(sanitizeCandidate);
+    }
     if (res.status === 401) {
       handleLogout();
       throw new Error(data.message || 'សូមចូលប្រព័ន្ធជាថ្មី!');
@@ -2371,7 +2456,7 @@ function renderTabulationSheet() {
           <th rowspan="2" style="width:40px; font-size:10pt; white-space:nowrap;">ល.រ</th>
           <th rowspan="2" style="width:170px; font-size:10pt;">គោត្តនាម និងនាម</th>
           <th rowspan="2" style="width:45px; font-size:10pt; white-space:nowrap;">ភេទ</th>
-          <th rowspan="2" style="width:120px; font-size:10pt; white-space:nowrap;">ថ្ងៃ ខែ ឆ្នាំកំណើត</th>
+          <th rowspan="2" class="col-dob" style="width:135px; min-width:130px; font-size:10pt; white-space:nowrap;">ថ្ងៃ ខែ ឆ្នាំកំណើត</th>
           <th colspan="4" style="font-size:10pt; white-space:nowrap;">ពិន្ទុ</th>
           <th rowspan="2" style="width:80px; font-size:10pt; white-space:nowrap;">សរុបពិន្ទុ</th>
           <th rowspan="2" style="width:85px; font-size:10pt; white-space:nowrap;">ចំណាត់ថ្នាក់</th>
@@ -2423,7 +2508,7 @@ function renderTabulationSheet() {
             <td>${toKhmerNumber(idx + 1)}</td>
             <td style="text-align:left; padding-left:8px;">${c.name}</td>
             <td>${c.gender || ''}</td>
-            <td>${formatDobKhmer(c.dob)}</td>
+            <td class="col-dob" style="white-space:nowrap;">${formatDobKhmer(c.dob)}</td>
             <td>${c.scoreDegree !== undefined && c.scoreDegree !== null && c.scoreDegree !== '' ? c.scoreDegree : ''}</td>
             <td>${c.scoreExp !== undefined && c.scoreExp !== null && c.scoreExp !== '' ? c.scoreExp : ''}</td>
             <td>${c.scoreQcm !== undefined && c.scoreQcm !== null && c.scoreQcm !== '' ? Number(c.scoreQcm).toFixed(2) : ''}</td>
@@ -2450,7 +2535,7 @@ function renderTabulationSheet() {
             <td>${toKhmerNumber(idx + 1)}</td>
             <td style="text-align:left; padding-left:8px;">${c.name}</td>
             <td>${c.gender || ''}</td>
-            <td>${formatDobKhmer(c.dob)}</td>
+            <td class="col-dob" style="white-space:nowrap;">${formatDobKhmer(c.dob)}</td>
             <td>${c.scoreDegree !== undefined && c.scoreDegree !== null && c.scoreDegree !== '' ? c.scoreDegree : ''}</td>
             <td>${c.scoreExp !== undefined && c.scoreExp !== null && c.scoreExp !== '' ? c.scoreExp : ''}</td>
             <td>${c.scoreQcm !== undefined && c.scoreQcm !== null && c.scoreQcm !== '' ? Number(c.scoreQcm).toFixed(2) : ''}</td>
@@ -2477,7 +2562,7 @@ function renderTabulationSheet() {
             <td>${toKhmerNumber(idx + 1)}</td>
             <td style="text-align:left; padding-left:8px;">${c.name}</td>
             <td>${c.gender || ''}</td>
-            <td>${formatDobKhmer(c.dob)}</td>
+            <td class="col-dob" style="white-space:nowrap;">${formatDobKhmer(c.dob)}</td>
             <td class="excel-x-cell"></td>
             <td>${c.scoreExp !== undefined && c.scoreExp !== null && c.scoreExp !== '' ? c.scoreExp : ''}</td>
             <td class="excel-x-cell"></td>
@@ -2519,6 +2604,7 @@ function renderTabulationSheet() {
   initInstLines();
   initLogoPosition();
   initPageNumber();
+  purgeAllCorruptedDOMElements();
 }
 
 // ==============================================================================
@@ -2591,9 +2677,9 @@ function renderResultsSheet() {
       <thead>
         <tr style="font-size:10pt;">
           <th style="width:45px; font-size:10pt;">ល.រ</th>
-          <th style="width:210px; font-size:10pt;">គោត្តនាម និងនាម</th>
+          <th style="width:200px; font-size:10pt;">គោត្តនាម និងនាម</th>
           <th style="width:45px; font-size:10pt;">ភេទ</th>
-          <th style="width:140px; font-size:10pt;">ថ្ងៃ ខែ ឆ្នាំកំណើត</th>
+          <th class="col-dob" style="width:145px; min-width:135px; font-size:10pt; white-space:nowrap;">ថ្ងៃ ខែ ឆ្នាំកំណើត</th>
           <th style="width:90px; font-size:10pt;">សរុបពិន្ទុ</th>
           <th style="width:100px; font-size:10pt;">លទ្ធផល</th>
           <th style="width:100px; font-size:10pt;">ផ្សេងៗ</th>
@@ -2638,7 +2724,7 @@ function renderResultsSheet() {
             <td>${toKhmerNumber(idx + 1)}</td>
             <td style="text-align:left; padding-left:8px;">${c.name}</td>
             <td>${c.gender || ''}</td>
-            <td>${formatDobKhmer(c.dob)}</td>
+            <td class="col-dob" style="white-space:nowrap;">${formatDobKhmer(c.dob)}</td>
             <td>${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
             <td style="color:${c.status === 'A-ជាប់' ? '#047857' : (c.status === 'B-បម្រុង' || c.status === 'C-បម្រុងបន្ទាប់') ? '#0284C7' : '#DC2626'};">${c.status || ''}</td>
             <td>${sanitizeText(c.notes)}</td>
@@ -2661,7 +2747,7 @@ function renderResultsSheet() {
             <td>${toKhmerNumber(idx + 1)}</td>
             <td style="text-align:left; padding-left:8px;">${c.name}</td>
             <td>${c.gender || ''}</td>
-            <td>${formatDobKhmer(c.dob)}</td>
+            <td class="col-dob" style="white-space:nowrap;">${formatDobKhmer(c.dob)}</td>
             <td>${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
             <td style="color:${c.status === 'A-ជាប់' ? '#047857' : (c.status === 'B-បម្រុង' || c.status === 'C-បម្រុងបន្ទាប់') ? '#0284C7' : '#DC2626'};">${c.status || ''}</td>
             <td>${sanitizeText(c.notes)}</td>
@@ -2684,7 +2770,7 @@ function renderResultsSheet() {
             <td>${toKhmerNumber(idx + 1)}</td>
             <td style="text-align:left; padding-left:8px;">${c.name}</td>
             <td>${c.gender || ''}</td>
-            <td>${formatDobKhmer(c.dob)}</td>
+            <td class="col-dob" style="white-space:nowrap;">${formatDobKhmer(c.dob)}</td>
             <td>${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
             <td style="color:${c.status === 'A-ជាប់' ? '#047857' : (c.status === 'B-បម្រុង' || c.status === 'C-បម្រុងបន្ទាប់') ? '#0284C7' : '#DC2626'};">${c.status || ''}</td>
             <td>${sanitizeText(c.notes)}</td>
@@ -2722,6 +2808,7 @@ function renderResultsSheet() {
   initInstLines();
   initLogoPosition();
   initPageNumber();
+  purgeAllCorruptedDOMElements();
 }
 
 // ==============================================================================
@@ -4020,10 +4107,8 @@ function printOfficialReport(orientation) {
   document.body.classList.add(target === 'portrait' ? 'print-portrait' : 'print-landscape');
   setPrintOrientation(target);
 
-  // Clear any toast notifications so they NEVER print
-  const toastCont = document.getElementById('toastContainer');
-  if (toastCont) toastCont.innerHTML = '';
-  document.querySelectorAll('.toast').forEach(t => t.remove());
+  // Clear any corrupted elements or toast notifications so they NEVER print
+  purgeAllCorruptedDOMElements();
 
   if (typeof closeInstModal === 'function') closeInstModal();
   if (typeof closeUserModal === 'function') closeUserModal();
@@ -4031,9 +4116,14 @@ function printOfficialReport(orientation) {
   if (typeof closeSubstituteModal === 'function') closeSubstituteModal();
 
   setTimeout(() => {
+    purgeAllCorruptedDOMElements();
     window.print();
   }, 60);
 }
+
+window.addEventListener('beforeprint', () => {
+  purgeAllCorruptedDOMElements();
+});
 
 
 

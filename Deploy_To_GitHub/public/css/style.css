@@ -890,6 +890,15 @@ input[type="number"] {
   color: #000000 !important;
 }
 
+/* ជួរឈរ ថ្ងៃ ខែ ឆ្នាំកំណើត សុំឲ្យចេញមួយជួរដេក (No Line Wrap) */
+.col-dob,
+.excel-official-table td.col-dob,
+.excel-official-table th.col-dob {
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+  overflow: visible !important;
+}
+
 /* ២. លើកលែងកន្លែងគូសប្រអប់ (I- ឃុំ... និង មុខតំណែង...) សុំជា Font Khmer OS MuolLight */
 .excel-official-table .commune-banner-row td,
 .excel-official-table .role-banner-row td {
@@ -1100,6 +1109,14 @@ input[type="number"] {
   .excel-official-table {
     width: 100% !important;
     border-collapse: collapse !important;
+  }
+
+  .col-dob,
+  .excel-official-table td.col-dob,
+  .excel-official-table th.col-dob {
+    white-space: nowrap !important;
+    word-break: keep-all !important;
+    overflow: visible !important;
   }
 
   .excel-official-table tr {
