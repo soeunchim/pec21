@@ -143,14 +143,24 @@ function syncToFirebase(dataObj) {
   }, 350);
 }
 
+function isCorruptedValue(val) {
+  if (val === null || val === undefined) return false;
+  const str = String(val).toLowerCase();
+  return str.includes('pause') || str.includes('deploy') || str.includes('uuid') || 
+         str.includes('urn:') || str.includes('http:') || str.includes('https:') || 
+         str.includes('pts4d') || str.includes('9m455') || str.includes('b87z1') || str.includes('vercel');
+}
+
 function sanitizeCandidateRecord(c) {
   if (!c || typeof c !== 'object') return c;
-  const fields = ['notes', 'name', 'status', 'dob', 'gender', 'roleCode', 'communeCode'];
-  for (const f of fields) {
-    if (typeof c[f] === 'string') {
-      const lower = c[f].toLowerCase();
-      if (lower.includes('pause') || lower.includes('deploy') || lower.includes('uuid') || lower.includes('urn:') || lower.includes('http')) {
-        c[f] = (f === 'status') ? 'ធ្លាក់' : '';
+  for (const k of Object.keys(c)) {
+    if (typeof c[k] === 'string' && isCorruptedValue(c[k])) {
+      if (k === 'status') {
+        c[k] = 'ធ្លាក់';
+      } else if (k.startsWith('score') || k === 'rank') {
+        c[k] = 0;
+      } else {
+        c[k] = '';
       }
     }
   }

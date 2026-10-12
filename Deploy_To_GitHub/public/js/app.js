@@ -144,34 +144,43 @@ function switchTab(tabId) {
 }
 
 // ==============================================================================
-// GLOBAL DATA & DOM SANITIZER (លុបបំបាត់សារខូច Vercel/Render Pause/UUID គ្រប់ទីកន្លែង)
+// GLOBAL DATA & DOM SANITIZER (លុបបំបាត់សារខូច Vercel/Render Pause/UUID/Iframe គ្រប់ទីកន្លែង)
 // ==============================================================================
 function isCorruptedText(val) {
-  if (!val || typeof val !== 'string') return false;
-  const lower = val.toLowerCase();
-  return lower.includes('pause') || 
-         lower.includes('deploy') || 
-         lower.includes('uuid') || 
-         lower.includes('urn:') || 
-         lower.includes('http') ||
-         lower.includes('pts4d') ||
-         lower.includes('9m455') ||
-         lower.includes('vercel');
+  if (val === null || val === undefined) return false;
+  const str = String(val).toLowerCase();
+  return str.includes('pause') || 
+         str.includes('deploy') || 
+         str.includes('uuid') || 
+         str.includes('urn:') || 
+         str.includes('http:') ||
+         str.includes('https:') ||
+         str.includes('pts4d') || 
+         str.includes('9m455') || 
+         str.includes('b87z1') || 
+         str.includes('vercel');
 }
 
 function sanitizeText(val) {
-  if (!val || typeof val !== 'string') return '';
-  if (isCorruptedText(val)) return '';
-  return val.trim();
+  if (val === null || val === undefined) return '';
+  const str = String(val);
+  if (isCorruptedText(str)) return '';
+  return str.trim();
 }
 
 function sanitizeCandidate(c) {
   if (!c || typeof c !== 'object') return c;
-  ['notes', 'name', 'status', 'dob', 'gender', 'roleCode', 'communeCode'].forEach(key => {
+  for (const key of Object.keys(c)) {
     if (typeof c[key] === 'string' && isCorruptedText(c[key])) {
-      c[key] = (key === 'status') ? 'ធ្លាក់' : '';
+      if (key === 'status') {
+        c[key] = 'ធ្លាក់';
+      } else if (key.startsWith('score') || key === 'rank') {
+        c[key] = 0;
+      } else {
+        c[key] = '';
+      }
     }
-  });
+  }
   return c;
 }
 
@@ -194,36 +203,78 @@ function purgeAllCorruptedDOMElements() {
     }
   } catch(e) {}
 
-  // 3. Scan and scrub all text nodes inside document
-  const roots = [
-    document.getElementById('tabulationPaper'),
-    document.getElementById('resultsPaper'),
-    document.getElementById('tabulationTableContainer'),
-    document.getElementById('resultsTableContainer'),
-    document.getElementById('toastContainer')
-  ];
-  roots.forEach(root => {
-    if (!root) return;
-    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
-    const nodes = [];
-    while (walker.nextNode()) {
-      if (walker.currentNode && isCorruptedText(walker.currentNode.nodeValue)) {
-        nodes.push(walker.currentNode);
-      }
-    }
-    nodes.forEach(n => {
-      n.nodeValue = '';
-      if (n.parentElement && n.parentElement.tagName !== 'TD' && n.parentElement.tagName !== 'TH') {
-        n.parentElement.remove();
-      }
-    });
+  // 3. Remove ALL iframes, embeds, objects from entire document
+  document.querySelectorAll('iframe, embed, object, portal').forEach(el => {
+    try { el.remove(); } catch(e) {}
   });
 
-  // 4. Purge all toast elements
+  // 4. Scan and scrub all elements in document.body
+  if (document.body) {
+    const allEls = document.body.querySelectorAll('*');
+    allEls.forEach(el => {
+      if (el.tagName === 'IFRAME' || el.tagName === 'EMBED' || el.tagName === 'OBJECT') {
+        try { el.remove(); return; } catch(e) {}
+      }
+      if (isCorruptedText(el.id) || isCorruptedText(el.className)) {
+        try { el.remove(); return; } catch(e) {}
+      }
+      // Check leaf text nodes
+      if (el.children.length === 0 && isCorruptedText(el.textContent)) {
+        if (el.tagName === 'TD' || el.tagName === 'TH') {
+          el.textContent = '';
+        } else {
+          try { el.remove(); } catch(e) {}
+        }
+      }
+    });
+
+    // Also walker for any direct text nodes
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    const textNodes = [];
+    while (walker.nextNode()) {
+      if (walker.currentNode && isCorruptedText(walker.currentNode.nodeValue)) {
+        textNodes.push(walker.currentNode);
+      }
+    }
+    textNodes.forEach(n => {
+      n.nodeValue = '';
+      if (n.parentElement && n.parentElement.tagName !== 'TD' && n.parentElement.tagName !== 'TH') {
+        try { n.parentElement.remove(); } catch(e) {}
+      }
+    });
+  }
+
+  // 5. Purge toast elements
   const toastCont = document.getElementById('toastContainer');
   if (toastCont) toastCont.innerHTML = '';
   document.querySelectorAll('.toast').forEach(t => t.remove());
 }
+
+// Continuous observer to immediately remove any dynamically injected iframe
+try {
+  const iframeScrubberObserver = new MutationObserver((mutations) => {
+    for (const m of mutations) {
+      for (const node of m.addedNodes) {
+        if (node.nodeType === 1) {
+          if (node.tagName === 'IFRAME' || node.tagName === 'EMBED' || node.tagName === 'OBJECT') {
+            try { node.remove(); } catch(e) {}
+          } else if (node.querySelectorAll) {
+            node.querySelectorAll('iframe, embed, object').forEach(el => {
+              try { el.remove(); } catch(e) {}
+            });
+          }
+        }
+      }
+    }
+  });
+  if (document.body) {
+    iframeScrubberObserver.observe(document.body, { childList: true, subtree: true });
+  } else {
+    document.addEventListener('DOMContentLoaded', () => {
+      iframeScrubberObserver.observe(document.body, { childList: true, subtree: true });
+    });
+  }
+} catch (e) {}
 
 // ==============================================================================
 // API CALL HELPER
@@ -1982,7 +2033,7 @@ function formatDobKhmer(dobStr) {
       y = parts[2];
     }
     const monthName = KHMER_MONTHS_MAP[m] || m;
-    return `${toKhmerNumber(d)}-${monthName}-${toKhmerNumber(y)}`;
+    return `${toKhmerNumber(d)}\u2011${monthName}\u2011${toKhmerNumber(y)}`;
   }
   return toKhmerNumber(dobStr);
 }
@@ -2104,34 +2155,6 @@ function reorganizeTabulationList() {
 // ==============================================================================
 // STORAGE SANITIZER (ជម្រះចោលទិន្នន័យខូច ឬសារប្រព័ន្ធ Render/UUID ដែលធ្លាក់ចូល LocalStorage)
 // ==============================================================================
-function isCorruptedText(val) {
-  if (!val || typeof val !== 'string') return false;
-  const lower = val.toLowerCase();
-  return lower.includes('pause') || lower.includes('deploy') || lower.includes('uuid') || lower.includes('urn:') || lower.includes('http');
-}
-
-function sanitizeText(val) {
-  if (!val || typeof val !== 'string') return '';
-  if (isCorruptedText(val)) return '';
-  return val.trim();
-}
-
-function sanitizeCandidate(c) {
-  if (!c || typeof c !== 'object') return c;
-  ['notes', 'name', 'status', 'dob', 'gender', 'roleCode', 'communeCode'].forEach(key => {
-    if (typeof c[key] === 'string' && isCorruptedText(c[key])) {
-      c[key] = (key === 'status') ? 'ធ្លាក់' : '';
-    }
-  });
-  return c;
-}
-
-function sanitizeAllCandidates() {
-  if (Array.isArray(state.candidates)) {
-    state.candidates.forEach(sanitizeCandidate);
-  }
-}
-
 (function sanitizeStorage() {
   try {
     const pageVal = localStorage.getItem('pec21_report_page_num');
@@ -2456,7 +2479,7 @@ function renderTabulationSheet() {
           <th rowspan="2" style="width:40px; font-size:10pt; white-space:nowrap;">ល.រ</th>
           <th rowspan="2" style="width:170px; font-size:10pt;">គោត្តនាម និងនាម</th>
           <th rowspan="2" style="width:45px; font-size:10pt; white-space:nowrap;">ភេទ</th>
-          <th rowspan="2" class="col-dob" style="width:135px; min-width:130px; font-size:10pt; white-space:nowrap;">ថ្ងៃ ខែ ឆ្នាំកំណើត</th>
+          <th rowspan="2" class="col-dob" style="width:145px; min-width:145px; font-size:10pt; white-space:nowrap;">ថ្ងៃ ខែ ឆ្នាំកំណើត</th>
           <th colspan="4" style="font-size:10pt; white-space:nowrap;">ពិន្ទុ</th>
           <th rowspan="2" style="width:80px; font-size:10pt; white-space:nowrap;">សរុបពិន្ទុ</th>
           <th rowspan="2" style="width:85px; font-size:10pt; white-space:nowrap;">ចំណាត់ថ្នាក់</th>
@@ -2506,15 +2529,15 @@ function renderTabulationSheet() {
         tableHtml += `
           <tr>
             <td>${toKhmerNumber(idx + 1)}</td>
-            <td style="text-align:left; padding-left:8px;">${c.name}</td>
-            <td>${c.gender || ''}</td>
-            <td class="col-dob" style="white-space:nowrap;">${formatDobKhmer(c.dob)}</td>
-            <td>${c.scoreDegree !== undefined && c.scoreDegree !== null && c.scoreDegree !== '' ? c.scoreDegree : ''}</td>
-            <td>${c.scoreExp !== undefined && c.scoreExp !== null && c.scoreExp !== '' ? c.scoreExp : ''}</td>
-            <td>${c.scoreQcm !== undefined && c.scoreQcm !== null && c.scoreQcm !== '' ? Number(c.scoreQcm).toFixed(2) : ''}</td>
+            <td style="text-align:left; padding-left:8px;">${sanitizeText(c.name)}</td>
+            <td>${sanitizeText(c.gender)}</td>
+            <td class="col-dob" style="white-space:nowrap !important; width:145px; min-width:145px;"><span style="display:inline-block; white-space:nowrap !important;">${formatDobKhmer(c.dob)}</span></td>
+            <td>${c.scoreDegree !== undefined && c.scoreDegree !== null && c.scoreDegree !== '' && !isCorruptedText(c.scoreDegree) ? c.scoreDegree : ''}</td>
+            <td>${c.scoreExp !== undefined && c.scoreExp !== null && c.scoreExp !== '' && !isCorruptedText(c.scoreExp) ? c.scoreExp : ''}</td>
+            <td>${c.scoreQcm !== undefined && c.scoreQcm !== null && c.scoreQcm !== '' && !isCorruptedText(c.scoreQcm) ? Number(c.scoreQcm).toFixed(2) : ''}</td>
             <td class="excel-x-cell"></td>
-            <td>${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
-            <td>${c.status || ''}</td>
+            <td>${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' && !isCorruptedText(c.scoreTotal) ? (isNaN(Number(c.scoreTotal)) ? sanitizeText(c.scoreTotal) : Number(c.scoreTotal).toFixed(2)) : ''}</td>
+            <td>${sanitizeText(c.status)}</td>
             <td>${sanitizeText(c.notes)}</td>
           </tr>
         `;
@@ -2533,15 +2556,15 @@ function renderTabulationSheet() {
         tableHtml += `
           <tr>
             <td>${toKhmerNumber(idx + 1)}</td>
-            <td style="text-align:left; padding-left:8px;">${c.name}</td>
-            <td>${c.gender || ''}</td>
-            <td class="col-dob" style="white-space:nowrap;">${formatDobKhmer(c.dob)}</td>
-            <td>${c.scoreDegree !== undefined && c.scoreDegree !== null && c.scoreDegree !== '' ? c.scoreDegree : ''}</td>
-            <td>${c.scoreExp !== undefined && c.scoreExp !== null && c.scoreExp !== '' ? c.scoreExp : ''}</td>
-            <td>${c.scoreQcm !== undefined && c.scoreQcm !== null && c.scoreQcm !== '' ? Number(c.scoreQcm).toFixed(2) : ''}</td>
+            <td style="text-align:left; padding-left:8px;">${sanitizeText(c.name)}</td>
+            <td>${sanitizeText(c.gender)}</td>
+            <td class="col-dob" style="white-space:nowrap !important; width:145px; min-width:145px;"><span style="display:inline-block; white-space:nowrap !important;">${formatDobKhmer(c.dob)}</span></td>
+            <td>${c.scoreDegree !== undefined && c.scoreDegree !== null && c.scoreDegree !== '' && !isCorruptedText(c.scoreDegree) ? c.scoreDegree : ''}</td>
+            <td>${c.scoreExp !== undefined && c.scoreExp !== null && c.scoreExp !== '' && !isCorruptedText(c.scoreExp) ? c.scoreExp : ''}</td>
+            <td>${c.scoreQcm !== undefined && c.scoreQcm !== null && c.scoreQcm !== '' && !isCorruptedText(c.scoreQcm) ? Number(c.scoreQcm).toFixed(2) : ''}</td>
             <td class="excel-x-cell"></td>
-            <td>${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
-            <td>${c.status || ''}</td>
+            <td>${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' && !isCorruptedText(c.scoreTotal) ? (isNaN(Number(c.scoreTotal)) ? sanitizeText(c.scoreTotal) : Number(c.scoreTotal).toFixed(2)) : ''}</td>
+            <td>${sanitizeText(c.status)}</td>
             <td>${sanitizeText(c.notes)}</td>
           </tr>
         `;
@@ -2560,15 +2583,15 @@ function renderTabulationSheet() {
         tableHtml += `
           <tr>
             <td>${toKhmerNumber(idx + 1)}</td>
-            <td style="text-align:left; padding-left:8px;">${c.name}</td>
-            <td>${c.gender || ''}</td>
-            <td class="col-dob" style="white-space:nowrap;">${formatDobKhmer(c.dob)}</td>
+            <td style="text-align:left; padding-left:8px;">${sanitizeText(c.name)}</td>
+            <td>${sanitizeText(c.gender)}</td>
+            <td class="col-dob" style="white-space:nowrap !important; width:145px; min-width:145px;"><span style="display:inline-block; white-space:nowrap !important;">${formatDobKhmer(c.dob)}</span></td>
             <td class="excel-x-cell"></td>
-            <td>${c.scoreExp !== undefined && c.scoreExp !== null && c.scoreExp !== '' ? c.scoreExp : ''}</td>
+            <td>${c.scoreExp !== undefined && c.scoreExp !== null && c.scoreExp !== '' && !isCorruptedText(c.scoreExp) ? c.scoreExp : ''}</td>
             <td class="excel-x-cell"></td>
-            <td>${c.scorePc !== undefined && c.scorePc !== null && c.scorePc !== '' ? Number(c.scorePc).toFixed(2) : ''}</td>
-            <td>${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
-            <td>${c.status || ''}</td>
+            <td>${c.scorePc !== undefined && c.scorePc !== null && c.scorePc !== '' && !isCorruptedText(c.scorePc) ? Number(c.scorePc).toFixed(2) : ''}</td>
+            <td>${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' && !isCorruptedText(c.scoreTotal) ? (isNaN(Number(c.scoreTotal)) ? sanitizeText(c.scoreTotal) : Number(c.scoreTotal).toFixed(2)) : ''}</td>
+            <td>${sanitizeText(c.status)}</td>
             <td>${sanitizeText(c.notes)}</td>
           </tr>
         `;
@@ -2594,6 +2617,7 @@ function renderTabulationSheet() {
   const femTabCountStr = String(femTabCount).padStart(2, '0');
 
   container.innerHTML = tableHtml;
+  purgeAllCorruptedDOMElements();
 
   const tabStopEl = document.getElementById('tabStopListText');
   if (tabStopEl) {
@@ -2679,7 +2703,7 @@ function renderResultsSheet() {
           <th style="width:45px; font-size:10pt;">ល.រ</th>
           <th style="width:200px; font-size:10pt;">គោត្តនាម និងនាម</th>
           <th style="width:45px; font-size:10pt;">ភេទ</th>
-          <th class="col-dob" style="width:145px; min-width:135px; font-size:10pt; white-space:nowrap;">ថ្ងៃ ខែ ឆ្នាំកំណើត</th>
+          <th class="col-dob" style="width:145px; min-width:145px; font-size:10pt; white-space:nowrap;">ថ្ងៃ ខែ ឆ្នាំកំណើត</th>
           <th style="width:90px; font-size:10pt;">សរុបពិន្ទុ</th>
           <th style="width:100px; font-size:10pt;">លទ្ធផល</th>
           <th style="width:100px; font-size:10pt;">ផ្សេងៗ</th>
@@ -2722,11 +2746,11 @@ function renderResultsSheet() {
         tableHtml += `
           <tr>
             <td>${toKhmerNumber(idx + 1)}</td>
-            <td style="text-align:left; padding-left:8px;">${c.name}</td>
-            <td>${c.gender || ''}</td>
-            <td class="col-dob" style="white-space:nowrap;">${formatDobKhmer(c.dob)}</td>
-            <td>${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
-            <td style="color:${c.status === 'A-ជាប់' ? '#047857' : (c.status === 'B-បម្រុង' || c.status === 'C-បម្រុងបន្ទាប់') ? '#0284C7' : '#DC2626'};">${c.status || ''}</td>
+            <td style="text-align:left; padding-left:8px;">${sanitizeText(c.name)}</td>
+            <td>${sanitizeText(c.gender)}</td>
+            <td class="col-dob" style="white-space:nowrap !important; width:145px; min-width:145px;"><span style="display:inline-block; white-space:nowrap !important;">${formatDobKhmer(c.dob)}</span></td>
+            <td>${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' && !isCorruptedText(c.scoreTotal) ? (isNaN(Number(c.scoreTotal)) ? sanitizeText(c.scoreTotal) : Number(c.scoreTotal).toFixed(2)) : ''}</td>
+            <td style="color:${c.status === 'A-ជាប់' ? '#047857' : (c.status === 'B-បម្រុង' || c.status === 'C-បម្រុងបន្ទាប់') ? '#0284C7' : '#DC2626'};">${sanitizeText(c.status)}</td>
             <td>${sanitizeText(c.notes)}</td>
           </tr>
         `;
@@ -2745,11 +2769,11 @@ function renderResultsSheet() {
         tableHtml += `
           <tr>
             <td>${toKhmerNumber(idx + 1)}</td>
-            <td style="text-align:left; padding-left:8px;">${c.name}</td>
-            <td>${c.gender || ''}</td>
-            <td class="col-dob" style="white-space:nowrap;">${formatDobKhmer(c.dob)}</td>
-            <td>${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
-            <td style="color:${c.status === 'A-ជាប់' ? '#047857' : (c.status === 'B-បម្រុង' || c.status === 'C-បម្រុងបន្ទាប់') ? '#0284C7' : '#DC2626'};">${c.status || ''}</td>
+            <td style="text-align:left; padding-left:8px;">${sanitizeText(c.name)}</td>
+            <td>${sanitizeText(c.gender)}</td>
+            <td class="col-dob" style="white-space:nowrap !important; width:145px; min-width:145px;"><span style="display:inline-block; white-space:nowrap !important;">${formatDobKhmer(c.dob)}</span></td>
+            <td>${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' && !isCorruptedText(c.scoreTotal) ? (isNaN(Number(c.scoreTotal)) ? sanitizeText(c.scoreTotal) : Number(c.scoreTotal).toFixed(2)) : ''}</td>
+            <td style="color:${c.status === 'A-ជាប់' ? '#047857' : (c.status === 'B-បម្រុង' || c.status === 'C-បម្រុងបន្ទាប់') ? '#0284C7' : '#DC2626'};">${sanitizeText(c.status)}</td>
             <td>${sanitizeText(c.notes)}</td>
           </tr>
         `;
@@ -2768,11 +2792,11 @@ function renderResultsSheet() {
         tableHtml += `
           <tr>
             <td>${toKhmerNumber(idx + 1)}</td>
-            <td style="text-align:left; padding-left:8px;">${c.name}</td>
-            <td>${c.gender || ''}</td>
-            <td class="col-dob" style="white-space:nowrap;">${formatDobKhmer(c.dob)}</td>
-            <td>${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
-            <td style="color:${c.status === 'A-ជាប់' ? '#047857' : (c.status === 'B-បម្រុង' || c.status === 'C-បម្រុងបន្ទាប់') ? '#0284C7' : '#DC2626'};">${c.status || ''}</td>
+            <td style="text-align:left; padding-left:8px;">${sanitizeText(c.name)}</td>
+            <td>${sanitizeText(c.gender)}</td>
+            <td class="col-dob" style="white-space:nowrap !important; width:145px; min-width:145px;"><span style="display:inline-block; white-space:nowrap !important;">${formatDobKhmer(c.dob)}</span></td>
+            <td>${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' && !isCorruptedText(c.scoreTotal) ? (isNaN(Number(c.scoreTotal)) ? sanitizeText(c.scoreTotal) : Number(c.scoreTotal).toFixed(2)) : ''}</td>
+            <td style="color:${c.status === 'A-ជាប់' ? '#047857' : (c.status === 'B-បម្រុង' || c.status === 'C-បម្រុងបន្ទាប់') ? '#0284C7' : '#DC2626'};">${sanitizeText(c.status)}</td>
             <td>${sanitizeText(c.notes)}</td>
           </tr>
         `;
@@ -2798,6 +2822,7 @@ function renderResultsSheet() {
   const femResCountStr = String(femResCount).padStart(2, '0');
 
   container.innerHTML = tableHtml;
+  purgeAllCorruptedDOMElements();
 
   const resStopEl = document.getElementById('resStopListText');
   if (resStopEl) {

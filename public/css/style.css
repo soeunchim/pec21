@@ -893,10 +893,19 @@ input[type="number"] {
 /* ជួរឈរ ថ្ងៃ ខែ ឆ្នាំកំណើត សុំឲ្យចេញមួយជួរដេក (No Line Wrap) */
 .col-dob,
 .excel-official-table td.col-dob,
-.excel-official-table th.col-dob {
+.excel-official-table th.col-dob,
+.excel-official-table td:nth-child(4),
+.excel-official-table th:nth-child(4) {
   white-space: nowrap !important;
   word-break: keep-all !important;
   overflow: visible !important;
+  min-width: 145px !important;
+  width: 145px !important;
+}
+
+.col-dob * {
+  white-space: nowrap !important;
+  display: inline-block !important;
 }
 
 /* ២. លើកលែងកន្លែងគូសប្រអប់ (I- ឃុំ... និង មុខតំណែង...) សុំជា Font Khmer OS MuolLight */
@@ -1070,7 +1079,8 @@ input[type="number"] {
     print-color-adjust: exact !important;
   }
 
-  .top-header, .nav-bar, .toolbar, .no-print, .btn, .toast, .toast-container, .modal, .modal-overlay, .modal-content, .modal-card, #instModal, #userModal, #substituteModal, #toastContainer, .logo-nudge-bar, .excel-sheet-bar {
+  .top-header, .nav-bar, .toolbar, .no-print, .btn, .toast, .toast-container, .modal, .modal-overlay, .modal-content, .modal-card, #instModal, #userModal, #substituteModal, #toastContainer, .logo-nudge-bar, .excel-sheet-bar,
+  iframe, embed, object, portal, [src*="vercel"], [class*="vercel"] {
     display: none !important;
     visibility: hidden !important;
     opacity: 0 !important;
@@ -1113,10 +1123,19 @@ input[type="number"] {
 
   .col-dob,
   .excel-official-table td.col-dob,
-  .excel-official-table th.col-dob {
+  .excel-official-table th.col-dob,
+  .excel-official-table td:nth-child(4),
+  .excel-official-table th:nth-child(4) {
     white-space: nowrap !important;
     word-break: keep-all !important;
     overflow: visible !important;
+    min-width: 145px !important;
+    width: 145px !important;
+  }
+
+  .col-dob * {
+    white-space: nowrap !important;
+    display: inline-block !important;
   }
 
   .excel-official-table tr {
