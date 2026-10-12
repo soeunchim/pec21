@@ -179,6 +179,7 @@ function loadDatabase() {
       db = JSON.parse(data);
       if (!db.examCodes) db.examCodes = [];
       sanitizeDatabase(db);
+      recomputeRanksAndStatuses();
       console.log(`[DB] Database loaded: ${db.candidates.length} candidates, ${db.communes.length} communes, ${db.examCodes.length} codes.`);
     } else {
       console.error('[DB] Database file not found at:', DB_FILE);
@@ -197,10 +198,12 @@ function loadDatabase() {
         sanitizeDatabase(cloudData);
         db = cloudData;
         if (!db.examCodes) db.examCodes = [];
+        recomputeRanksAndStatuses();
         console.log(`[Firebase] Successfully synced from Cloud: ${db.candidates.length} candidates.`);
         try { fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2), 'utf8'); } catch (e) {}
       } else if (db && db.candidates && db.candidates.length > 0) {
         console.log('[Firebase] Cloud empty, seeding initial local data to Cloud...');
+        recomputeRanksAndStatuses();
         syncToFirebase(db);
       }
     }).catch(err => {
@@ -272,19 +275,28 @@ function recomputeRanksAndStatuses() {
         if (score < minPass) {
           item.status = 'ធ្លាក់';
         } else if (roleCode === 'c' && hasRoleBInCommune) {
-          // ១. ឃុំសង្កាត់ណាមួយដែលមានជ្រើសរើសមុខសមាជិក ក.ច.ប ដែលជួយការងារអនុប្រធាន ក.ច.ប 
-          //    នោះមុខតំណែងសមាជិក ក.ច.ប ការីកុំព្យូទ័រ ត្រូវជាប់២នាក់គឺ A-ជាប់ ចំនួន២នាក់
+          // ២. ឃុំសង្កាត់ណាដែលមានការជ្រើសរើសមុខតំណែងសមាជិក ក.ច.ប ដែលជួយការងារអនុប្រធាន ក.ច.ប៖
+          //    មុខតំណែងសមាជិក ក.ច.ប ការីកុំព្យូទ័រ ជាប់២នាក់គឺ៖
+          //    - A-ជាប់ (២នាក់: idx 0, 1)
+          //    - B-បម្រុង (២នាក់: idx 2, 3)
+          //    - C-បម្រុងបន្ទាប់ (២នាក់: idx 4, 5)
+          //    - ធ្លាក់ (idx >= 6)
           if (idx === 0 || idx === 1) {
             item.status = 'A-ជាប់';
-          } else if (idx === 2) {
+          } else if (idx === 2 || idx === 3) {
             item.status = 'B-បម្រុង';
-          } else if (idx === 3) {
+          } else if (idx === 4 || idx === 5) {
             item.status = 'C-បម្រុងបន្ទាប់';
           } else {
             item.status = 'ធ្លាក់';
           }
         } else {
-          // Normal roles or commune without Role B:
+          // ១. ឃុំសង្កាត់ណាដែលមិនមានការជ្រើសរើសមុខតំណែងសមាជិក ក.ច.ប ដែលជួយការងារអនុប្រធាន ក.ច.ប (ឬមុខតំណែងទូទៅ a, b, d)៖
+          //    ជាប់១នាក់គឺ៖
+          //    - A-ជាប់ (idx 0)
+          //    - B-បម្រុង (idx 1)
+          //    - C-បម្រុងបន្ទាប់ (idx 2)
+          //    - ធ្លាក់ (idx >= 3)
           if (idx === 0) {
             item.status = 'A-ជាប់';
           } else if (idx === 1) {

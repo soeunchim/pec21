@@ -2122,17 +2122,28 @@ function reorganizeTabulationList() {
       if (cand.scoreTotal === 'អវត្តមាន') {
         cand.status = 'អវត្តមាន';
       } else if (roleCode === 'c' && hasRoleB) {
-        // Communes with Role B: Role C gets two (2) A-ជាប់
+        // ២. ឃុំសង្កាត់ណាដែលមានការជ្រើសរើសមុខតំណែងសមាជិក ក.ច.ប ដែលជួយការងារអនុប្រធាន ក.ច.ប៖
+        //    មុខតំណែងសមាជិក ក.ច.ប ការីកុំព្យូទ័រ ជាប់២នាក់គឺ៖
+        //    - A-ជាប់ (២នាក់: idx 0, 1)
+        //    - B-បម្រុង (២នាក់: idx 2, 3)
+        //    - C-បម្រុងបន្ទាប់ (២នាក់: idx 4, 5)
+        //    - ធ្លាក់ (idx >= 6)
         if (idx === 0 || idx === 1) {
           cand.status = 'A-ជាប់';
-        } else if (idx === 2) {
+        } else if (idx === 2 || idx === 3) {
           cand.status = 'B-បម្រុង';
-        } else if (idx === 3) {
+        } else if (idx === 4 || idx === 5) {
           cand.status = 'C-បម្រុងបន្ទាប់';
         } else {
           cand.status = 'ធ្លាក់';
         }
       } else {
+        // ១. ឃុំសង្កាត់ណាដែលមិនមានការជ្រើសរើសមុខតំណែងសមាជិក ក.ច.ប ដែលជួយការងារអនុប្រធាន ក.ច.ប (ឬមុខតំណែងទូទៅ a, b, d)៖
+        //    ជាប់១នាក់គឺ៖
+        //    - A-ជាប់ (idx 0)
+        //    - B-បម្រុង (idx 1)
+        //    - C-បម្រុងបន្ទាប់ (idx 2)
+        //    - ធ្លាក់ (idx >= 3)
         if (idx === 0) {
           cand.status = 'A-ជាប់';
         } else if (idx === 1) {
