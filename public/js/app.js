@@ -2402,6 +2402,35 @@ function getSavedReportTitles() {
   };
 }
 
+function getSavedTitleGap() {
+  const g = localStorage.getItem('pec21_title_gap');
+  return g !== null ? parseInt(g, 10) : 12;
+}
+
+function applyReportTitleGap(gap) {
+  if (gap === undefined || gap === null) gap = getSavedTitleGap();
+  document.querySelectorAll('.report-title-container').forEach(el => {
+    el.style.marginTop = `${gap}px`;
+  });
+  const disp = document.getElementById('titleGapDisplay');
+  if (disp) disp.innerText = `${gap}px`;
+}
+
+function adjustReportTitleGap(delta) {
+  let gap = getSavedTitleGap() + delta;
+  if (gap < 0) gap = 0;
+  if (gap > 60) gap = 60;
+  localStorage.setItem('pec21_title_gap', gap);
+  applyReportTitleGap(gap);
+  showToast(`បានកែសម្រួលគម្លាតចំណងជើង: ${gap}px`, 'info');
+}
+
+function resetReportTitleGap() {
+  localStorage.removeItem('pec21_title_gap');
+  applyReportTitleGap(12);
+  showToast('បានកំណត់គម្លាតចំណងជើងទៅដើមវិញ (12px)!', 'success');
+}
+
 function applyReportTitles(titles) {
   if (!titles) titles = getSavedReportTitles();
   
@@ -2418,6 +2447,8 @@ function applyReportTitles(titles) {
   if (inpTab2) inpTab2.value = titles.tabTitle2;
   const inpRes1 = document.getElementById('modalResTitle1');
   if (inpRes1) inpRes1.value = titles.resTitle1;
+
+  applyReportTitleGap();
 }
 
 function handleTitleDirectEdit(type, textVal) {
@@ -2437,6 +2468,7 @@ function resetTitlesToDefault() {
   localStorage.removeItem('pec21_tab_title_2');
   localStorage.removeItem('pec21_res_title_1');
   applyReportTitles(DEFAULT_REPORT_TITLES);
+  resetReportTitleGap();
   showToast('បានកំណត់ចំណងជើងទៅដើមវិញ (Default)!', 'success');
 }
 
