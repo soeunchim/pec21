@@ -2404,7 +2404,7 @@ function getSavedReportTitles() {
 
 function getSavedTitleGap() {
   const g = localStorage.getItem('pec21_title_gap');
-  return g !== null ? parseInt(g, 10) : 12;
+  return g !== null ? parseInt(g, 10) : 4;
 }
 
 function applyReportTitleGap(gap) {
@@ -2418,7 +2418,7 @@ function applyReportTitleGap(gap) {
 
 function adjustReportTitleGap(delta) {
   let gap = getSavedTitleGap() + delta;
-  if (gap < 0) gap = 0;
+  if (gap < -20) gap = -20;
   if (gap > 60) gap = 60;
   localStorage.setItem('pec21_title_gap', gap);
   applyReportTitleGap(gap);
@@ -2427,8 +2427,8 @@ function adjustReportTitleGap(delta) {
 
 function resetReportTitleGap() {
   localStorage.removeItem('pec21_title_gap');
-  applyReportTitleGap(12);
-  showToast('បានកំណត់គម្លាតចំណងជើងទៅដើមវិញ (12px)!', 'success');
+  applyReportTitleGap(4);
+  showToast('បានកំណត់គម្លាតចំណងជើងទៅដើមវិញ (4px)!', 'success');
 }
 
 function applyReportTitles(titles) {
