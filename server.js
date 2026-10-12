@@ -143,12 +143,32 @@ function syncToFirebase(dataObj) {
   }, 350);
 }
 
+function sanitizeCandidateRecord(c) {
+  if (!c || typeof c !== 'object') return c;
+  const fields = ['notes', 'name', 'status', 'dob', 'gender', 'roleCode', 'communeCode'];
+  for (const f of fields) {
+    if (typeof c[f] === 'string') {
+      const lower = c[f].toLowerCase();
+      if (lower.includes('pause') || lower.includes('deploy') || lower.includes('uuid') || lower.includes('urn:') || lower.includes('http')) {
+        c[f] = (f === 'status') ? 'ធ្លាក់' : '';
+      }
+    }
+  }
+  return c;
+}
+
+function sanitizeDatabase(data) {
+  if (!data || !Array.isArray(data.candidates)) return;
+  data.candidates.forEach(sanitizeCandidateRecord);
+}
+
 function loadDatabase() {
   try {
     if (fs.existsSync(DB_FILE)) {
       const data = fs.readFileSync(DB_FILE, 'utf8');
       db = JSON.parse(data);
       if (!db.examCodes) db.examCodes = [];
+      sanitizeDatabase(db);
       console.log(`[DB] Database loaded: ${db.candidates.length} candidates, ${db.communes.length} communes, ${db.examCodes.length} codes.`);
     } else {
       console.error('[DB] Database file not found at:', DB_FILE);
@@ -164,6 +184,7 @@ function loadDatabase() {
     console.log('[Firebase] Configured with URL. Checking Cloud DB...');
     fetchFromFirebase().then(cloudData => {
       if (cloudData && cloudData.candidates && cloudData.candidates.length > 0) {
+        sanitizeDatabase(cloudData);
         db = cloudData;
         if (!db.examCodes) db.examCodes = [];
         console.log(`[Firebase] Successfully synced from Cloud: ${db.candidates.length} candidates.`);
@@ -180,6 +201,7 @@ function loadDatabase() {
 
 function saveDatabase() {
   try {
+    sanitizeDatabase(db);
     fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2), 'utf8');
   } catch (err) {
     console.error('[DB] Error saving database:', err.message);
@@ -1289,7 +1311,12 @@ const server = http.createServer(async (req, res) => {
       filePath = path.join(PUBLIC_DIR, 'index.html');
     }
     const contentType = MIME_TYPES[path.extname(filePath).toLowerCase()] || 'application/octet-stream';
-    res.writeHead(200, { 'Content-Type': contentType });
+    res.writeHead(200, {
+      'Content-Type': contentType,
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0'
+    });
     const stream = fs.createReadStream(filePath);
     stream.pipe(res);
   });

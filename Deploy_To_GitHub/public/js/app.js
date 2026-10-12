@@ -2025,6 +2025,28 @@ function isCorruptedText(val) {
   return lower.includes('pause') || lower.includes('deploy') || lower.includes('uuid') || lower.includes('urn:') || lower.includes('http');
 }
 
+function sanitizeText(val) {
+  if (!val || typeof val !== 'string') return '';
+  if (isCorruptedText(val)) return '';
+  return val.trim();
+}
+
+function sanitizeCandidate(c) {
+  if (!c || typeof c !== 'object') return c;
+  ['notes', 'name', 'status', 'dob', 'gender', 'roleCode', 'communeCode'].forEach(key => {
+    if (typeof c[key] === 'string' && isCorruptedText(c[key])) {
+      c[key] = (key === 'status') ? 'ធ្លាក់' : '';
+    }
+  });
+  return c;
+}
+
+function sanitizeAllCandidates() {
+  if (Array.isArray(state.candidates)) {
+    state.candidates.forEach(sanitizeCandidate);
+  }
+}
+
 (function sanitizeStorage() {
   try {
     const pageVal = localStorage.getItem('pec21_report_page_num');
@@ -2408,7 +2430,7 @@ function renderTabulationSheet() {
             <td class="excel-x-cell"></td>
             <td>${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
             <td>${c.status || ''}</td>
-            <td>${c.notes || ''}</td>
+            <td>${sanitizeText(c.notes)}</td>
           </tr>
         `;
       });
@@ -2435,7 +2457,7 @@ function renderTabulationSheet() {
             <td class="excel-x-cell"></td>
             <td>${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
             <td>${c.status || ''}</td>
-            <td>${c.notes || ''}</td>
+            <td>${sanitizeText(c.notes)}</td>
           </tr>
         `;
       });
@@ -2462,7 +2484,7 @@ function renderTabulationSheet() {
             <td>${c.scorePc !== undefined && c.scorePc !== null && c.scorePc !== '' ? Number(c.scorePc).toFixed(2) : ''}</td>
             <td>${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
             <td>${c.status || ''}</td>
-            <td>${c.notes || ''}</td>
+            <td>${sanitizeText(c.notes)}</td>
           </tr>
         `;
       });
@@ -2619,7 +2641,7 @@ function renderResultsSheet() {
             <td>${formatDobKhmer(c.dob)}</td>
             <td>${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
             <td style="color:${c.status === 'A-ជាប់' ? '#047857' : (c.status === 'B-បម្រុង' || c.status === 'C-បម្រុងបន្ទាប់') ? '#0284C7' : '#DC2626'};">${c.status || ''}</td>
-            <td>${c.notes || ''}</td>
+            <td>${sanitizeText(c.notes)}</td>
           </tr>
         `;
       });
@@ -2642,7 +2664,7 @@ function renderResultsSheet() {
             <td>${formatDobKhmer(c.dob)}</td>
             <td>${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
             <td style="color:${c.status === 'A-ជាប់' ? '#047857' : (c.status === 'B-បម្រុង' || c.status === 'C-បម្រុងបន្ទាប់') ? '#0284C7' : '#DC2626'};">${c.status || ''}</td>
-            <td>${c.notes || ''}</td>
+            <td>${sanitizeText(c.notes)}</td>
           </tr>
         `;
       });
@@ -2665,7 +2687,7 @@ function renderResultsSheet() {
             <td>${formatDobKhmer(c.dob)}</td>
             <td>${c.scoreTotal !== undefined && c.scoreTotal !== null && c.scoreTotal !== '' ? Number(c.scoreTotal).toFixed(2) : ''}</td>
             <td style="color:${c.status === 'A-ជាប់' ? '#047857' : (c.status === 'B-បម្រុង' || c.status === 'C-បម្រុងបន្ទាប់') ? '#0284C7' : '#DC2626'};">${c.status || ''}</td>
-            <td>${c.notes || ''}</td>
+            <td>${sanitizeText(c.notes)}</td>
           </tr>
         `;
       });
@@ -3104,8 +3126,11 @@ function initLogoPosition() {
   initLogoDrag();
 }
 
-// Clean Printing Modal Closer
+// Clean Printing Modal Closer & Toast Remover
 window.addEventListener('beforeprint', () => {
+  const toastCont = document.getElementById('toastContainer');
+  if (toastCont) toastCont.innerHTML = '';
+  document.querySelectorAll('.toast').forEach(t => t.remove());
   if (typeof closeInstModal === 'function') closeInstModal();
   if (typeof closeUserModal === 'function') closeUserModal();
   if (typeof closeCandidateModal === 'function') closeCandidateModal();
@@ -3974,7 +3999,19 @@ function setPrintOrientation(orientation) {
     document.head.appendChild(styleEl);
   }
   const isLandscape = orientation === 'landscape';
-  styleEl.innerHTML = `@page { size: A4 ${isLandscape ? 'landscape' : 'portrait'} !important; margin: ${isLandscape ? '8mm 6mm 10mm 6mm' : '10mm 8mm 12mm 8mm'} !important; }`;
+  styleEl.innerHTML = `
+    @page {
+      size: A4 ${isLandscape ? 'landscape' : 'portrait'};
+      margin: ${isLandscape ? '10mm 8mm 14mm 8mm' : '12mm 10mm 15mm 10mm'};
+      @bottom-center {
+        content: "-" counter(page, khmer) "-";
+        font-family: 'Khmer OS Siemreap', 'Siemreap', sans-serif;
+        font-size: 9pt;
+        font-weight: normal;
+        color: #000000;
+      }
+    }
+  `;
 }
 
 function printOfficialReport(orientation) {
@@ -3982,6 +4019,11 @@ function printOfficialReport(orientation) {
   document.body.classList.remove('print-portrait', 'print-landscape');
   document.body.classList.add(target === 'portrait' ? 'print-portrait' : 'print-landscape');
   setPrintOrientation(target);
+
+  // Clear any toast notifications so they NEVER print
+  const toastCont = document.getElementById('toastContainer');
+  if (toastCont) toastCont.innerHTML = '';
+  document.querySelectorAll('.toast').forEach(t => t.remove());
 
   if (typeof closeInstModal === 'function') closeInstModal();
   if (typeof closeUserModal === 'function') closeUserModal();
