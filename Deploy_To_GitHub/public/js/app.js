@@ -2367,6 +2367,7 @@ function initInstLines() {
   const lines = getSavedInstLines();
   const sizes = getSavedInstSizes();
   applyInstLines(lines, sizes);
+  applyReportTitles();
 }
 
 function handleInstLineDirectEdit(lineNum, textVal) {
@@ -2384,6 +2385,61 @@ function adjustInstFontSizeAll(delta) {
   showToast(`បានកែទំហំអក្សរស្ថាប័ន (${delta > 0 ? '+' : ''}${delta}pt)`, 'info');
 }
 
+// ==============================================================================
+// REPORT TITLES MANAGEMENT (TAB 4 & TAB 5)
+// ==============================================================================
+const DEFAULT_REPORT_TITLES = {
+  tabTitle1: 'តារាងស្រង់ពិន្ទុបេក្ខជន',
+  tabTitle2: 'ដែលបានដាក់ពាក្យប្រឡងតាមមុខតំណែងនីមួយៗសម្រាប់បម្រើការងារនៅក្នុងគណៈកម្មការឃុំសង្កាត់',
+  resTitle1: 'លទ្ធផលនៃការប្រឡងជ្រើសរើសសមាសភាពក្រុមចុះឈ្មោះបោះឆ្នោត'
+};
+
+function getSavedReportTitles() {
+  return {
+    tabTitle1: localStorage.getItem('pec21_tab_title_1') || DEFAULT_REPORT_TITLES.tabTitle1,
+    tabTitle2: localStorage.getItem('pec21_tab_title_2') || DEFAULT_REPORT_TITLES.tabTitle2,
+    resTitle1: localStorage.getItem('pec21_res_title_1') || DEFAULT_REPORT_TITLES.resTitle1
+  };
+}
+
+function applyReportTitles(titles) {
+  if (!titles) titles = getSavedReportTitles();
+  
+  const elTab1 = document.getElementById('tabReportTitleLine1');
+  if (elTab1) elTab1.innerText = titles.tabTitle1;
+  const elTab2 = document.getElementById('tabReportTitleLine2');
+  if (elTab2) elTab2.innerText = titles.tabTitle2;
+  const elRes1 = document.getElementById('resultReportTitleLine1');
+  if (elRes1) elRes1.innerText = titles.resTitle1;
+
+  const inpTab1 = document.getElementById('modalTabTitle1');
+  if (inpTab1) inpTab1.value = titles.tabTitle1;
+  const inpTab2 = document.getElementById('modalTabTitle2');
+  if (inpTab2) inpTab2.value = titles.tabTitle2;
+  const inpRes1 = document.getElementById('modalResTitle1');
+  if (inpRes1) inpRes1.value = titles.resTitle1;
+}
+
+function handleTitleDirectEdit(type, textVal) {
+  const val = (textVal || '').trim();
+  if (type === 'tab1') {
+    localStorage.setItem('pec21_tab_title_1', val || DEFAULT_REPORT_TITLES.tabTitle1);
+  } else if (type === 'tab2') {
+    localStorage.setItem('pec21_tab_title_2', val || DEFAULT_REPORT_TITLES.tabTitle2);
+  } else if (type === 'res1') {
+    localStorage.setItem('pec21_res_title_1', val || DEFAULT_REPORT_TITLES.resTitle1);
+  }
+  showToast('បានរក្សាទុកចំណងជើងដោយជោគជ័យ!', 'success');
+}
+
+function resetTitlesToDefault() {
+  localStorage.removeItem('pec21_tab_title_1');
+  localStorage.removeItem('pec21_tab_title_2');
+  localStorage.removeItem('pec21_res_title_1');
+  applyReportTitles(DEFAULT_REPORT_TITLES);
+  showToast('បានកំណត់ចំណងជើងទៅដើមវិញ (Default)!', 'success');
+}
+
 function openInstModal() {
   const lines = getSavedInstLines();
   const sizes = getSavedInstSizes();
@@ -2393,6 +2449,16 @@ function openInstModal() {
     const sInput = document.getElementById(`modalInstSize${idx + 1}`);
     if (sInput) sInput.value = sizes[idx];
   });
+  
+  // Populate report titles
+  const titles = getSavedReportTitles();
+  const inpTab1 = document.getElementById('modalTabTitle1');
+  if (inpTab1) inpTab1.value = titles.tabTitle1;
+  const inpTab2 = document.getElementById('modalTabTitle2');
+  if (inpTab2) inpTab2.value = titles.tabTitle2;
+  const inpRes1 = document.getElementById('modalResTitle1');
+  if (inpRes1) inpRes1.value = titles.resTitle1;
+
   const modal = document.getElementById('instModal');
   if (modal) modal.classList.add('active');
 }
@@ -2419,8 +2485,18 @@ function handleSaveInstLines(e) {
   localStorage.setItem('pec21_inst_lines', JSON.stringify(lines));
   localStorage.setItem('pec21_inst_font_sizes', JSON.stringify(sizes));
   applyInstLines(lines, sizes);
+
+  // Save report titles
+  const inpTab1 = document.getElementById('modalTabTitle1');
+  const inpTab2 = document.getElementById('modalTabTitle2');
+  const inpRes1 = document.getElementById('modalResTitle1');
+  if (inpTab1) localStorage.setItem('pec21_tab_title_1', inpTab1.value.trim() || DEFAULT_REPORT_TITLES.tabTitle1);
+  if (inpTab2) localStorage.setItem('pec21_tab_title_2', inpTab2.value.trim() || DEFAULT_REPORT_TITLES.tabTitle2);
+  if (inpRes1) localStorage.setItem('pec21_res_title_1', inpRes1.value.trim() || DEFAULT_REPORT_TITLES.resTitle1);
+  applyReportTitles();
+
   closeInstModal();
-  showToast('បានរក្សាទុកអក្សរ និងទំហំអក្សរនៅក្រោម Logo រួចរាល់!', 'success');
+  showToast('បានរក្សាទុកអក្សរស្ថាប័ន និងចំណងជើងតារាងរួចរាល់!', 'success');
 }
 
 function saveSettingsInstLines() {

@@ -501,7 +501,7 @@
 
         <div class="official-paper" id="tabulationPaper">
           <!-- Top Header Grid (ព្រះរាជាណាចក្រកម្ពុជា តម្រឹមកណ្តាលក្រដាស A4) -->
-          <div style="position:relative; margin-bottom:18px; min-height:225px;">
+          <div style="position:relative; margin-bottom:4px; min-height:150px;">
             <!-- Left: NEC / PEC (អក្សរនៅខាងក្រោម Logo តម្រឹមឆ្វេង) -->
             <div style="position:absolute; left:0; top:0; text-align:left; font-family:'Khmer OS Muol Light', 'Khmer OS MuolLight', 'Khmer OS Muol', 'Moul', serif;">
               <div style="margin:0 auto 6px; text-align:center; position:relative;">
@@ -537,9 +537,9 @@
           </div>
 
           <!-- Main Title (ពាក្យ តារាងស្រង់ពិន្ទុបេក្ខជន ទំហំ Size 13, អក្សរខាងក្រោម Size: 12) -->
-          <div style="text-align:center; margin:28px 0 18px; clear:both; font-family:'Khmer OS Muol Light', 'Khmer OS MuolLight', 'Khmer OS Muol', 'Moul', serif;">
-            <h3 style="font-size:13pt; margin-bottom:6px; font-weight:normal;">តារាងស្រង់ពិន្ទុបេក្ខជន</h3>
-            <p style="font-size:12pt; margin-bottom:4px; font-weight:normal;">ដែលបានដាក់ពាក្យប្រឡងតាមមុខតំណែងនីមួយៗសម្រាប់បម្រើការងារនៅក្នុងគណៈកម្មការឃុំសង្កាត់</p>
+          <div style="text-align:center; margin:6px 0 14px; clear:both; font-family:'Khmer OS Muol Light', 'Khmer OS MuolLight', 'Khmer OS Muol', 'Moul', serif;">
+            <h3 id="tabReportTitleLine1" contenteditable="true" onblur="handleTitleDirectEdit('tab1', this.innerText)" title="ចុចទីនេះដើម្បីកែសម្រួលចំណងជើងដោយផ្ទាល់" style="font-size:13pt; margin-bottom:4px; font-weight:normal; outline:none; cursor:text;">តារាងស្រង់ពិន្ទុបេក្ខជន</h3>
+            <p id="tabReportTitleLine2" contenteditable="true" onblur="handleTitleDirectEdit('tab2', this.innerText)" title="ចុចទីនេះដើម្បីកែសម្រួលចំណងជើងដោយផ្ទាល់" style="font-size:12pt; margin-bottom:4px; font-weight:normal; outline:none; cursor:text;">ដែលបានដាក់ពាក្យប្រឡងតាមមុខតំណែងនីមួយៗសម្រាប់បម្រើការងារនៅក្នុងគណៈកម្មការឃុំសង្កាត់</p>
             <p style="font-size:12pt; font-weight:normal;" id="tabReportDistrictTitle">ស្រុកអង្គរបុរី នៃខេត្តតាកែវ</p>
           </div>
 
@@ -642,7 +642,7 @@
 
         <div class="official-paper" id="resultsPaper">
           <!-- Top Header Grid (ព្រះរាជាណាចក្រកម្ពុជា តម្រឹមកណ្តាលក្រដាស A4) -->
-          <div style="position:relative; margin-bottom:18px; min-height:235px;">
+          <div style="position:relative; margin-bottom:4px; min-height:150px;">
             <!-- Left: NEC / PEC (អក្សរនៅខាងក្រោម Logo តម្រឹមឆ្វេង) -->
             <div style="position:absolute; left:0; top:0; text-align:left; font-family:'Khmer OS Muol Light', 'Khmer OS MuolLight', 'Khmer OS Muol', 'Moul', serif;">
               <div style="margin:0 auto 6px; text-align:center; position:relative;">
@@ -678,8 +678,8 @@
           </div>
 
           <!-- Main Title (ពាក្យ លទ្ធផលនៃការប្រឡង... ទំហំ Size 13, អក្សរខាងក្រោម Size: 12) -->
-          <div style="text-align:center; margin:32px 0 18px; clear:both; font-family:'Khmer OS Muol Light', 'Khmer OS MuolLight', 'Khmer OS Muol', 'Moul', serif;">
-            <h3 style="font-size:13pt; margin-bottom:6px; font-weight:normal;">លទ្ធផលនៃការប្រឡងជ្រើសរើសសមាសភាពក្រុមចុះឈ្មោះបោះឆ្នោត</h3>
+          <div style="text-align:center; margin:6px 0 14px; clear:both; font-family:'Khmer OS Muol Light', 'Khmer OS MuolLight', 'Khmer OS Muol', 'Moul', serif;">
+            <h3 id="resultReportTitleLine1" contenteditable="true" onblur="handleTitleDirectEdit('res1', this.innerText)" title="ចុចទីនេះដើម្បីកែសម្រួលចំណងជើងដោយផ្ទាល់" style="font-size:13pt; margin-bottom:4px; font-weight:normal; outline:none; cursor:text;">លទ្ធផលនៃការប្រឡងជ្រើសរើសសមាសភាពក្រុមចុះឈ្មោះបោះឆ្នោត</h3>
             <p style="font-size:12pt; font-weight:normal;" id="resultReportDistrictTitle">ស្រុកអង្គរបូរី នៃខេត្តតាកែវ</p>
           </div>
 
@@ -1450,6 +1450,26 @@ AB004	អវត្តមាន" style="font-family:monospace; font-size:0.88rem;
               <input type="number" id="modalInstSize4" class="form-control" step="0.5" min="6" max="20">
             </div>
           </div>
+
+          <!-- SECTION: កែសម្រួលចំណងជើងតារាងរបាយការណ៍ (Report Titles) -->
+          <div style="background:#eff6ff; padding:10px 12px; border-radius:6px; border:1px solid #bfdbfe; margin-top:8px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <span style="font-size:0.85rem; color:#1e40af; font-weight:700;">📝 កែសម្រួលចំណងជើងតារាង (Report Titles)៖</span>
+              <button type="button" class="btn btn-secondary" style="padding:2px 8px; font-size:0.75rem;" onclick="resetTitlesToDefault()" title="កំណត់ចំណងជើងដើមវិញ">🔄 ចំណងជើងដើម</button>
+            </div>
+            <div style="margin-bottom:8px;">
+              <label class="form-label" style="font-size:0.78rem; margin-bottom:2px; font-weight:600; color:#1e3a8a;">តារាងស្រង់ពិន្ទុ (Tab 4) - ជួរទី១</label>
+              <input type="text" id="modalTabTitle1" class="form-control" placeholder="តារាងស្រង់ពិន្ទុបេក្ខជន">
+            </div>
+            <div style="margin-bottom:8px;">
+              <label class="form-label" style="font-size:0.78rem; margin-bottom:2px; font-weight:600; color:#1e3a8a;">តារាងស្រង់ពិន្ទុ (Tab 4) - ជួរទី២</label>
+              <input type="text" id="modalTabTitle2" class="form-control" placeholder="ដែលបានដាក់ពាក្យប្រឡងតាមមុខតំណែងនីមួយៗសម្រាប់បម្រើការងារនៅក្នុងគណៈកម្មការឃុំសង្កាត់">
+            </div>
+            <div>
+              <label class="form-label" style="font-size:0.78rem; margin-bottom:2px; font-weight:600; color:#1e3a8a;">តារាងលទ្ធផលប្រឡង (Tab 5) - ជួរទី១</label>
+              <input type="text" id="modalResTitle1" class="form-control" placeholder="លទ្ធផលនៃការប្រឡងជ្រើសរើសសមាសភាពក្រុមចុះឈ្មោះបោះឆ្នោត">
+            </div>
+          </div>
         </div>
         <div class="modal-footer" style="display:flex; justify-content:space-between;">
           <button type="button" class="btn btn-secondary" onclick="resetInstLinesToDefault()">កំណត់ឡើងវិញ (Default)</button>
@@ -1569,6 +1589,6 @@ AB004	អវត្តមាន" style="font-family:monospace; font-size:0.88rem;
   <div id="toastContainer" class="toast-container"></div>
 
   <!-- Application Logic -->
-  <script src="js/app.js?v=20261012_v6_nuke_paused_dob_nowrap"></script>
+  <script src="js/app.js?v=20261012_v7_titles_editable"></script>
 </body>
 </html>
