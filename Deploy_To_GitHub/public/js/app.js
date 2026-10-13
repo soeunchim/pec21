@@ -2965,25 +2965,8 @@ function renderResultsSheet() {
     </table>
   `;
 
-  // Dynamic summary line below table (គៀកជើងតារាងខាងឆ្វេង ស្មើនឹងជួរថ្ងៃខែឆ្នាំខាងស្តាំ)
-  let allResCands = [];
-  communesInDist.forEach(comm => {
-    const cands = state.candidates.filter(c => c.communeCode === comm.code);
-    allResCands.push(...cands);
-  });
-  const lastResCand = allResCands.length > 0 ? allResCands[allResCands.length - 1] : null;
-  const lastResCandName = lastResCand ? lastResCand.name : '';
-  const totalResCands = allResCands.length;
-  const femResCount = allResCands.filter(c => c.gender === 'ស្រី' || c.gender === 'ស').length;
-  const femResCountStr = String(femResCount).padStart(2, '0');
-
   container.innerHTML = tableHtml;
   purgeAllCorruptedDOMElements();
-
-  const resStopEl = document.getElementById('resStopListText');
-  if (resStopEl) {
-    resStopEl.innerText = `បញ្ឈប់បញ្ជីនេះត្រឹមឈ្មោះ: ${lastResCandName} សរុប ${toKhmerNumber(totalResCands)} នាក់ (ស្រី ${toKhmerNumber(femResCountStr)} នាក់)`;
-  }
 
   applySavedReportDates();
   initInstLines();

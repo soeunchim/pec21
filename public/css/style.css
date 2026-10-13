@@ -769,11 +769,15 @@ input[type="number"] {
   padding: 30px 25px;
 }
 
+#resultsPaper .excel-official-table {
+  margin-bottom: 4px !important;
+}
+
 #resultsPaper .official-signatures-layout {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-top: 2px;
+  margin-top: 2px !important;
   font-size: 11pt;
 }
 
@@ -1179,6 +1183,14 @@ input[type="number"] {
   .paper-page-number {
     page-break-inside: avoid !important;
     break-inside: avoid !important;
+  }
+
+  #resultsPaper .excel-official-table {
+    margin-bottom: 4px !important;
+  }
+
+  #resultsPaper .official-signatures-layout {
+    margin-top: 2px !important;
   }
 }
 
