@@ -786,6 +786,10 @@ input[type="number"] {
   max-width: 380px;
 }
 
+#resultsPaper .res-sig-left-col {
+  margin-top: 24px !important;
+}
+
 .paper-motto {
   text-align: center;
   margin-bottom: 20px;
@@ -1191,6 +1195,10 @@ input[type="number"] {
 
   #resultsPaper .official-signatures-layout {
     margin-top: 2px !important;
+  }
+
+  #resultsPaper .res-sig-left-col {
+    margin-top: 24px !important;
   }
 }
 
